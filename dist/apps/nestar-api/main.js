@@ -65,16 +65,62 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const app_controller_1 = __webpack_require__(/*! ./app.controller */ "./apps/nestar-api/src/app.controller.ts");
 const app_service_1 = __webpack_require__(/*! ./app.service */ "./apps/nestar-api/src/app.service.ts");
 const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const apollo_1 = __webpack_require__(/*! @nestjs/apollo */ "@nestjs/apollo");
+const app_resolve_1 = __webpack_require__(/*! ./app.resolve */ "./apps/nestar-api/src/app.resolve.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot()],
+        imports: [config_1.ConfigModule.forRoot(), graphql_1.GraphQLModule.forRoot({
+                driver: apollo_1.ApolloDriver,
+                playground: true,
+                uploads: false,
+                autoSchemaFile: true,
+            }),],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, app_resolve_1.AppResolver],
     })
 ], AppModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/app.resolve.ts":
+/*!********************************************!*\
+  !*** ./apps/nestar-api/src/app.resolve.ts ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AppResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+let AppResolver = class AppResolver {
+    sayHello() {
+        return "GraphQL API Server";
+    }
+};
+exports.AppResolver = AppResolver;
+__decorate([
+    (0, graphql_1.Query)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], AppResolver.prototype, "sayHello", null);
+exports.AppResolver = AppResolver = __decorate([
+    (0, graphql_1.Resolver)()
+], AppResolver);
 
 
 /***/ }),
@@ -108,6 +154,16 @@ exports.AppService = AppService = __decorate([
 
 /***/ }),
 
+/***/ "@nestjs/apollo":
+/*!*********************************!*\
+  !*** external "@nestjs/apollo" ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/apollo");
+
+/***/ }),
+
 /***/ "@nestjs/common":
 /*!*********************************!*\
   !*** external "@nestjs/common" ***!
@@ -135,6 +191,16 @@ module.exports = require("@nestjs/config");
 /***/ ((module) => {
 
 module.exports = require("@nestjs/core");
+
+/***/ }),
+
+/***/ "@nestjs/graphql":
+/*!**********************************!*\
+  !*** external "@nestjs/graphql" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/graphql");
 
 /***/ })
 
