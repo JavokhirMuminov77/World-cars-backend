@@ -15,16 +15,32 @@
 
 
 
-function reduceNestedArray(arr: (number | any)[]): number {
-	return arr.reduce((acc, curr) => {
-		if (typeof curr === 'number') {
-			return acc + curr;
-		} else if (Array.isArray(curr)) {
-			return acc + reduceNestedArray(curr);
-		} else {
-			return acc;
+// function reduceNestedArray(arr: (number | any)[]): number {
+// 	return arr.reduce((acc, curr) => {
+// 		if (typeof curr === 'number') {
+// 			return acc + curr;
+// 		} else if (Array.isArray(curr)) {
+// 			return acc + reduceNestedArray(curr);
+// 		} else {
+// 			return acc;
+// 		}
+// 	}, 0);
+// }
+
+// console.log("Train =>",reduceNestedArray([1, [1, 2, [4]]]));
+
+
+// ZK-TASK:
+
+function printNumbers() {
+	const interval = setInterval(() => {
+		for (let i = 1; i <= 5; i++) {
+			console.log(i);
 		}
-	}, 0);
+	}, 1000);
+	setTimeout(() => {
+		clearTimeout(interval);
+	}, 5000);
 }
 
-console.log("Train =>",reduceNestedArray([1, [1, 2, [4]]]));
+printNumbers();
