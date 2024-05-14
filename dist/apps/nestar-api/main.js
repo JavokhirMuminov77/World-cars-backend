@@ -373,56 +373,79 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d, _e;
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const member_input_1 = __webpack_require__(/*! ../../libs/dto/member/member.input */ "./apps/nestar-api/src/libs/dto/member/member.input.ts");
+const member_1 = __webpack_require__(/*! ../../libs/dto/member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
 let MemberResolver = class MemberResolver {
     constructor(memberService) {
         this.memberService = memberService;
     }
-    async signup() {
-        console.log("Mutation: Signup");
-        return this.memberService.signup();
+    async signup(input) {
+        try {
+            console.log('Mutation signup');
+            console.log('input', input);
+            return this.memberService.signup(input);
+        }
+        catch (err) {
+            console.log('Error signup: ', err);
+            throw new common_1.InternalServerErrorException(err);
+        }
     }
-    async login() {
-        console.log("Mutation: login");
-        return this.memberService.login();
+    async login(input) {
+        try {
+            console.log('Mutation login');
+            return this.memberService.login(input);
+        }
+        catch (err) {
+            console.log('Error signup: ', err);
+            throw new common_1.InternalServerErrorException(err);
+        }
     }
     async updateMember() {
-        console.log("Mutation: updateMember");
+        console.log('Mutation updateMember');
         return this.memberService.updateMember();
     }
     async getMember() {
-        console.log("Mutation: getMember");
+        console.log('Query getMember');
         return this.memberService.getMember();
     }
 };
 exports.MemberResolver = MemberResolver;
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => member_1.Member),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
+    __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+    __metadata("design:paramtypes", [typeof (_b = typeof member_input_1.MemberInput !== "undefined" && member_input_1.MemberInput) === "function" ? _b : Object]),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], MemberResolver.prototype, "signup", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => member_1.Member),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
+    __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    __metadata("design:paramtypes", [typeof (_d = typeof member_input_1.LoginInput !== "undefined" && member_input_1.LoginInput) === "function" ? _d : Object]),
+    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
 ], MemberResolver.prototype, "login", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], MemberResolver.prototype, "updateMember", null);
 __decorate([
     (0, graphql_1.Query)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
 ], MemberResolver.prototype, "getMember", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -457,27 +480,50 @@ exports.MemberService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
 let MemberService = class MemberService {
     constructor(memberModel) {
         this.memberModel = memberModel;
     }
-    async signup() {
-        return "signup executed!";
+    async signup(input) {
+        try {
+            const result = await this.memberModel.create(input);
+            return result;
+        }
+        catch (err) {
+            console.log('Error Service.modul:', err);
+            throw new common_1.BadRequestException(err);
+        }
     }
-    async login() {
-        return "login executed!";
+    async login(input) {
+        const { memberNick, memberPassword } = input;
+        const response = await this.memberModel
+            .findOne({ memberNick: memberNick })
+            .select('+memberPassword')
+            .exec();
+        if (!response || response.memberStatus === member_enum_1.MemberStatus.DELETE) {
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_MEMBER_NICK);
+        }
+        else if (response.memberStatus === member_enum_1.MemberStatus.BLOCK) {
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.BLOCKED_USER);
+        }
+        const isMatch = memberPassword === response.memberPassword;
+        if (!isMatch)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.WRONG_PASSWORD);
+        return response;
     }
     async updateMember() {
-        return "updateMember executed!";
+        return 'updateMember executed';
     }
     async getMember() {
-        return "getMember executed!";
+        return 'getMember executed';
     }
 };
 exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)("Member")),
+    __param(0, (0, mongoose_1.InjectModel)('Member')),
     __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object])
 ], MemberService);
 
@@ -592,6 +638,243 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/dto/member/member.input.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/member/member.input.ts ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LoginInput = exports.MemberInput = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+let MemberInput = class MemberInput {
+};
+exports.MemberInput = MemberInput;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 12),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], MemberInput.prototype, "memberNick", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(5, 12),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], MemberInput.prototype, "memberPassword", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], MemberInput.prototype, "memberPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MemberType, { nullable: true }),
+    __metadata("design:type", typeof (_a = typeof member_enum_1.MemberType !== "undefined" && member_enum_1.MemberType) === "function" ? _a : Object)
+], MemberInput.prototype, "memberType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MembrAuthType, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof member_enum_1.MembrAuthType !== "undefined" && member_enum_1.MembrAuthType) === "function" ? _b : Object)
+], MemberInput.prototype, "memberAuthType", void 0);
+exports.MemberInput = MemberInput = __decorate([
+    (0, graphql_1.InputType)()
+], MemberInput);
+let LoginInput = class LoginInput {
+};
+exports.LoginInput = LoginInput;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 12),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], LoginInput.prototype, "memberNick", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(5, 12),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], LoginInput.prototype, "memberPassword", void 0);
+exports.LoginInput = LoginInput = __decorate([
+    (0, graphql_1.InputType)()
+], LoginInput);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/member/member.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/member/member.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Member = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+let Member = class Member {
+};
+exports.Member = Member;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], Member.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_enum_1.MemberType),
+    __metadata("design:type", typeof (_b = typeof member_enum_1.MemberType !== "undefined" && member_enum_1.MemberType) === "function" ? _b : Object)
+], Member.prototype, "memberType", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_enum_1.MemberStatus),
+    __metadata("design:type", typeof (_c = typeof member_enum_1.MemberStatus !== "undefined" && member_enum_1.MemberStatus) === "function" ? _c : Object)
+], Member.prototype, "memberStatus", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_enum_1.MembrAuthType),
+    __metadata("design:type", typeof (_d = typeof member_enum_1.MembrAuthType !== "undefined" && member_enum_1.MembrAuthType) === "function" ? _d : Object)
+], Member.prototype, "memberAuthType", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Member.prototype, "memberPhone", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Member.prototype, "memberNick", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Member.prototype, "memberFullName", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Member.prototype, "memberImage", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Member.prototype, "memberAddress", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Member.prototype, "memberDesc", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberProperties", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberArticles", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberFollowers", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberFollowings", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberPoints", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberLikes", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberViews", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberComments", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberRank", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberWarnings", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Member.prototype, "memberBlocks", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], Member.prototype, "deletedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], Member.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
+], Member.prototype, "updatedAt", void 0);
+exports.Member = Member = __decorate([
+    (0, graphql_1.ObjectType)()
+], Member);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/enums/common.enum.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/common.enum.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Message = void 0;
+var Message;
+(function (Message) {
+    Message["SOMETHING_WENT_WRONG"] = "Something went wrong!";
+    Message["NO_DATA_FOUND"] = "No data found!";
+    Message["CREATE_FAILED"] = "Create failed!";
+    Message["UPDATE_FAILED"] = "Update failed!";
+    Message["REMOVE_FAILED"] = "Remove failed!";
+    Message["UPLOAD_FAILED"] = "Upload failed!";
+    Message["BAD_REQUEST"] = "Bad Request";
+    Message["NO_MEMBER_NICK"] = "No member with that member nick!";
+    Message["BLOCKED_USER"] = "You have been blocked!";
+    Message["WRONG_PASSWORD"] = "Wrong password, please try again!";
+    Message["NOT_AUTHENTICATED"] = "You are not authenticated, Place login first!";
+    Message["TOKEN_NOT_EXITS"] = "Bearer Token is not provided!";
+    Message["ONLY_SPECIFIC_ROLES_ALLOWED"] = "Allowed only for members with specific roles!";
+    Message["NOT_ALLOWED_REQUEST"] = "Not Allowed Request!";
+    Message["NOT_ALLOWED_FORMAT"] = "Please provide jpg, jpeg, or png images!";
+    Message["SELF_SUBSCRIPTION_DENIED"] = "Self subsecription is denied!";
+})(Message || (exports.Message = Message = {}));
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/enums/member.enum.ts":
 /*!*******************************************************!*\
   !*** ./apps/nestar-api/src/libs/enums/member.enum.ts ***!
@@ -649,7 +932,7 @@ const MemberSchema = new mongoose_1.Schema({
         enum: member_enum_1.MemberType,
         default: member_enum_1.MemberType.USER,
     },
-    MemberStatus: {
+    memberStatus: {
         type: String,
         enum: member_enum_1.MemberStatus,
         default: member_enum_1.MemberStatus.ACTIVE,
@@ -679,7 +962,7 @@ const MemberSchema = new mongoose_1.Schema({
     },
     memberImage: {
         type: String,
-        default: "",
+        default: '',
     },
     memberAddress: {
         type: String,
@@ -732,9 +1015,9 @@ const MemberSchema = new mongoose_1.Schema({
         default: 0,
     },
     deletedAt: {
-        type: Date
-    }
-}, { timestamps: true, collaction: "members" });
+        type: Date,
+    },
+}, { timestamps: true, collection: 'members' });
 exports["default"] = MemberSchema;
 
 
@@ -797,6 +1080,16 @@ module.exports = require("@nestjs/graphql");
 /***/ ((module) => {
 
 module.exports = require("@nestjs/mongoose");
+
+/***/ }),
+
+/***/ "class-validator":
+/*!**********************************!*\
+  !*** external "class-validator" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("class-validator");
 
 /***/ }),
 
