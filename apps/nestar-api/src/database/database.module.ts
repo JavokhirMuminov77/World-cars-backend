@@ -13,6 +13,8 @@ import { Connection} from 'mongoose';
 })
 export class DatabaseModule {
   constructor(@InjectConnection() private readonly connection: Connection) {
+    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+
     if(connection.readyState === 1) {
       console.log(
         `MongoDB is connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`,);

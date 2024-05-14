@@ -266,6 +266,7 @@ const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 let DatabaseModule = class DatabaseModule {
     constructor(connection) {
         this.connection = connection;
+        console.log("process.env.NODE_ENV", process.env.NODE_ENV);
         if (connection.readyState === 1) {
             console.log(`MongoDB is connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`);
         }
