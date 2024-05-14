@@ -338,12 +338,148 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const member_resolver_1 = __webpack_require__(/*! ./member.resolver */ "./apps/nestar-api/src/components/member/member.resolver.ts");
+const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const Member_model_1 = __webpack_require__(/*! ../../schemas/Member.model */ "./apps/nestar-api/src/schemas/Member.model.ts");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }])
+        ],
+        providers: [member_resolver_1.MemberResolver, member_service_1.MemberService]
+    })
 ], MemberModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/member/member.resolver.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/member/member.resolver.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MemberResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+let MemberResolver = class MemberResolver {
+    constructor(memberService) {
+        this.memberService = memberService;
+    }
+    async signup() {
+        console.log("Mutation: Signup");
+        return this.memberService.signup();
+    }
+    async login() {
+        console.log("Mutation: login");
+        return this.memberService.login();
+    }
+    async updateMember() {
+        console.log("Mutation: updateMember");
+        return this.memberService.updateMember();
+    }
+    async getMember() {
+        console.log("Mutation: getMember");
+        return this.memberService.getMember();
+    }
+};
+exports.MemberResolver = MemberResolver;
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+], MemberResolver.prototype, "signup", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], MemberResolver.prototype, "login", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], MemberResolver.prototype, "updateMember", null);
+__decorate([
+    (0, graphql_1.Query)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+], MemberResolver.prototype, "getMember", null);
+exports.MemberResolver = MemberResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _a : Object])
+], MemberResolver);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/member/member.service.ts":
+/*!*****************************************************************!*\
+  !*** ./apps/nestar-api/src/components/member/member.service.ts ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MemberService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+let MemberService = class MemberService {
+    constructor(memberModel) {
+        this.memberModel = memberModel;
+    }
+    async signup() {
+        return "signup executed!";
+    }
+    async login() {
+        return "login executed!";
+    }
+    async updateMember() {
+        return "updateMember executed!";
+    }
+    async getMember() {
+        return "getMember executed!";
+    }
+};
+exports.MemberService = MemberService;
+exports.MemberService = MemberService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)("Member")),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object])
+], MemberService);
 
 
 /***/ }),
@@ -452,6 +588,154 @@ exports.DatabaseModule = DatabaseModule = __decorate([
     __param(0, (0, mongoose_1.InjectConnection)()),
     __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Connection !== "undefined" && mongoose_2.Connection) === "function" ? _a : Object])
 ], DatabaseModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/enums/member.enum.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/member.enum.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MembrAuthType = exports.MemberStatus = exports.MemberType = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var MemberType;
+(function (MemberType) {
+    MemberType["USER"] = "USER";
+    MemberType["AGENT"] = "AGENT";
+    MemberType["ADMIN"] = "ADMIN";
+})(MemberType || (exports.MemberType = MemberType = {}));
+(0, graphql_1.registerEnumType)(MemberType, {
+    name: 'MemberType',
+});
+var MemberStatus;
+(function (MemberStatus) {
+    MemberStatus["ACTIVE"] = "ACTIVE";
+    MemberStatus["BLOCK"] = "BLOCK";
+    MemberStatus["DELETE"] = "DELETE";
+})(MemberStatus || (exports.MemberStatus = MemberStatus = {}));
+(0, graphql_1.registerEnumType)(MemberStatus, {
+    name: 'MemberType',
+});
+var MembrAuthType;
+(function (MembrAuthType) {
+    MembrAuthType["PHONE"] = "PHONE";
+    MembrAuthType["EMAIL"] = "EMAIL";
+    MembrAuthType["TRLRGRAM"] = "TELEGRAM";
+})(MembrAuthType || (exports.MembrAuthType = MembrAuthType = {}));
+(0, graphql_1.registerEnumType)(MembrAuthType, {
+    name: 'MemberType',
+});
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/schemas/Member.model.ts":
+/*!*****************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/Member.model.ts ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const MemberSchema = new mongoose_1.Schema({
+    memberType: {
+        type: String,
+        enum: member_enum_1.MemberType,
+        default: member_enum_1.MemberType.USER,
+    },
+    MemberStatus: {
+        type: String,
+        enum: member_enum_1.MemberStatus,
+        default: member_enum_1.MemberStatus.ACTIVE,
+    },
+    memberAuthType: {
+        type: String,
+        enum: member_enum_1.MembrAuthType,
+        default: member_enum_1.MembrAuthType.PHONE,
+    },
+    memberPhone: {
+        type: String,
+        index: { unique: true, sparse: true },
+        required: true,
+    },
+    memberNick: {
+        type: String,
+        index: { unique: true, sparse: true },
+        required: true,
+    },
+    memberPassword: {
+        type: String,
+        select: false,
+        required: true,
+    },
+    memberFullName: {
+        type: String,
+    },
+    memberImage: {
+        type: String,
+        default: "",
+    },
+    memberAddress: {
+        type: String,
+    },
+    memberDesc: {
+        type: String,
+    },
+    memberProperties: {
+        type: Number,
+        default: 0,
+    },
+    memberArticles: {
+        type: Number,
+        default: 0,
+    },
+    memberFollowers: {
+        type: Number,
+        default: 0,
+    },
+    memberFollowings: {
+        type: Number,
+        default: 0,
+    },
+    memberPoints: {
+        type: Number,
+        default: 0,
+    },
+    memberLikes: {
+        type: Number,
+        default: 0,
+    },
+    memberViews: {
+        type: Number,
+        default: 0,
+    },
+    memberComments: {
+        type: Number,
+        default: 0,
+    },
+    memberRank: {
+        type: Number,
+        default: 0,
+    },
+    memberWarnings: {
+        type: Number,
+        default: 0,
+    },
+    memberBlocks: {
+        type: Number,
+        default: 0,
+    },
+    deletedAt: {
+        type: Date
+    }
+}, { timestamps: true, collaction: "members" });
+exports["default"] = MemberSchema;
 
 
 /***/ }),
