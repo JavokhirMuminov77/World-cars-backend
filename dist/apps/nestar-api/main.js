@@ -156,6 +156,84 @@ exports.AppService = AppService = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/components/auth/auth.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/auth.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let AuthModule = class AuthModule {
+};
+exports.AuthModule = AuthModule;
+exports.AuthModule = AuthModule = __decorate([
+    (0, common_1.Module)({})
+], AuthModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/board-article/board-article.module.ts":
+/*!******************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/board-article/board-article.module.ts ***!
+  \******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let BoardArticleModule = class BoardArticleModule {
+};
+exports.BoardArticleModule = BoardArticleModule;
+exports.BoardArticleModule = BoardArticleModule = __decorate([
+    (0, common_1.Module)({})
+], BoardArticleModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/comment/comment.module.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/comment/comment.module.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let CommentModule = class CommentModule {
+};
+exports.CommentModule = CommentModule;
+exports.CommentModule = CommentModule = __decorate([
+    (0, common_1.Module)({})
+], CommentModule);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/components/components.module.ts":
 /*!*************************************************************!*\
   !*** ./apps/nestar-api/src/components/components.module.ts ***!
@@ -174,14 +252,72 @@ exports.ComponentsModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const member_module_1 = __webpack_require__(/*! ./member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
 const property_module_1 = __webpack_require__(/*! ./property/property.module */ "./apps/nestar-api/src/components/property/property.module.ts");
+const comment_module_1 = __webpack_require__(/*! ./comment/comment.module */ "./apps/nestar-api/src/components/comment/comment.module.ts");
+const auth_module_1 = __webpack_require__(/*! ./auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const like_module_1 = __webpack_require__(/*! ./like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
+const view_module_1 = __webpack_require__(/*! ./view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
+const follow_module_1 = __webpack_require__(/*! ./follow/follow.module */ "./apps/nestar-api/src/components/follow/follow.module.ts");
+const board_article_module_1 = __webpack_require__(/*! ./board-article/board-article.module */ "./apps/nestar-api/src/components/board-article/board-article.module.ts");
 let ComponentsModule = class ComponentsModule {
 };
 exports.ComponentsModule = ComponentsModule;
 exports.ComponentsModule = ComponentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [member_module_1.MemberModule, property_module_1.PropertyModule]
+        imports: [member_module_1.MemberModule, property_module_1.PropertyModule, comment_module_1.CommentModule, auth_module_1.AuthModule, like_module_1.LikeModule, view_module_1.ViewModule, follow_module_1.FollowModule, board_article_module_1.BoardArticleModule]
     })
 ], ComponentsModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/follow/follow.module.ts":
+/*!****************************************************************!*\
+  !*** ./apps/nestar-api/src/components/follow/follow.module.ts ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.FollowModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let FollowModule = class FollowModule {
+};
+exports.FollowModule = FollowModule;
+exports.FollowModule = FollowModule = __decorate([
+    (0, common_1.Module)({})
+], FollowModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/like/like.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/like/like.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LikeModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let LikeModule = class LikeModule {
+};
+exports.LikeModule = LikeModule;
+exports.LikeModule = LikeModule = __decorate([
+    (0, common_1.Module)({})
+], LikeModule);
 
 
 /***/ }),
@@ -234,6 +370,32 @@ exports.PropertyModule = PropertyModule;
 exports.PropertyModule = PropertyModule = __decorate([
     (0, common_1.Module)({})
 ], PropertyModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/view/view.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/view/view.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ViewModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let ViewModule = class ViewModule {
+};
+exports.ViewModule = ViewModule;
+exports.ViewModule = ViewModule = __decorate([
+    (0, common_1.Module)({})
+], ViewModule);
 
 
 /***/ }),
