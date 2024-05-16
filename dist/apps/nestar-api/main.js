@@ -910,6 +910,40 @@ var MemberAuthType;
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts":
+/*!********************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LoggingInterceptor = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const operators_1 = __webpack_require__(/*! rxjs/operators */ "rxjs/operators");
+let LoggingInterceptor = class LoggingInterceptor {
+    intercept(context, next) {
+        console.log('Before...');
+        const now = Date.now();
+        return next
+            .handle()
+            .pipe((0, operators_1.tap)(() => console.log(`After...${Date.now() - now}ms`)));
+    }
+};
+exports.LoggingInterceptor = LoggingInterceptor;
+exports.LoggingInterceptor = LoggingInterceptor = __decorate([
+    (0, common_1.Injectable)()
+], LoggingInterceptor);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/schemas/Member.model.ts":
 /*!*****************************************************!*\
   !*** ./apps/nestar-api/src/schemas/Member.model.ts ***!
@@ -1095,6 +1129,16 @@ module.exports = require("class-validator");
 
 module.exports = require("mongoose");
 
+/***/ }),
+
+/***/ "rxjs/operators":
+/*!*********************************!*\
+  !*** external "rxjs/operators" ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = require("rxjs/operators");
+
 /***/ })
 
 /******/ 	});
@@ -1136,9 +1180,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
 const app_module_1 = __webpack_require__(/*! ./app.module */ "./apps/nestar-api/src/app.module.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const Loggin_interceptor_1 = __webpack_require__(/*! ./libs/interceptor/Loggin.interceptor */ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalPipes(new common_1.ValidationPipe());
+    app.useGlobalInterceptors(new Loggin_interceptor_1.LoggingInterceptor());
     await app.listen(process.env.PORT_API ?? 3000);
 }
 bootstrap();
