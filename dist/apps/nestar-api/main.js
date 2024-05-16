@@ -926,14 +926,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LoggingInterceptor = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const operators_1 = __webpack_require__(/*! rxjs/operators */ "rxjs/operators");
 let LoggingInterceptor = class LoggingInterceptor {
+    constructor() {
+        this.logger = new common_1.Logger();
+    }
     intercept(context, next) {
+        const recordTime = Date.now();
+        const requestType = context.getType();
         console.log('Before...');
-        const now = Date.now();
+        this.logger.log(` Type ${requestType}`, `Request`);
+        if (requestType === 'http') {
+        }
+        else if (requestType == 'graphql') {
+            const gqlContext = graphql_1.GqlExecutionContext.create(context);
+            console.log('gqlContext => ', gqlContext.getContext().req.body);
+            this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
+        }
         return next
             .handle()
-            .pipe((0, operators_1.tap)(() => console.log(`After...${Date.now() - now}ms`)));
+            .pipe((0, operators_1.tap)((context) => {
+            const responseTime = Date.now() - recordTime;
+            this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, `RESPONSE`);
+        }));
+    }
+    stringify(context) {
+        return JSON.stringify(context).slice(0, 75);
     }
 };
 exports.LoggingInterceptor = LoggingInterceptor;
