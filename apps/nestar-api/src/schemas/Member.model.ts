@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { MembrAuthType, MemberStatus, MemberType } from '../libs/enums/member.enum';
+import { MemberAuthType, MemberStatus, MemberType } from '../libs/enums/member.enum';
 
 const MemberSchema = new Schema(
 	{
@@ -17,8 +17,8 @@ const MemberSchema = new Schema(
 
 		memberAuthType: {
 			type: String,
-			enum: MembrAuthType,
-			default: MembrAuthType.PHONE,
+			enum: MemberAuthType,
+			default: MemberAuthType.PHONE,
 		},
 
 		memberPhone: {

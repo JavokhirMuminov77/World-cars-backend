@@ -687,8 +687,8 @@ __decorate([
 ], MemberInput.prototype, "memberType", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, graphql_1.Field)(() => member_enum_1.MembrAuthType, { nullable: true }),
-    __metadata("design:type", typeof (_b = typeof member_enum_1.MembrAuthType !== "undefined" && member_enum_1.MembrAuthType) === "function" ? _b : Object)
+    (0, graphql_1.Field)(() => member_enum_1.MemberAuthType, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof member_enum_1.MemberAuthType !== "undefined" && member_enum_1.MemberAuthType) === "function" ? _b : Object)
 ], MemberInput.prototype, "memberAuthType", void 0);
 exports.MemberInput = MemberInput = __decorate([
     (0, graphql_1.InputType)()
@@ -753,8 +753,8 @@ __decorate([
     __metadata("design:type", typeof (_c = typeof member_enum_1.MemberStatus !== "undefined" && member_enum_1.MemberStatus) === "function" ? _c : Object)
 ], Member.prototype, "memberStatus", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => member_enum_1.MembrAuthType),
-    __metadata("design:type", typeof (_d = typeof member_enum_1.MembrAuthType !== "undefined" && member_enum_1.MembrAuthType) === "function" ? _d : Object)
+    (0, graphql_1.Field)(() => member_enum_1.MemberAuthType),
+    __metadata("design:type", typeof (_d = typeof member_enum_1.MemberAuthType !== "undefined" && member_enum_1.MemberAuthType) === "function" ? _d : Object)
 ], Member.prototype, "memberAuthType", void 0);
 __decorate([
     (0, graphql_1.Field)(() => String),
@@ -883,7 +883,7 @@ var Message;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MembrAuthType = exports.MemberStatus = exports.MemberType = void 0;
+exports.MemberAuthType = exports.MemberStatus = exports.MemberType = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 var MemberType;
 (function (MemberType) {
@@ -891,27 +891,21 @@ var MemberType;
     MemberType["AGENT"] = "AGENT";
     MemberType["ADMIN"] = "ADMIN";
 })(MemberType || (exports.MemberType = MemberType = {}));
-(0, graphql_1.registerEnumType)(MemberType, {
-    name: 'MemberType',
-});
+(0, graphql_1.registerEnumType)(MemberType, { name: 'MemberType' });
 var MemberStatus;
 (function (MemberStatus) {
     MemberStatus["ACTIVE"] = "ACTIVE";
     MemberStatus["BLOCK"] = "BLOCK";
     MemberStatus["DELETE"] = "DELETE";
 })(MemberStatus || (exports.MemberStatus = MemberStatus = {}));
-(0, graphql_1.registerEnumType)(MemberStatus, {
-    name: 'MemberType',
-});
-var MembrAuthType;
-(function (MembrAuthType) {
-    MembrAuthType["PHONE"] = "PHONE";
-    MembrAuthType["EMAIL"] = "EMAIL";
-    MembrAuthType["TRLRGRAM"] = "TELEGRAM";
-})(MembrAuthType || (exports.MembrAuthType = MembrAuthType = {}));
-(0, graphql_1.registerEnumType)(MembrAuthType, {
-    name: 'MemberType',
-});
+(0, graphql_1.registerEnumType)(MemberStatus, { name: 'MemberStatus' });
+var MemberAuthType;
+(function (MemberAuthType) {
+    MemberAuthType["PHONE"] = "PHONE";
+    MemberAuthType["EMAIL"] = "EMAIL";
+    MemberAuthType["TELEGRAM"] = "TELEGRAM";
+})(MemberAuthType || (exports.MemberAuthType = MemberAuthType = {}));
+(0, graphql_1.registerEnumType)(MemberAuthType, { name: 'MemberAuthType' });
 
 
 /***/ }),
@@ -939,8 +933,8 @@ const MemberSchema = new mongoose_1.Schema({
     },
     memberAuthType: {
         type: String,
-        enum: member_enum_1.MembrAuthType,
-        default: member_enum_1.MembrAuthType.PHONE,
+        enum: member_enum_1.MemberAuthType,
+        default: member_enum_1.MemberAuthType.PHONE,
     },
     memberPhone: {
         type: String,
