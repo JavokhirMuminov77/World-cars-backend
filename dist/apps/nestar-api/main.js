@@ -75,12 +75,24 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot(), graphql_1.GraphQLModule.forRoot({
+        imports: [
+            config_1.ConfigModule.forRoot(),
+            graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,
                 playground: true,
                 uploads: false,
                 autoSchemaFile: true,
-            }), components_module_1.ComponentsModule, database_module_1.DatabaseModule,],
+                formatError: (error) => {
+                    console.log("error:", error);
+                    const graphqlFormattedError = {
+                        code: error?.extensions.code,
+                        message: error?.extensions?.extension?.response?.message || error?.extensions?.response.message || error?.message,
+                    };
+                    console.log("GRAPHQUEL GLOBAL ERROR", graphqlFormattedError);
+                    return graphqlFormattedError;
+                }
+            }), components_module_1.ComponentsModule, database_module_1.DatabaseModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, app_resolve_1.AppResolver],
     })
@@ -389,25 +401,12 @@ let MemberResolver = class MemberResolver {
         this.memberService = memberService;
     }
     async signup(input) {
-        try {
-            console.log('Mutation signup');
-            console.log('input', input);
-            return this.memberService.signup(input);
-        }
-        catch (err) {
-            console.log('Error signup: ', err);
-            throw new common_1.InternalServerErrorException(err);
-        }
+        console.log('Mutation signup');
+        return this.memberService.signup(input);
     }
     async login(input) {
-        try {
-            console.log('Mutation login');
-            return this.memberService.login(input);
-        }
-        catch (err) {
-            console.log('Error signup: ', err);
-            throw new common_1.InternalServerErrorException(err);
-        }
+        console.log('Mutation login');
+        return this.memberService.login(input);
     }
     async updateMember() {
         console.log('Mutation updateMember');
@@ -492,8 +491,8 @@ let MemberService = class MemberService {
             return result;
         }
         catch (err) {
-            console.log('Error Service.modul:', err);
-            throw new common_1.BadRequestException(err);
+            console.log('Error Service.modul:', err.message);
+            throw new common_1.BadRequestException(common_enum_1.Message.USED_MEMBER_NICK_OR_PHONE);
         }
     }
     async login(input) {
@@ -861,6 +860,7 @@ var Message;
     Message["REMOVE_FAILED"] = "Remove failed!";
     Message["UPLOAD_FAILED"] = "Upload failed!";
     Message["BAD_REQUEST"] = "Bad Request";
+    Message["USED_MEMBER_NICK_OR_PHONE"] = "Already used member nick or phone!";
     Message["NO_MEMBER_NICK"] = "No member with that member nick!";
     Message["BLOCKED_USER"] = "You have been blocked!";
     Message["WRONG_PASSWORD"] = "Wrong password, please try again!";
@@ -1135,8 +1135,10 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
 const app_module_1 = __webpack_require__(/*! ./app.module */ "./apps/nestar-api/src/app.module.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useGlobalPipes(new common_1.ValidationPipe());
     await app.listen(process.env.PORT_API ?? 3000);
 }
 bootstrap();
