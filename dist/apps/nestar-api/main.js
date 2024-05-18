@@ -186,11 +186,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const auth_service_1 = __webpack_require__(/*! ./auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+const axios_1 = __webpack_require__(/*! @nestjs/axios */ "@nestjs/axios");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            axios_1.HttpModule,
+            jwt_1.JwtModule.register({
+                secret: `${process.env.SECRET_TOKEN}`,
+                signOptions: { expiresIn: '30d' },
+            })
+        ],
         providers: [auth_service_1.AuthService],
         exports: [auth_service_1.AuthService],
     })
@@ -212,11 +221,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const bcrypt = __webpack_require__(/*! bcryptjs */ "bcryptjs");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
 let AuthService = class AuthService {
+    constructor(jwtService) {
+        this.jwtService = jwtService;
+    }
     async hashPassword(memberPassword) {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(memberPassword, salt);
@@ -224,10 +241,25 @@ let AuthService = class AuthService {
     async cpmparePasswords(password, hashedPassword) {
         return await bcrypt.compare(password, hashedPassword);
     }
+    async createToken(member) {
+        console.log('member: ', member);
+        const payload = {};
+        Object.keys(member['_doc'] ? member['_doc'] : member).map((ele) => {
+            payload[`${ele}`] = member[`${ele}`];
+        });
+        delete payload.memberPassword;
+        console.log('payload', payload);
+        return await this.jwtService.signAsync(payload);
+    }
+    async verifyToken(token) {
+        const member = await this.jwtService.verifyAsync(token);
+        return member;
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _a : Object])
 ], AuthService);
 
 
@@ -529,6 +561,8 @@ let MemberService = class MemberService {
         const result = this.authService.hashPassword(input.memberPassword);
         try {
             const result = await this.memberModel.create(input);
+            const accessToken = await this.authService.createToken(result);
+            console.log("accessToken", accessToken);
             return result;
         }
         catch (err) {
@@ -551,6 +585,7 @@ let MemberService = class MemberService {
         const isMatch = await this.authService.cpmparePasswords(input.memberPassword, response.memberPassword);
         if (!isMatch)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.WRONG_PASSWORD);
+        response.accessToken = await this.authService.createToken(response);
         return response;
     }
     async updateMember() {
@@ -875,6 +910,10 @@ __decorate([
     (0, graphql_1.Field)(() => Date),
     __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
 ], Member.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Member.prototype, "accessToken", void 0);
 exports.Member = Member = __decorate([
     (0, graphql_1.ObjectType)()
 ], Member);
@@ -1116,6 +1155,16 @@ module.exports = require("@nestjs/apollo");
 
 /***/ }),
 
+/***/ "@nestjs/axios":
+/*!********************************!*\
+  !*** external "@nestjs/axios" ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/axios");
+
+/***/ }),
+
 /***/ "@nestjs/common":
 /*!*********************************!*\
   !*** external "@nestjs/common" ***!
@@ -1153,6 +1202,16 @@ module.exports = require("@nestjs/core");
 /***/ ((module) => {
 
 module.exports = require("@nestjs/graphql");
+
+/***/ }),
+
+/***/ "@nestjs/jwt":
+/*!******************************!*\
+  !*** external "@nestjs/jwt" ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/jwt");
 
 /***/ }),
 
