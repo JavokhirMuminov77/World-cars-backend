@@ -83,15 +83,16 @@ exports.AppModule = AppModule = __decorate([
                 uploads: false,
                 autoSchemaFile: true,
                 formatError: (error) => {
-                    console.log("error:", error);
-                    const graphqlFormattedError = {
+                    const graphQLFormatedError = {
                         code: error?.extensions.code,
-                        message: error?.extensions?.extension?.response?.message || error?.extensions?.response.message || error?.message,
+                        message: error?.extensions?.exception?.response?.message || error?.extensions?.response?.message || error?.message,
                     };
-                    console.log("GRAPHQUEL GLOBAL ERROR", graphqlFormattedError);
-                    return graphqlFormattedError;
-                }
-            }), components_module_1.ComponentsModule, database_module_1.DatabaseModule,
+                    console.log('GRAPHQL GLOBAL ERR', graphQLFormatedError);
+                    return graphQLFormatedError;
+                },
+            }),
+            components_module_1.ComponentsModule,
+            database_module_1.DatabaseModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, app_resolve_1.AppResolver],
@@ -184,12 +185,50 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_service_1 = __webpack_require__(/*! ./auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        providers: [auth_service_1.AuthService],
+        exports: [auth_service_1.AuthService],
+    })
 ], AuthModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/auth.service.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/auth.service.ts ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const bcrypt = __webpack_require__(/*! bcryptjs */ "bcryptjs");
+let AuthService = class AuthService {
+    async hashPassword(memberPassword) {
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(memberPassword, salt);
+    }
+    async cpmparePasswords(password, hashedPassword) {
+        return await bcrypt.compare(password, hashedPassword);
+    }
+};
+exports.AuthService = AuthService;
+exports.AuthService = AuthService = __decorate([
+    (0, common_1.Injectable)()
+], AuthService);
 
 
 /***/ }),
@@ -354,13 +393,14 @@ const member_resolver_1 = __webpack_require__(/*! ./member.resolver */ "./apps/n
 const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const Member_model_1 = __webpack_require__(/*! ../../schemas/Member.model */ "./apps/nestar-api/src/schemas/Member.model.ts");
+const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }])
+            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }]), auth_module_1.AuthModule
         ],
         providers: [member_resolver_1.MemberResolver, member_service_1.MemberService]
     })
@@ -393,7 +433,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const member_input_1 = __webpack_require__(/*! ../../libs/dto/member/member.input */ "./apps/nestar-api/src/libs/dto/member/member.input.ts");
 const member_1 = __webpack_require__(/*! ../../libs/dto/member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
 let MemberResolver = class MemberResolver {
@@ -402,6 +441,7 @@ let MemberResolver = class MemberResolver {
     }
     async signup(input) {
         console.log('Mutation signup');
+        console.log('input', input);
         return this.memberService.signup(input);
     }
     async login(input) {
@@ -420,7 +460,6 @@ let MemberResolver = class MemberResolver {
 exports.MemberResolver = MemberResolver;
 __decorate([
     (0, graphql_1.Mutation)(() => member_1.Member),
-    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_b = typeof member_input_1.MemberInput !== "undefined" && member_input_1.MemberInput) === "function" ? _b : Object]),
@@ -428,7 +467,6 @@ __decorate([
 ], MemberResolver.prototype, "signup", null);
 __decorate([
     (0, graphql_1.Mutation)(() => member_1.Member),
-    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_d = typeof member_input_1.LoginInput !== "undefined" && member_input_1.LoginInput) === "function" ? _d : Object]),
@@ -473,7 +511,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -481,11 +519,14 @@ const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const auth_service_1 = __webpack_require__(/*! ../auth/auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
 let MemberService = class MemberService {
-    constructor(memberModel) {
+    constructor(memberModel, authService) {
         this.memberModel = memberModel;
+        this.authService = authService;
     }
     async signup(input) {
+        const result = this.authService.hashPassword(input.memberPassword);
         try {
             const result = await this.memberModel.create(input);
             return result;
@@ -507,7 +548,7 @@ let MemberService = class MemberService {
         else if (response.memberStatus === member_enum_1.MemberStatus.BLOCK) {
             throw new common_1.InternalServerErrorException(common_enum_1.Message.BLOCKED_USER);
         }
-        const isMatch = memberPassword === response.memberPassword;
+        const isMatch = await this.authService.cpmparePasswords(input.memberPassword, response.memberPassword);
         if (!isMatch)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.WRONG_PASSWORD);
         return response;
@@ -523,7 +564,7 @@ exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Member')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _b : Object])
 ], MemberService);
 
 
@@ -934,23 +975,19 @@ let LoggingInterceptor = class LoggingInterceptor {
     intercept(context, next) {
         const recordTime = Date.now();
         const requestType = context.getType();
-        console.log('Before...');
-        this.logger.log(` Type ${requestType}`, `Request`);
         if (requestType === 'http') {
         }
-        else if (requestType == 'graphql') {
+        else if (requestType === 'graphql') {
             const gqlContext = graphql_1.GqlExecutionContext.create(context);
-            console.log('gqlContext => ', gqlContext.getContext().req.body);
             this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
+            return next.handle().pipe((0, operators_1.tap)((context) => {
+                const responseTime = Date.now() - recordTime;
+                this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, 'RESPONSE');
+            }));
         }
-        return next
-            .handle()
-            .pipe((0, operators_1.tap)((context) => {
-            const responseTime = Date.now() - recordTime;
-            this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, `RESPONSE`);
-        }));
     }
     stringify(context) {
+        console.log(typeof context);
         return JSON.stringify(context).slice(0, 75);
     }
 };
@@ -1126,6 +1163,16 @@ module.exports = require("@nestjs/graphql");
 /***/ ((module) => {
 
 module.exports = require("@nestjs/mongoose");
+
+/***/ }),
+
+/***/ "bcryptjs":
+/*!***************************!*\
+  !*** external "bcryptjs" ***!
+  \***************************/
+/***/ ((module) => {
+
+module.exports = require("bcryptjs");
 
 /***/ }),
 
