@@ -460,7 +460,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -487,6 +487,13 @@ let MemberResolver = class MemberResolver {
     async getMember() {
         console.log('Query getMember');
         return this.memberService.getMember();
+    }
+    async getAllMembersByAdmin() {
+        return this.memberService.getAllMembersByAdmin();
+    }
+    async updateMemberByAdmin() {
+        console.log('Mutation updateMemberByAdmin');
+        return this.memberService.updateMemberByAdmin();
     }
 };
 exports.MemberResolver = MemberResolver;
@@ -516,6 +523,18 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
 ], MemberResolver.prototype, "getMember", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
+], MemberResolver.prototype, "getAllMembersByAdmin", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
+], MemberResolver.prototype, "updateMemberByAdmin", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _a : Object])
@@ -592,6 +611,12 @@ let MemberService = class MemberService {
         return 'updateMember executed';
     }
     async getMember() {
+        return 'getMember executed';
+    }
+    async getAllMembersByAdmin() {
+        return 'updateMember executed';
+    }
+    async updateMemberByAdmin() {
         return 'getMember executed';
     }
 };

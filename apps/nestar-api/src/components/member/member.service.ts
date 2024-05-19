@@ -6,6 +6,7 @@ import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
+import { Mutation } from '@nestjs/graphql';
 
 @Injectable()
 export class MemberService {
@@ -55,4 +56,15 @@ export class MemberService {
 	public async getMember(): Promise<string> {
 		return 'getMember executed';
 	}
+
+
+	public async getAllMembersByAdmin(): Promise<string> {
+		return 'updateMember executed';
+	}
+
+	public async updateMemberByAdmin(): Promise<string> {
+		return 'getMember executed';
+	}
+
+
 }
