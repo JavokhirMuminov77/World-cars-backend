@@ -1,14 +1,55 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ([
-/* 0 */,
-/* 1 */
-/***/ ((module) => {
+/******/ 	var __webpack_modules__ = ({
 
-module.exports = require("@nestjs/core");
+/***/ "./apps/nestar-api/src/app.controller.ts":
+/*!***********************************************!*\
+  !*** ./apps/nestar-api/src/app.controller.ts ***!
+  \***********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AppController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const app_service_1 = __webpack_require__(/*! ./app.service */ "./apps/nestar-api/src/app.service.ts");
+let AppController = class AppController {
+    constructor(appService) {
+        this.appService = appService;
+    }
+    getHello() {
+        return this.appService.getHello();
+    }
+};
+exports.AppController = AppController;
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], AppController.prototype, "getHello", null);
+exports.AppController = AppController = __decorate([
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof app_service_1.AppService !== "undefined" && app_service_1.AppService) === "function" ? _a : Object])
+], AppController);
+
 
 /***/ }),
-/* 2 */
+
+/***/ "./apps/nestar-api/src/app.module.ts":
+/*!*******************************************!*\
+  !*** ./apps/nestar-api/src/app.module.ts ***!
+  \*******************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -20,15 +61,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AppModule = void 0;
-const common_1 = __webpack_require__(3);
-const app_controller_1 = __webpack_require__(4);
-const app_service_1 = __webpack_require__(5);
-const config_1 = __webpack_require__(6);
-const graphql_1 = __webpack_require__(7);
-const apollo_1 = __webpack_require__(8);
-const app_resolve_1 = __webpack_require__(9);
-const components_module_1 = __webpack_require__(10);
-const database_module_1 = __webpack_require__(37);
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const app_controller_1 = __webpack_require__(/*! ./app.controller */ "./apps/nestar-api/src/app.controller.ts");
+const app_service_1 = __webpack_require__(/*! ./app.service */ "./apps/nestar-api/src/app.service.ts");
+const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const apollo_1 = __webpack_require__(/*! @nestjs/apollo */ "@nestjs/apollo");
+const app_resolve_1 = __webpack_require__(/*! ./app.resolve */ "./apps/nestar-api/src/app.resolve.ts");
+const components_module_1 = __webpack_require__(/*! ./components/components.module */ "./apps/nestar-api/src/components/components.module.ts");
+const database_module_1 = __webpack_require__(/*! ./database/database.module */ "./apps/nestar-api/src/database/database.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -60,96 +101,11 @@ exports.AppModule = AppModule = __decorate([
 
 
 /***/ }),
-/* 3 */
-/***/ ((module) => {
 
-module.exports = require("@nestjs/common");
-
-/***/ }),
-/* 4 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AppController = void 0;
-const common_1 = __webpack_require__(3);
-const app_service_1 = __webpack_require__(5);
-let AppController = class AppController {
-    constructor(appService) {
-        this.appService = appService;
-    }
-    getHello() {
-        return this.appService.getHello();
-    }
-};
-exports.AppController = AppController;
-__decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], AppController.prototype, "getHello", null);
-exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof app_service_1.AppService !== "undefined" && app_service_1.AppService) === "function" ? _a : Object])
-], AppController);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AppService = void 0;
-const common_1 = __webpack_require__(3);
-let AppService = class AppService {
-    getHello() {
-        return 'Hello World!';
-    }
-};
-exports.AppService = AppService;
-exports.AppService = AppService = __decorate([
-    (0, common_1.Injectable)()
-], AppService);
-
-
-/***/ }),
-/* 6 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/config");
-
-/***/ }),
-/* 7 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/graphql");
-
-/***/ }),
-/* 8 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/apollo");
-
-/***/ }),
-/* 9 */
+/***/ "./apps/nestar-api/src/app.resolve.ts":
+/*!********************************************!*\
+  !*** ./apps/nestar-api/src/app.resolve.ts ***!
+  \********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -164,7 +120,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AppResolver = void 0;
-const graphql_1 = __webpack_require__(7);
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 let AppResolver = class AppResolver {
     sayHello() {
         return "GraphQL API Server";
@@ -183,7 +139,341 @@ exports.AppResolver = AppResolver = __decorate([
 
 
 /***/ }),
-/* 10 */
+
+/***/ "./apps/nestar-api/src/app.service.ts":
+/*!********************************************!*\
+  !*** ./apps/nestar-api/src/app.service.ts ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AppService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let AppService = class AppService {
+    getHello() {
+        return 'Hello World!';
+    }
+};
+exports.AppService = AppService;
+exports.AppService = AppService = __decorate([
+    (0, common_1.Injectable)()
+], AppService);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/auth.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/auth.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_service_1 = __webpack_require__(/*! ./auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+const axios_1 = __webpack_require__(/*! @nestjs/axios */ "@nestjs/axios");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+let AuthModule = class AuthModule {
+};
+exports.AuthModule = AuthModule;
+exports.AuthModule = AuthModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            axios_1.HttpModule,
+            jwt_1.JwtModule.register({
+                secret: `${process.env.SECRET_TOKEN}`,
+                signOptions: { expiresIn: '30d' },
+            })
+        ],
+        providers: [auth_service_1.AuthService],
+        exports: [auth_service_1.AuthService],
+    })
+], AuthModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/auth.service.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/auth.service.ts ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const bcrypt = __webpack_require__(/*! bcryptjs */ "bcryptjs");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+let AuthService = class AuthService {
+    constructor(jwtService) {
+        this.jwtService = jwtService;
+    }
+    async hashPassword(memberPassword) {
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(memberPassword, salt);
+    }
+    async cpmparePasswords(password, hashedPassword) {
+        return await bcrypt.compare(password, hashedPassword);
+    }
+    async createToken(member) {
+        console.log('member: ', member);
+        const payload = {};
+        Object.keys(member['_doc'] ? member['_doc'] : member).map((ele) => {
+            payload[`${ele}`] = member[`${ele}`];
+        });
+        delete payload.memberPassword;
+        console.log('payload', payload);
+        return await this.jwtService.signAsync(payload);
+    }
+    async verifyToken(token) {
+        const member = await this.jwtService.verifyAsync(token);
+        member._id = (0, config_1.shapeIntoMongoObjectId)(member._id);
+        return member;
+    }
+};
+exports.AuthService = AuthService;
+exports.AuthService = AuthService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _a : Object])
+], AuthService);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts":
+/*!********************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthMember = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+exports.AuthMember = (0, common_1.createParamDecorator)((data, context) => {
+    let request;
+    if (context.contextType === 'graphql') {
+        request = context.getArgByIndex(2).req;
+        if (request.body.authMember) {
+            request.body.authMember.authorization = request.headers?.authorization;
+        }
+    }
+    else
+        request = context.switchToHttp().getRequest();
+    const member = request.body.authMember;
+    if (member)
+        return data ? member?.[data] : member;
+    else
+        return null;
+});
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts":
+/*!***************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Roles = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const Roles = (...roles) => (0, common_1.SetMetadata)('roles', roles);
+exports.Roles = Roles;
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/guards/auth.guard.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthGuard = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_service_1 = __webpack_require__(/*! ../auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+const common_enum_1 = __webpack_require__(/*! apps/nestar-api/src/libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+let AuthGuard = class AuthGuard {
+    constructor(authService) {
+        this.authService = authService;
+    }
+    async canActivate(context) {
+        console.info('--- @guard() Authentication [AuthGuard] ---');
+        if (context.contextType === 'graphql') {
+            const request = context.getArgByIndex(2).req;
+            const bearerToken = request.headers.authorization;
+            if (!bearerToken)
+                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXITS);
+            const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token);
+            console.log('memberNick[auth] =>', authMember.memberNick);
+            request.body.authMember = authMember;
+            return true;
+        }
+    }
+};
+exports.AuthGuard = AuthGuard;
+exports.AuthGuard = AuthGuard = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
+], AuthGuard);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts":
+/*!*******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/guards/roles.guard.ts ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RolesGuard = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
+const auth_service_1 = __webpack_require__(/*! ../auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+const common_enum_1 = __webpack_require__(/*! apps/nestar-api/src/libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+let RolesGuard = class RolesGuard {
+    constructor(reflector, authService) {
+        this.reflector = reflector;
+        this.authService = authService;
+    }
+    async canActivate(context) {
+        const roles = this.reflector.get('roles', context.getHandler());
+        if (!roles)
+            return true;
+        console.info(`--- @guard() Authentication [RolesGuard]: ${roles} ---`);
+        if (context.contextType === 'graphql') {
+            const request = context.getArgByIndex(2).req;
+            const bearerToken = request.headers.authorization;
+            if (!bearerToken)
+                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXITS);
+            const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token), hasRole = () => roles.indexOf(authMember.memberType) > -1, hasPermission = hasRole();
+            if (!authMember || !hasPermission)
+                throw new common_1.ForbiddenException(common_enum_1.Message.ONLY_SPECIFIC_ROLES_ALLOWED);
+            console.log('memberNick[roles] =>', authMember.memberNick);
+            request.body.authMember = authMember;
+            return true;
+        }
+    }
+};
+exports.RolesGuard = RolesGuard;
+exports.RolesGuard = RolesGuard = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof core_1.Reflector !== "undefined" && core_1.Reflector) === "function" ? _a : Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _b : Object])
+], RolesGuard);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/board-article/board-article.module.ts":
+/*!******************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/board-article/board-article.module.ts ***!
+  \******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let BoardArticleModule = class BoardArticleModule {
+};
+exports.BoardArticleModule = BoardArticleModule;
+exports.BoardArticleModule = BoardArticleModule = __decorate([
+    (0, common_1.Module)({})
+], BoardArticleModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/comment/comment.module.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/comment/comment.module.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let CommentModule = class CommentModule {
+};
+exports.CommentModule = CommentModule;
+exports.CommentModule = CommentModule = __decorate([
+    (0, common_1.Module)({})
+], CommentModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/components.module.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/components/components.module.ts ***!
+  \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -195,15 +485,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ComponentsModule = void 0;
-const common_1 = __webpack_require__(3);
-const member_module_1 = __webpack_require__(11);
-const property_module_1 = __webpack_require__(31);
-const comment_module_1 = __webpack_require__(32);
-const auth_module_1 = __webpack_require__(29);
-const like_module_1 = __webpack_require__(33);
-const view_module_1 = __webpack_require__(34);
-const follow_module_1 = __webpack_require__(35);
-const board_article_module_1 = __webpack_require__(36);
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const member_module_1 = __webpack_require__(/*! ./member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
+const property_module_1 = __webpack_require__(/*! ./property/property.module */ "./apps/nestar-api/src/components/property/property.module.ts");
+const comment_module_1 = __webpack_require__(/*! ./comment/comment.module */ "./apps/nestar-api/src/components/comment/comment.module.ts");
+const auth_module_1 = __webpack_require__(/*! ./auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const like_module_1 = __webpack_require__(/*! ./like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
+const view_module_1 = __webpack_require__(/*! ./view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
+const follow_module_1 = __webpack_require__(/*! ./follow/follow.module */ "./apps/nestar-api/src/components/follow/follow.module.ts");
+const board_article_module_1 = __webpack_require__(/*! ./board-article/board-article.module */ "./apps/nestar-api/src/components/board-article/board-article.module.ts");
 let ComponentsModule = class ComponentsModule {
 };
 exports.ComponentsModule = ComponentsModule;
@@ -215,7 +505,63 @@ exports.ComponentsModule = ComponentsModule = __decorate([
 
 
 /***/ }),
-/* 11 */
+
+/***/ "./apps/nestar-api/src/components/follow/follow.module.ts":
+/*!****************************************************************!*\
+  !*** ./apps/nestar-api/src/components/follow/follow.module.ts ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.FollowModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let FollowModule = class FollowModule {
+};
+exports.FollowModule = FollowModule;
+exports.FollowModule = FollowModule = __decorate([
+    (0, common_1.Module)({})
+], FollowModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/like/like.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/like/like.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LikeModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let LikeModule = class LikeModule {
+};
+exports.LikeModule = LikeModule;
+exports.LikeModule = LikeModule = __decorate([
+    (0, common_1.Module)({})
+], LikeModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/member/member.module.ts":
+/*!****************************************************************!*\
+  !*** ./apps/nestar-api/src/components/member/member.module.ts ***!
+  \****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -227,12 +573,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberModule = void 0;
-const common_1 = __webpack_require__(3);
-const member_resolver_1 = __webpack_require__(12);
-const member_service_1 = __webpack_require__(13);
-const mongoose_1 = __webpack_require__(14);
-const Member_model_1 = __webpack_require__(28);
-const auth_module_1 = __webpack_require__(29);
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const member_resolver_1 = __webpack_require__(/*! ./member.resolver */ "./apps/nestar-api/src/components/member/member.resolver.ts");
+const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const Member_model_1 = __webpack_require__(/*! ../../schemas/Member.model */ "./apps/nestar-api/src/schemas/Member.model.ts");
+const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
@@ -247,7 +593,11 @@ exports.MemberModule = MemberModule = __decorate([
 
 
 /***/ }),
-/* 12 */
+
+/***/ "./apps/nestar-api/src/components/member/member.resolver.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/member/member.resolver.ts ***!
+  \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -266,14 +616,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
-const graphql_1 = __webpack_require__(7);
-const member_service_1 = __webpack_require__(13);
-const member_input_1 = __webpack_require__(23);
-const member_1 = __webpack_require__(25);
-const auth_guard_1 = __webpack_require__(26);
-const common_1 = __webpack_require__(3);
-const authMember_decorator_1 = __webpack_require__(27);
-const mongoose_1 = __webpack_require__(15);
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const member_input_1 = __webpack_require__(/*! ../../libs/dto/member/member.input */ "./apps/nestar-api/src/libs/dto/member/member.input.ts");
+const member_1 = __webpack_require__(/*! ../../libs/dto/member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
 let MemberResolver = class MemberResolver {
     constructor(memberService) {
         this.memberService = memberService;
@@ -333,6 +686,8 @@ __decorate([
     __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], MemberResolver.prototype, "getMember", null);
 __decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -351,7 +706,11 @@ exports.MemberResolver = MemberResolver = __decorate([
 
 
 /***/ }),
-/* 13 */
+
+/***/ "./apps/nestar-api/src/components/member/member.service.ts":
+/*!*****************************************************************!*\
+  !*** ./apps/nestar-api/src/components/member/member.service.ts ***!
+  \*****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -370,12 +729,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberService = void 0;
-const common_1 = __webpack_require__(3);
-const mongoose_1 = __webpack_require__(14);
-const mongoose_2 = __webpack_require__(15);
-const member_enum_1 = __webpack_require__(16);
-const common_enum_1 = __webpack_require__(17);
-const auth_service_1 = __webpack_require__(18);
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const auth_service_1 = __webpack_require__(/*! ../auth/auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
 let MemberService = class MemberService {
     constructor(memberModel, authService) {
         this.memberModel = memberModel;
@@ -434,79 +793,63 @@ exports.MemberService = MemberService = __decorate([
 
 
 /***/ }),
-/* 14 */
-/***/ ((module) => {
 
-module.exports = require("@nestjs/mongoose");
-
-/***/ }),
-/* 15 */
-/***/ ((module) => {
-
-module.exports = require("mongoose");
-
-/***/ }),
-/* 16 */
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ "./apps/nestar-api/src/components/property/property.module.ts":
+/*!********************************************************************!*\
+  !*** ./apps/nestar-api/src/components/property/property.module.ts ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MemberAuthType = exports.MemberStatus = exports.MemberType = void 0;
-const graphql_1 = __webpack_require__(7);
-var MemberType;
-(function (MemberType) {
-    MemberType["USER"] = "USER";
-    MemberType["AGENT"] = "AGENT";
-    MemberType["ADMIN"] = "ADMIN";
-})(MemberType || (exports.MemberType = MemberType = {}));
-(0, graphql_1.registerEnumType)(MemberType, { name: 'MemberType' });
-var MemberStatus;
-(function (MemberStatus) {
-    MemberStatus["ACTIVE"] = "ACTIVE";
-    MemberStatus["BLOCK"] = "BLOCK";
-    MemberStatus["DELETE"] = "DELETE";
-})(MemberStatus || (exports.MemberStatus = MemberStatus = {}));
-(0, graphql_1.registerEnumType)(MemberStatus, { name: 'MemberStatus' });
-var MemberAuthType;
-(function (MemberAuthType) {
-    MemberAuthType["PHONE"] = "PHONE";
-    MemberAuthType["EMAIL"] = "EMAIL";
-    MemberAuthType["TELEGRAM"] = "TELEGRAM";
-})(MemberAuthType || (exports.MemberAuthType = MemberAuthType = {}));
-(0, graphql_1.registerEnumType)(MemberAuthType, { name: 'MemberAuthType' });
+exports.PropertyModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let PropertyModule = class PropertyModule {
+};
+exports.PropertyModule = PropertyModule;
+exports.PropertyModule = PropertyModule = __decorate([
+    (0, common_1.Module)({})
+], PropertyModule);
 
 
 /***/ }),
-/* 17 */
-/***/ ((__unused_webpack_module, exports) => {
+
+/***/ "./apps/nestar-api/src/components/view/view.module.ts":
+/*!************************************************************!*\
+  !*** ./apps/nestar-api/src/components/view/view.module.ts ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Message = void 0;
-var Message;
-(function (Message) {
-    Message["SOMETHING_WENT_WRONG"] = "Something went wrong!";
-    Message["NO_DATA_FOUND"] = "No data found!";
-    Message["CREATE_FAILED"] = "Create failed!";
-    Message["UPDATE_FAILED"] = "Update failed!";
-    Message["REMOVE_FAILED"] = "Remove failed!";
-    Message["UPLOAD_FAILED"] = "Upload failed!";
-    Message["BAD_REQUEST"] = "Bad Request";
-    Message["USED_MEMBER_NICK_OR_PHONE"] = "Already used member nick or phone!";
-    Message["NO_MEMBER_NICK"] = "No member with that member nick!";
-    Message["BLOCKED_USER"] = "You have been blocked!";
-    Message["WRONG_PASSWORD"] = "Wrong password, please try again!";
-    Message["NOT_AUTHENTICATED"] = "You are not authenticated, Place login first!";
-    Message["TOKEN_NOT_EXITS"] = "Bearer Token is not provided!";
-    Message["ONLY_SPECIFIC_ROLES_ALLOWED"] = "Allowed only for members with specific roles!";
-    Message["NOT_ALLOWED_REQUEST"] = "Not Allowed Request!";
-    Message["NOT_ALLOWED_FORMAT"] = "Please provide jpg, jpeg, or png images!";
-    Message["SELF_SUBSCRIPTION_DENIED"] = "Self subsecription is denied!";
-})(Message || (exports.Message = Message = {}));
+exports.ViewModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let ViewModule = class ViewModule {
+};
+exports.ViewModule = ViewModule;
+exports.ViewModule = ViewModule = __decorate([
+    (0, common_1.Module)({})
+], ViewModule);
 
 
 /***/ }),
-/* 18 */
+
+/***/ "./apps/nestar-api/src/database/database.module.ts":
+/*!*********************************************************!*\
+  !*** ./apps/nestar-api/src/database/database.module.ts ***!
+  \*********************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -519,67 +862,55 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthService = void 0;
-const common_1 = __webpack_require__(3);
-const bcrypt = __webpack_require__(19);
-const jwt_1 = __webpack_require__(20);
-const config_1 = __webpack_require__(21);
-let AuthService = class AuthService {
-    constructor(jwtService) {
-        this.jwtService = jwtService;
-    }
-    async hashPassword(memberPassword) {
-        const salt = await bcrypt.genSalt();
-        return await bcrypt.hash(memberPassword, salt);
-    }
-    async cpmparePasswords(password, hashedPassword) {
-        return await bcrypt.compare(password, hashedPassword);
-    }
-    async createToken(member) {
-        console.log('member: ', member);
-        const payload = {};
-        Object.keys(member['_doc'] ? member['_doc'] : member).map((ele) => {
-            payload[`${ele}`] = member[`${ele}`];
-        });
-        delete payload.memberPassword;
-        console.log('payload', payload);
-        return await this.jwtService.signAsync(payload);
-    }
-    async verifyToken(token) {
-        const member = await this.jwtService.verifyAsync(token);
-        member._id = (0, config_1.shapeIntoMongoObjectId)(member._id);
-        return member;
+exports.DatabaseModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+let DatabaseModule = class DatabaseModule {
+    constructor(connection) {
+        this.connection = connection;
+        if (connection.readyState === 1) {
+            console.log(`MongoDB is connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`);
+        }
+        else {
+            console.log("DB is not connected!");
+        }
     }
 };
-exports.AuthService = AuthService;
-exports.AuthService = AuthService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _a : Object])
-], AuthService);
+exports.DatabaseModule = DatabaseModule;
+exports.DatabaseModule = DatabaseModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forRootAsync({
+                useFactory: () => ({
+                    uri: process.env.NODE_ENV === "production" ? process.env.MONGO_PROD : process.env.MONGO_DEV,
+                }),
+            }),
+        ],
+        exports: [mongoose_1.MongooseModule],
+    }),
+    __param(0, (0, mongoose_1.InjectConnection)()),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Connection !== "undefined" && mongoose_2.Connection) === "function" ? _a : Object])
+], DatabaseModule);
 
 
 /***/ }),
-/* 19 */
-/***/ ((module) => {
 
-module.exports = require("bcryptjs");
-
-/***/ }),
-/* 20 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/jwt");
-
-/***/ }),
-/* 21 */
+/***/ "./apps/nestar-api/src/libs/config.ts":
+/*!********************************************!*\
+  !*** ./apps/nestar-api/src/libs/config.ts ***!
+  \********************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.shapeIntoMongoObjectId = void 0;
-const bson_1 = __webpack_require__(22);
+const bson_1 = __webpack_require__(/*! bson */ "bson");
 const shapeIntoMongoObjectId = (target) => {
     return typeof target == "string" ? new bson_1.ObjectId(target) : target;
 };
@@ -587,13 +918,11 @@ exports.shapeIntoMongoObjectId = shapeIntoMongoObjectId;
 
 
 /***/ }),
-/* 22 */
-/***/ ((module) => {
 
-module.exports = require("bson");
-
-/***/ }),
-/* 23 */
+/***/ "./apps/nestar-api/src/libs/dto/member/member.input.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/member/member.input.ts ***!
+  \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -609,9 +938,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LoginInput = exports.MemberInput = void 0;
-const graphql_1 = __webpack_require__(7);
-const class_validator_1 = __webpack_require__(24);
-const member_enum_1 = __webpack_require__(16);
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 let MemberInput = class MemberInput {
 };
 exports.MemberInput = MemberInput;
@@ -666,13 +995,11 @@ exports.LoginInput = LoginInput = __decorate([
 
 
 /***/ }),
-/* 24 */
-/***/ ((module) => {
 
-module.exports = require("class-validator");
-
-/***/ }),
-/* 25 */
+/***/ "./apps/nestar-api/src/libs/dto/member/member.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/member/member.ts ***!
+  \*******************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -688,9 +1015,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Member = void 0;
-const graphql_1 = __webpack_require__(7);
-const mongoose_1 = __webpack_require__(15);
-const member_enum_1 = __webpack_require__(16);
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 let Member = class Member {
 };
 exports.Member = Member;
@@ -800,7 +1127,79 @@ exports.Member = Member = __decorate([
 
 
 /***/ }),
-/* 26 */
+
+/***/ "./apps/nestar-api/src/libs/enums/common.enum.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/common.enum.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Message = void 0;
+var Message;
+(function (Message) {
+    Message["SOMETHING_WENT_WRONG"] = "Something went wrong!";
+    Message["NO_DATA_FOUND"] = "No data found!";
+    Message["CREATE_FAILED"] = "Create failed!";
+    Message["UPDATE_FAILED"] = "Update failed!";
+    Message["REMOVE_FAILED"] = "Remove failed!";
+    Message["UPLOAD_FAILED"] = "Upload failed!";
+    Message["BAD_REQUEST"] = "Bad Request";
+    Message["USED_MEMBER_NICK_OR_PHONE"] = "Already used member nick or phone!";
+    Message["NO_MEMBER_NICK"] = "No member with that member nick!";
+    Message["BLOCKED_USER"] = "You have been blocked!";
+    Message["WRONG_PASSWORD"] = "Wrong password, please try again!";
+    Message["NOT_AUTHENTICATED"] = "You are not authenticated, Place login first!";
+    Message["TOKEN_NOT_EXITS"] = "Bearer Token is not provided!";
+    Message["ONLY_SPECIFIC_ROLES_ALLOWED"] = "Allowed only for members with specific roles!";
+    Message["NOT_ALLOWED_REQUEST"] = "Not Allowed Request!";
+    Message["NOT_ALLOWED_FORMAT"] = "Please provide jpg, jpeg, or png images!";
+    Message["SELF_SUBSCRIPTION_DENIED"] = "Self subsecription is denied!";
+})(Message || (exports.Message = Message = {}));
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/enums/member.enum.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/member.enum.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MemberAuthType = exports.MemberStatus = exports.MemberType = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var MemberType;
+(function (MemberType) {
+    MemberType["USER"] = "USER";
+    MemberType["AGENT"] = "AGENT";
+    MemberType["ADMIN"] = "ADMIN";
+})(MemberType || (exports.MemberType = MemberType = {}));
+(0, graphql_1.registerEnumType)(MemberType, { name: 'MemberType' });
+var MemberStatus;
+(function (MemberStatus) {
+    MemberStatus["ACTIVE"] = "ACTIVE";
+    MemberStatus["BLOCK"] = "BLOCK";
+    MemberStatus["DELETE"] = "DELETE";
+})(MemberStatus || (exports.MemberStatus = MemberStatus = {}));
+(0, graphql_1.registerEnumType)(MemberStatus, { name: 'MemberStatus' });
+var MemberAuthType;
+(function (MemberAuthType) {
+    MemberAuthType["PHONE"] = "PHONE";
+    MemberAuthType["EMAIL"] = "EMAIL";
+    MemberAuthType["TELEGRAM"] = "TELEGRAM";
+})(MemberAuthType || (exports.MemberAuthType = MemberAuthType = {}));
+(0, graphql_1.registerEnumType)(MemberAuthType, { name: 'MemberAuthType' });
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts":
+/*!********************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts ***!
+  \********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -810,74 +1209,52 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthGuard = void 0;
-const common_1 = __webpack_require__(3);
-const auth_service_1 = __webpack_require__(18);
-const common_enum_1 = __webpack_require__(17);
-let AuthGuard = class AuthGuard {
-    constructor(authService) {
-        this.authService = authService;
+exports.LoggingInterceptor = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const operators_1 = __webpack_require__(/*! rxjs/operators */ "rxjs/operators");
+let LoggingInterceptor = class LoggingInterceptor {
+    constructor() {
+        this.logger = new common_1.Logger();
     }
-    async canActivate(context) {
-        console.info('--- @guard() Authentication [AuthGuard] ---');
-        if (context.contextType === 'graphql') {
-            const request = context.getArgByIndex(2).req;
-            const bearerToken = request.headers.authorization;
-            if (!bearerToken)
-                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXITS);
-            const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token);
-            console.log('memberNick[auth] =>', authMember.memberNick);
-            request.body.authMember = authMember;
-            return true;
+    intercept(context, next) {
+        const recordTime = Date.now();
+        const requestType = context.getType();
+        if (requestType === 'http') {
+        }
+        else if (requestType === 'graphql') {
+            const gqlContext = graphql_1.GqlExecutionContext.create(context);
+            this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
+            return next.handle().pipe((0, operators_1.tap)((context) => {
+                const responseTime = Date.now() - recordTime;
+                this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, 'RESPONSE');
+            }));
         }
     }
+    stringify(context) {
+        console.log(typeof context);
+        return JSON.stringify(context).slice(0, 75);
+    }
 };
-exports.AuthGuard = AuthGuard;
-exports.AuthGuard = AuthGuard = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
-], AuthGuard);
+exports.LoggingInterceptor = LoggingInterceptor;
+exports.LoggingInterceptor = LoggingInterceptor = __decorate([
+    (0, common_1.Injectable)()
+], LoggingInterceptor);
 
 
 /***/ }),
-/* 27 */
+
+/***/ "./apps/nestar-api/src/schemas/Member.model.ts":
+/*!*****************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/Member.model.ts ***!
+  \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthMember = void 0;
-const common_1 = __webpack_require__(3);
-exports.AuthMember = (0, common_1.createParamDecorator)((data, context) => {
-    let request;
-    if (context.contextType === 'graphql') {
-        request = context.getArgByIndex(2).req;
-        if (request.body.authMember) {
-            request.body.authMember.authorization = request.headers?.authorization;
-        }
-    }
-    else
-        request = context.switchToHttp().getRequest();
-    const member = request.body.authMember;
-    if (member)
-        return data ? member?.[data] : member;
-    else
-        return null;
-});
-
-
-/***/ }),
-/* 28 */
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const mongoose_1 = __webpack_require__(15);
-const member_enum_1 = __webpack_require__(16);
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_enum_1 = __webpack_require__(/*! ../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 const MemberSchema = new mongoose_1.Schema({
     memberType: {
         type: String,
@@ -974,282 +1351,138 @@ exports["default"] = MemberSchema;
 
 
 /***/ }),
-/* 29 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/apollo":
+/*!*********************************!*\
+  !*** external "@nestjs/apollo" ***!
+  \*********************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthModule = void 0;
-const common_1 = __webpack_require__(3);
-const auth_service_1 = __webpack_require__(18);
-const axios_1 = __webpack_require__(30);
-const jwt_1 = __webpack_require__(20);
-let AuthModule = class AuthModule {
-};
-exports.AuthModule = AuthModule;
-exports.AuthModule = AuthModule = __decorate([
-    (0, common_1.Module)({
-        imports: [
-            axios_1.HttpModule,
-            jwt_1.JwtModule.register({
-                secret: `${process.env.SECRET_TOKEN}`,
-                signOptions: { expiresIn: '30d' },
-            })
-        ],
-        providers: [auth_service_1.AuthService],
-        exports: [auth_service_1.AuthService],
-    })
-], AuthModule);
-
+module.exports = require("@nestjs/apollo");
 
 /***/ }),
-/* 30 */
+
+/***/ "@nestjs/axios":
+/*!********************************!*\
+  !*** external "@nestjs/axios" ***!
+  \********************************/
 /***/ ((module) => {
 
 module.exports = require("@nestjs/axios");
 
 /***/ }),
-/* 31 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/common":
+/*!*********************************!*\
+  !*** external "@nestjs/common" ***!
+  \*********************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PropertyModule = void 0;
-const common_1 = __webpack_require__(3);
-let PropertyModule = class PropertyModule {
-};
-exports.PropertyModule = PropertyModule;
-exports.PropertyModule = PropertyModule = __decorate([
-    (0, common_1.Module)({})
-], PropertyModule);
-
+module.exports = require("@nestjs/common");
 
 /***/ }),
-/* 32 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/config":
+/*!*********************************!*\
+  !*** external "@nestjs/config" ***!
+  \*********************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CommentModule = void 0;
-const common_1 = __webpack_require__(3);
-let CommentModule = class CommentModule {
-};
-exports.CommentModule = CommentModule;
-exports.CommentModule = CommentModule = __decorate([
-    (0, common_1.Module)({})
-], CommentModule);
-
+module.exports = require("@nestjs/config");
 
 /***/ }),
-/* 33 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/core":
+/*!*******************************!*\
+  !*** external "@nestjs/core" ***!
+  \*******************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LikeModule = void 0;
-const common_1 = __webpack_require__(3);
-let LikeModule = class LikeModule {
-};
-exports.LikeModule = LikeModule;
-exports.LikeModule = LikeModule = __decorate([
-    (0, common_1.Module)({})
-], LikeModule);
-
+module.exports = require("@nestjs/core");
 
 /***/ }),
-/* 34 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/graphql":
+/*!**********************************!*\
+  !*** external "@nestjs/graphql" ***!
+  \**********************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ViewModule = void 0;
-const common_1 = __webpack_require__(3);
-let ViewModule = class ViewModule {
-};
-exports.ViewModule = ViewModule;
-exports.ViewModule = ViewModule = __decorate([
-    (0, common_1.Module)({})
-], ViewModule);
-
+module.exports = require("@nestjs/graphql");
 
 /***/ }),
-/* 35 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/jwt":
+/*!******************************!*\
+  !*** external "@nestjs/jwt" ***!
+  \******************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FollowModule = void 0;
-const common_1 = __webpack_require__(3);
-let FollowModule = class FollowModule {
-};
-exports.FollowModule = FollowModule;
-exports.FollowModule = FollowModule = __decorate([
-    (0, common_1.Module)({})
-], FollowModule);
-
+module.exports = require("@nestjs/jwt");
 
 /***/ }),
-/* 36 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "@nestjs/mongoose":
+/*!***********************************!*\
+  !*** external "@nestjs/mongoose" ***!
+  \***********************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BoardArticleModule = void 0;
-const common_1 = __webpack_require__(3);
-let BoardArticleModule = class BoardArticleModule {
-};
-exports.BoardArticleModule = BoardArticleModule;
-exports.BoardArticleModule = BoardArticleModule = __decorate([
-    (0, common_1.Module)({})
-], BoardArticleModule);
-
+module.exports = require("@nestjs/mongoose");
 
 /***/ }),
-/* 37 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "bcryptjs":
+/*!***************************!*\
+  !*** external "bcryptjs" ***!
+  \***************************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DatabaseModule = void 0;
-const common_1 = __webpack_require__(3);
-const mongoose_1 = __webpack_require__(14);
-const mongoose_2 = __webpack_require__(15);
-let DatabaseModule = class DatabaseModule {
-    constructor(connection) {
-        this.connection = connection;
-        if (connection.readyState === 1) {
-            console.log(`MongoDB is connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`);
-        }
-        else {
-            console.log("DB is not connected!");
-        }
-    }
-};
-exports.DatabaseModule = DatabaseModule;
-exports.DatabaseModule = DatabaseModule = __decorate([
-    (0, common_1.Module)({
-        imports: [
-            mongoose_1.MongooseModule.forRootAsync({
-                useFactory: () => ({
-                    uri: process.env.NODE_ENV === "production" ? process.env.MONGO_PROD : process.env.MONGO_DEV,
-                }),
-            }),
-        ],
-        exports: [mongoose_1.MongooseModule],
-    }),
-    __param(0, (0, mongoose_1.InjectConnection)()),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Connection !== "undefined" && mongoose_2.Connection) === "function" ? _a : Object])
-], DatabaseModule);
-
+module.exports = require("bcryptjs");
 
 /***/ }),
-/* 38 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+/***/ "bson":
+/*!***********************!*\
+  !*** external "bson" ***!
+  \***********************/
+/***/ ((module) => {
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LoggingInterceptor = void 0;
-const common_1 = __webpack_require__(3);
-const graphql_1 = __webpack_require__(7);
-const operators_1 = __webpack_require__(39);
-let LoggingInterceptor = class LoggingInterceptor {
-    constructor() {
-        this.logger = new common_1.Logger();
-    }
-    intercept(context, next) {
-        const recordTime = Date.now();
-        const requestType = context.getType();
-        if (requestType === 'http') {
-        }
-        else if (requestType === 'graphql') {
-            const gqlContext = graphql_1.GqlExecutionContext.create(context);
-            this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
-            return next.handle().pipe((0, operators_1.tap)((context) => {
-                const responseTime = Date.now() - recordTime;
-                this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, 'RESPONSE');
-            }));
-        }
-    }
-    stringify(context) {
-        console.log(typeof context);
-        return JSON.stringify(context).slice(0, 75);
-    }
-};
-exports.LoggingInterceptor = LoggingInterceptor;
-exports.LoggingInterceptor = LoggingInterceptor = __decorate([
-    (0, common_1.Injectable)()
-], LoggingInterceptor);
-
+module.exports = require("bson");
 
 /***/ }),
-/* 39 */
+
+/***/ "class-validator":
+/*!**********************************!*\
+  !*** external "class-validator" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("class-validator");
+
+/***/ }),
+
+/***/ "mongoose":
+/*!***************************!*\
+  !*** external "mongoose" ***!
+  \***************************/
+/***/ ((module) => {
+
+module.exports = require("mongoose");
+
+/***/ }),
+
+/***/ "rxjs/operators":
+/*!*********************************!*\
+  !*** external "rxjs/operators" ***!
+  \*********************************/
 /***/ ((module) => {
 
 module.exports = require("rxjs/operators");
 
 /***/ })
-/******/ 	]);
+
+/******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -1280,12 +1513,15 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 var exports = __webpack_exports__;
+/*!*************************************!*\
+  !*** ./apps/nestar-api/src/main.ts ***!
+  \*************************************/
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __webpack_require__(1);
-const app_module_1 = __webpack_require__(2);
-const common_1 = __webpack_require__(3);
-const Loggin_interceptor_1 = __webpack_require__(38);
+const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
+const app_module_1 = __webpack_require__(/*! ./app.module */ "./apps/nestar-api/src/app.module.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const Loggin_interceptor_1 = __webpack_require__(/*! ./libs/interceptor/Loggin.interceptor */ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalPipes(new common_1.ValidationPipe());

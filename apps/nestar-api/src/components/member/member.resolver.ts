@@ -10,6 +10,7 @@ import { Roles } from '../auth/decoratots/roles.decorator';
 
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { MemberUpdate } from '../../libs/dto/member/member.update';
 
 @Resolver()
 export class MemberResolver {
@@ -30,10 +31,13 @@ export class MemberResolver {
   //Authenticated
 
 	@UseGuards(AuthGuard)
-	@Mutation(() => String)
-	public async updateMember(@AuthMember() memberId: ObjectId): Promise<string> {
+	@Mutation(() => Member)
+	public async updateMember(
+		@Args("input") input : MemberUpdate,
+		@AuthMember() memberId: ObjectId): Promise<Member> {
 		console.log('Mutation updateMember');
-		return this.memberService.updateMember();
+		delete input._id;
+		return this.memberService.updateMember(memberId, input);
 	}
 
 
