@@ -613,7 +613,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -627,6 +627,8 @@ const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
 const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
+const member_update_1 = __webpack_require__(/*! ../../libs/dto/member/member.update */ "./apps/nestar-api/src/libs/dto/member/member.update.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let MemberResolver = class MemberResolver {
     constructor(memberService) {
         this.memberService = memberService;
@@ -640,13 +642,15 @@ let MemberResolver = class MemberResolver {
         console.log('Mutation login');
         return this.memberService.login(input);
     }
-    async updateMember(memberId) {
+    async updateMember(input, memberId) {
         console.log('Mutation updateMember');
-        return this.memberService.updateMember();
+        delete input._id;
+        return this.memberService.updateMember(memberId, input);
     }
-    async getMember() {
+    async getMember(input) {
         console.log('Query getMember');
-        return this.memberService.getMember();
+        const targetId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return this.memberService.getMember(targetId);
     }
     async getAllMembersByAdmin() {
         return this.memberService.getAllMembersByAdmin();
@@ -673,17 +677,19 @@ __decorate([
 ], MemberResolver.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, graphql_1.Mutation)(() => String),
-    __param(0, (0, authMember_decorator_1.AuthMember)()),
+    (0, graphql_1.Mutation)(() => member_1.Member),
+    __param(0, (0, graphql_1.Args)("input")),
+    __param(1, (0, authMember_decorator_1.AuthMember)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_f = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _f : Object]),
-    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+    __metadata("design:paramtypes", [typeof (_f = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _f : Object, typeof (_g = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _g : Object]),
+    __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], MemberResolver.prototype, "updateMember", null);
 __decorate([
-    (0, graphql_1.Query)(() => String),
+    (0, graphql_1.Query)(() => member_1.Member),
+    __param(0, (0, graphql_1.Args)("memberId")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
 ], MemberResolver.prototype, "getMember", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -691,13 +697,13 @@ __decorate([
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
+    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
 ], MemberResolver.prototype, "getAllMembersByAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+    __metadata("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
 ], MemberResolver.prototype, "updateMemberByAdmin", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -771,11 +777,27 @@ let MemberService = class MemberService {
         response.accessToken = await this.authService.createToken(response);
         return response;
     }
-    async updateMember() {
-        return 'updateMember executed';
+    async updateMember(memberId, input) {
+        const result = await this.memberModel.findByIdAndUpdate({ _id: memberId,
+            memberStatus: member_enum_1.MemberStatus.ACTIVE,
+        }, input, { new: true })
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        result.accessToken = await this.authService.createToken(result);
+        return result;
     }
-    async getMember() {
-        return 'getMember executed';
+    async getMember(targetId) {
+        const search = {
+            _id: targetId,
+            memberStatus: {
+                $in: [member_enum_1.MemberStatus.ACTIVE, member_enum_1.MemberStatus.BLOCK],
+            },
+        };
+        const targetMember = await this.memberModel.findOne(search).exec();
+        if (!targetMember)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return targetMember;
     }
     async getAllMembersByAdmin() {
         return 'updateMember executed';
@@ -1124,6 +1146,91 @@ __decorate([
 exports.Member = Member = __decorate([
     (0, graphql_1.ObjectType)()
 ], Member);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/member/member.update.ts":
+/*!**************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/member/member.update.ts ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MemberUpdate = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+let MemberUpdate = class MemberUpdate {
+};
+exports.MemberUpdate = MemberUpdate;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof Object !== "undefined" && Object) === "function" ? _a : Object)
+], MemberUpdate.prototype, "_id", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MemberType, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof member_enum_1.MemberType !== "undefined" && member_enum_1.MemberType) === "function" ? _b : Object)
+], MemberUpdate.prototype, "memberType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MemberStatus, { nullable: true }),
+    __metadata("design:type", typeof (_c = typeof member_enum_1.MemberStatus !== "undefined" && member_enum_1.MemberStatus) === "function" ? _c : Object)
+], MemberUpdate.prototype, "MemberStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 12),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberNick", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(5, 12),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberPassword", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 100),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberFullName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberImage", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberAddress", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MemberUpdate.prototype, "memberDesc", void 0);
+exports.MemberUpdate = MemberUpdate = __decorate([
+    (0, graphql_1.InputType)()
+], MemberUpdate);
 
 
 /***/ }),
