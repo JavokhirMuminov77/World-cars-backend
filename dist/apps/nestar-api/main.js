@@ -418,6 +418,60 @@ exports.RolesGuard = RolesGuard = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/components/auth/guards/without.guard.ts":
+/*!*********************************************************************!*\
+  !*** ./apps/nestar-api/src/components/auth/guards/without.guard.ts ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.WithoutGuard = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_service_1 = __webpack_require__(/*! ../auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+let WithoutGuard = class WithoutGuard {
+    constructor(authService) {
+        this.authService = authService;
+    }
+    async canActivate(context) {
+        console.info('--- @guard() Authentication [WithoutGuard] ---');
+        if (context.contextType === 'graphql') {
+            const request = context.getArgByIndex(2).req, bearerToken = request.headers.authorization;
+            if (bearerToken) {
+                try {
+                    const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token);
+                    request.body.authMember = authMember;
+                }
+                catch (err) {
+                    request.body.authMember = null;
+                }
+            }
+            else
+                request.body.authMember = null;
+            console.log('memberNick[without] =>', request.body.authMember?.memberNick ?? 'none');
+            return true;
+        }
+    }
+};
+exports.WithoutGuard = WithoutGuard;
+exports.WithoutGuard = WithoutGuard = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
+], WithoutGuard);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/components/board-article/board-article.module.ts":
 /*!******************************************************************************!*\
   !*** ./apps/nestar-api/src/components/board-article/board-article.module.ts ***!
@@ -579,13 +633,15 @@ const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nes
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const Member_model_1 = __webpack_require__(/*! ../../schemas/Member.model */ "./apps/nestar-api/src/schemas/Member.model.ts");
 const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }]), auth_module_1.AuthModule
+            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }]), auth_module_1.AuthModule,
+            view_module_1.ViewModule
         ],
         providers: [member_resolver_1.MemberResolver, member_service_1.MemberService]
     })
@@ -613,7 +669,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -629,6 +685,7 @@ const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ ".
 const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
 const member_update_1 = __webpack_require__(/*! ../../libs/dto/member/member.update */ "./apps/nestar-api/src/libs/dto/member/member.update.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
 let MemberResolver = class MemberResolver {
     constructor(memberService) {
         this.memberService = memberService;
@@ -647,10 +704,10 @@ let MemberResolver = class MemberResolver {
         delete input._id;
         return this.memberService.updateMember(memberId, input);
     }
-    async getMember(input) {
+    async getMember(input, memberId) {
         console.log('Query getMember');
         const targetId = (0, config_1.shapeIntoMongoObjectId)(input);
-        return this.memberService.getMember(targetId);
+        return this.memberService.getMember(memberId, targetId);
     }
     async getAllMembersByAdmin() {
         return this.memberService.getAllMembersByAdmin();
@@ -685,11 +742,13 @@ __decorate([
     __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], MemberResolver.prototype, "updateMember", null);
 __decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
     (0, graphql_1.Query)(() => member_1.Member),
     __param(0, (0, graphql_1.Args)("memberId")),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
+    __metadata("design:paramtypes", [String, typeof (_j = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _j : Object]),
+    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
 ], MemberResolver.prototype, "getMember", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -697,13 +756,13 @@ __decorate([
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+    __metadata("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
 ], MemberResolver.prototype, "getAllMembersByAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
+    __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
 ], MemberResolver.prototype, "updateMemberByAdmin", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -732,7 +791,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b;
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -741,10 +800,13 @@ const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
 const auth_service_1 = __webpack_require__(/*! ../auth/auth.service */ "./apps/nestar-api/src/components/auth/auth.service.ts");
+const view_service_1 = __webpack_require__(/*! ../view/view.service */ "./apps/nestar-api/src/components/view/view.service.ts");
+const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
 let MemberService = class MemberService {
-    constructor(memberModel, authService) {
+    constructor(memberModel, authService, viewService) {
         this.memberModel = memberModel;
         this.authService = authService;
+        this.viewService = viewService;
     }
     async signup(input) {
         const result = this.authService.hashPassword(input.memberPassword);
@@ -787,16 +849,24 @@ let MemberService = class MemberService {
         result.accessToken = await this.authService.createToken(result);
         return result;
     }
-    async getMember(targetId) {
+    async getMember(memberId, targetId) {
         const search = {
             _id: targetId,
             memberStatus: {
                 $in: [member_enum_1.MemberStatus.ACTIVE, member_enum_1.MemberStatus.BLOCK],
             },
         };
-        const targetMember = await this.memberModel.findOne(search).exec();
+        const targetMember = await this.memberModel.findOne(search).lean().exec();
         if (!targetMember)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        if (memberId) {
+            const viewInput = { memberId: memberId, viewRefId: targetId, viewGroup: view_enum_1.ViewGroup.MEMBER };
+            const newView = await this.viewService.recordView(viewInput);
+            if (newView) {
+                await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+                targetMember.memberViews++;
+            }
+        }
         return targetMember;
     }
     async getAllMembersByAdmin() {
@@ -810,7 +880,7 @@ exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Member')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object])
 ], MemberService);
 
 
@@ -858,12 +928,73 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const view_service_1 = __webpack_require__(/*! ./view.service */ "./apps/nestar-api/src/components/view/view.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const View_model_1 = __webpack_require__(/*! ../../schemas/View.model */ "./apps/nestar-api/src/schemas/View.model.ts");
 let ViewModule = class ViewModule {
 };
 exports.ViewModule = ViewModule;
 exports.ViewModule = ViewModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: "View", schema: View_model_1.default }])],
+        providers: [view_service_1.ViewService],
+        exports: [view_service_1.ViewService],
+    })
 ], ViewModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/view/view.service.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/components/view/view.service.ts ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ViewService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+let ViewService = class ViewService {
+    constructor(viewModule) {
+        this.viewModule = viewModule;
+    }
+    async recordView(input) {
+        const viewExist = await this.checkViewExistence(input);
+        if (!viewExist) {
+            console.log("-New View Insert -");
+            return await this.viewModule.create(input);
+        }
+        else
+            return null;
+    }
+    async checkViewExistence(input) {
+        const { memberId, viewRefId } = input;
+        const search = { memberId: memberId, viewRefId: viewRefId };
+        return await this.viewModule.findOne(search).exec();
+    }
+};
+exports.ViewService = ViewService;
+exports.ViewService = ViewService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)("View")),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object])
+], ViewService);
 
 
 /***/ }),
@@ -1303,6 +1434,29 @@ var MemberAuthType;
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/enums/view.enum.ts":
+/*!*****************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/view.enum.ts ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ViewGroup = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var ViewGroup;
+(function (ViewGroup) {
+    ViewGroup["MEMBER"] = "MEMBER";
+    ViewGroup["ARTICLE"] = "ARTICLE";
+    ViewGroup["PROPERTY"] = "PROPERTY";
+})(ViewGroup || (exports.ViewGroup = ViewGroup = {}));
+(0, graphql_1.registerEnumType)(ViewGroup, {
+    name: 'ViewGroup',
+});
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts":
 /*!********************************************************************!*\
   !*** ./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts ***!
@@ -1455,6 +1609,38 @@ const MemberSchema = new mongoose_1.Schema({
     },
 }, { timestamps: true, collection: 'members' });
 exports["default"] = MemberSchema;
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/schemas/View.model.ts":
+/*!***************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/View.model.ts ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const view_enum_1 = __webpack_require__(/*! ../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
+const ViewSchema = new mongoose_1.Schema({
+    viewGroup: {
+        type: String,
+        enum: view_enum_1.ViewGroup,
+        required: true,
+    },
+    viewRefId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+    },
+    memberId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Member',
+    },
+}, { timestamps: true, collection: 'views' });
+ViewSchema.index({ memberId: 1, viewRefId: 1 }, { unique: true });
+exports["default"] = ViewSchema;
 
 
 /***/ }),
