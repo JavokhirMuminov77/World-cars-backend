@@ -669,7 +669,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -693,32 +693,33 @@ let MemberResolver = class MemberResolver {
     async signup(input) {
         console.log('Mutation signup');
         console.log('input', input);
-        return this.memberService.signup(input);
+        return await this.memberService.signup(input);
     }
     async login(input) {
         console.log('Mutation login');
-        return this.memberService.login(input);
+        return await this.memberService.login(input);
     }
     async updateMember(input, memberId) {
         console.log('Mutation updateMember');
         delete input._id;
-        return this.memberService.updateMember(memberId, input);
+        return await this.memberService.updateMember(memberId, input);
     }
     async getMember(input, memberId) {
         console.log('Query getMember');
         const targetId = (0, config_1.shapeIntoMongoObjectId)(input);
-        return this.memberService.getMember(memberId, targetId);
+        return await this.memberService.getMember(memberId, targetId);
     }
     async getAgents(input, memberId) {
         console.log("Query: getAgents");
-        return this.memberService.getAgents(memberId, input);
+        return await this.memberService.getAgents(memberId, input);
     }
-    async getAllMembersByAdmin() {
-        return this.memberService.getAllMembersByAdmin();
+    async getAllMembersByAdmin(input) {
+        console.log('Mutation getAllMembersByAdmin');
+        return await this.memberService.getAllMembersByAdmin(input);
     }
-    async updateMemberByAdmin() {
+    async updateMemberByAdmin(input) {
         console.log('Mutation updateMemberByAdmin');
-        return this.memberService.updateMemberByAdmin();
+        return await this.memberService.updateMemberByAdmin(input);
     }
 };
 exports.MemberResolver = MemberResolver;
@@ -760,22 +761,26 @@ __decorate([
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_l = typeof member_input_1.AgentsInquiry !== "undefined" && member_input_1.AgentsInquiry) === "function" ? _l : Object, typeof (_m = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _m : Object]),
+    __metadata("design:paramtypes", [typeof (_l = typeof member_input_1.AgentInquiry !== "undefined" && member_input_1.AgentInquiry) === "function" ? _l : Object, typeof (_m = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _m : Object]),
     __metadata("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
 ], MemberResolver.prototype, "getAgents", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Query)(() => member_1.Members),
+    __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_p = typeof Promise !== "undefined" && Promise) === "function" ? _p : Object)
+    __metadata("design:paramtypes", [typeof (_p = typeof member_input_1.MembersInquiry !== "undefined" && member_input_1.MembersInquiry) === "function" ? _p : Object]),
+    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
 ], MemberResolver.prototype, "getAllMembersByAdmin", null);
 __decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Mutation)(() => String),
+    __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+    __metadata("design:paramtypes", [typeof (_r = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _r : Object]),
+    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
 ], MemberResolver.prototype, "updateMemberByAdmin", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -898,17 +903,43 @@ let MemberService = class MemberService {
                     metaCounter: [{ $count: "total" }],
                 }
             }
-        ]);
+        ])
+            .exec();
         console.log("result", result);
         if (!result.length)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
     }
-    async getAllMembersByAdmin() {
-        return 'updateMember executed';
+    async getAllMembersByAdmin(input) {
+        const { memberType, memberStatus, text } = input.search;
+        const match = {};
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        if (memberStatus)
+            match.memberStatus = memberStatus;
+        if (memberType)
+            match.memberType = memberType;
+        if (text)
+            match.memberNick = { $regex: new RegExp(text, 'i') };
+        console.log('match', match);
+        const result = await this.memberModel.aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [{ $skip: (input.page - 1) * input.limit }, { $limit: input.limit }],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ]);
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
     }
-    async updateMemberByAdmin() {
-        return 'getMember executed';
+    async updateMemberByAdmin(input) {
+        const result = await this.memberModel.findOneAndUpdate({ _id: input._id }, input, { new: true }).exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        return result;
     }
 };
 exports.MemberService = MemberService;
@@ -1097,9 +1128,10 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.shapeIntoMongoObjectId = exports.availableAgentSorts = void 0;
+exports.shapeIntoMongoObjectId = exports.availableMembertSorts = exports.availableAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availableAgentSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews", "memberRank"];
+exports.availableMembertSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews"];
 const shapeIntoMongoObjectId = (target) => {
     return typeof target == "string" ? new bson_1.ObjectId(target) : target;
 };
@@ -1124,9 +1156,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c;
+var _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AgentsInquiry = exports.LoginInput = exports.MemberInput = void 0;
+exports.MembersInquiry = exports.AgentInquiry = exports.LoginInput = exports.MemberInput = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
 const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
@@ -1186,47 +1218,101 @@ exports.LoginInput = LoginInput = __decorate([
 let AISearch = class AISearch {
 };
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], AISearch.prototype, "text", void 0);
 AISearch = __decorate([
     (0, graphql_1.InputType)()
 ], AISearch);
-let AgentsInquiry = class AgentsInquiry {
+let AgentInquiry = class AgentInquiry {
 };
-exports.AgentsInquiry = AgentsInquiry;
+exports.AgentInquiry = AgentInquiry;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Min)(1),
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
-], AgentsInquiry.prototype, "page", void 0);
+], AgentInquiry.prototype, "page", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Min)(1),
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
-], AgentsInquiry.prototype, "limit", void 0);
+], AgentInquiry.prototype, "limit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsIn)(config_1.availableAgentSorts),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
-], AgentsInquiry.prototype, "sort", void 0);
+], AgentInquiry.prototype, "sort", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
     __metadata("design:type", typeof (_c = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _c : Object)
-], AgentsInquiry.prototype, "direction", void 0);
+], AgentInquiry.prototype, "direction", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, graphql_1.Field)(() => AISearch),
     __metadata("design:type", AISearch)
-], AgentsInquiry.prototype, "search", void 0);
-exports.AgentsInquiry = AgentsInquiry = __decorate([
+], AgentInquiry.prototype, "search", void 0);
+exports.AgentInquiry = AgentInquiry = __decorate([
     (0, graphql_1.InputType)()
-], AgentsInquiry);
+], AgentInquiry);
+let MISearch = class MISearch {
+};
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MemberStatus, { nullable: true }),
+    __metadata("design:type", typeof (_d = typeof member_enum_1.MemberStatus !== "undefined" && member_enum_1.MemberStatus) === "function" ? _d : Object)
+], MISearch.prototype, "memberStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => member_enum_1.MemberType, { nullable: true }),
+    __metadata("design:type", typeof (_e = typeof member_enum_1.MemberType !== "undefined" && member_enum_1.MemberType) === "function" ? _e : Object)
+], MISearch.prototype, "memberType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MISearch.prototype, "text", void 0);
+MISearch = __decorate([
+    (0, graphql_1.InputType)()
+], MISearch);
+let MembersInquiry = class MembersInquiry {
+};
+exports.MembersInquiry = MembersInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], MembersInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], MembersInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availableMembertSorts),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], MembersInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_f = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _f : Object)
+], MembersInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => MISearch),
+    __metadata("design:type", MISearch)
+], MembersInquiry.prototype, "search", void 0);
+exports.MembersInquiry = MembersInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], MembersInquiry);
 
 
 /***/ }),
