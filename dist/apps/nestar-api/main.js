@@ -669,15 +669,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const member_service_1 = __webpack_require__(/*! ./member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
 const member_input_1 = __webpack_require__(/*! ../../libs/dto/member/member.input */ "./apps/nestar-api/src/libs/dto/member/member.input.ts");
 const member_1 = __webpack_require__(/*! ../../libs/dto/member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
-const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
 const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
@@ -692,17 +692,20 @@ let MemberResolver = class MemberResolver {
     }
     async signup(input) {
         console.log('Mutation signup');
-        console.log('input', input);
         return await this.memberService.signup(input);
     }
     async login(input) {
         console.log('Mutation login');
         return await this.memberService.login(input);
     }
-    async updateMember(input, memberId) {
-        console.log('Mutation updateMember');
-        delete input._id;
-        return await this.memberService.updateMember(memberId, input);
+    async checkAuth(memberNick) {
+        console.log('Query checkAuth');
+        console.log('memberNick');
+        return `Hi ${memberNick}`;
+    }
+    async checkAuthRoles(authMember) {
+        console.log('Query checkAuthRoles');
+        return `Hi ${authMember.memberNick}, you are ${authMember.memberType} (memberId: ${authMember._id})`;
     }
     async getMember(input, memberId) {
         console.log('Query getMember');
@@ -710,11 +713,16 @@ let MemberResolver = class MemberResolver {
         return await this.memberService.getMember(memberId, targetId);
     }
     async getAgents(input, memberId) {
-        console.log("Query: getAgents");
+        console.log('Query getAgent');
         return await this.memberService.getAgents(memberId, input);
     }
+    async updateMember(input, memberId) {
+        console.log('Mutation updateMember');
+        delete input._id;
+        return await this.memberService.updateMember(memberId, input);
+    }
     async getAllMembersByAdmin(input) {
-        console.log('Mutation getAllMembersByAdmin');
+        console.log('Query getAllMembersByAdmin');
         return await this.memberService.getAllMembersByAdmin(input);
     }
     async updateMemberByAdmin(input) {
@@ -739,17 +747,25 @@ __decorate([
 ], MemberResolver.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, graphql_1.Mutation)(() => member_1.Member),
-    __param(0, (0, graphql_1.Args)("input")),
-    __param(1, (0, authMember_decorator_1.AuthMember)()),
+    (0, graphql_1.Query)(() => String),
+    __param(0, (0, authMember_decorator_1.AuthMember)('memberNick')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_f = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _f : Object, typeof (_g = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _g : Object]),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+], MemberResolver.prototype, "checkAuth", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.USER, member_enum_1.MemberType.AGENT),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Query)(() => String),
+    __param(0, (0, authMember_decorator_1.AuthMember)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_g = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _g : Object]),
     __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
-], MemberResolver.prototype, "updateMember", null);
+], MemberResolver.prototype, "checkAuthRoles", null);
 __decorate([
     (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
     (0, graphql_1.Query)(() => member_1.Member),
-    __param(0, (0, graphql_1.Args)("memberId")),
+    __param(0, (0, graphql_1.Args)('memberId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, typeof (_j = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _j : Object]),
@@ -765,22 +781,31 @@ __decorate([
     __metadata("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
 ], MemberResolver.prototype, "getAgents", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)(() => member_1.Member),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_p = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _p : Object, typeof (_q = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _q : Object]),
+    __metadata("design:returntype", typeof (_r = typeof Promise !== "undefined" && Promise) === "function" ? _r : Object)
+], MemberResolver.prototype, "updateMember", null);
+__decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Query)(() => member_1.Members),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_p = typeof member_input_1.MembersInquiry !== "undefined" && member_input_1.MembersInquiry) === "function" ? _p : Object]),
-    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+    __metadata("design:paramtypes", [typeof (_s = typeof member_input_1.MembersInquiry !== "undefined" && member_input_1.MembersInquiry) === "function" ? _s : Object]),
+    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
 ], MemberResolver.prototype, "getAllMembersByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => member_1.Member),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_r = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _r : Object]),
-    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
+    __metadata("design:paramtypes", [typeof (_u = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _u : Object]),
+    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
 ], MemberResolver.prototype, "updateMemberByAdmin", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -827,11 +852,10 @@ let MemberService = class MemberService {
         this.viewService = viewService;
     }
     async signup(input) {
-        const result = this.authService.hashPassword(input.memberPassword);
+        input.memberPassword = await this.authService.hashPassword(input.memberPassword);
         try {
             const result = await this.memberModel.create(input);
-            const accessToken = await this.authService.createToken(result);
-            console.log("accessToken", accessToken);
+            result.accessToken = await this.authService.createToken(result);
             return result;
         }
         catch (err) {
@@ -858,9 +882,13 @@ let MemberService = class MemberService {
         return response;
     }
     async updateMember(memberId, input) {
-        const result = await this.memberModel.findByIdAndUpdate({ _id: memberId,
+        const result = await this.memberModel
+            .findOneAndUpdate({
+            _id: memberId,
             memberStatus: member_enum_1.MemberStatus.ACTIVE,
-        }, input, { new: true })
+        }, input, {
+            new: true,
+        })
             .exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
@@ -889,23 +917,24 @@ let MemberService = class MemberService {
     }
     async getAgents(memberId, input) {
         const { text } = input.search;
-        const match = { memberType: member_enum_1.MemberType.AGENT, memberStatus: member_enum_1.MemberStatus.ACTIVE };
-        const sort = { [input?.sort ?? "createdAt"]: input?.direction ?? common_enum_1.Direction.DESC };
+        const match = {
+            memberType: member_enum_1.MemberType.AGENT,
+            memberStatus: member_enum_1.MemberStatus.ACTIVE,
+        };
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
         if (text)
-            match.memberNick = { $regex: new RegExp(text, "i") };
-        console.log("match", match);
+            match.memberNick = { $regex: new RegExp(text, 'i') };
+        console.log('match', match);
         const result = await this.memberModel.aggregate([
             { $match: match },
             { $sort: sort },
             {
                 $facet: {
                     list: [{ $skip: (input.page - 1) * input.limit }, { $limit: input.limit }],
-                    metaCounter: [{ $count: "total" }],
-                }
-            }
-        ])
-            .exec();
-        console.log("result", result);
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ]);
         if (!result.length)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
@@ -1495,13 +1524,14 @@ exports.MemberUpdate = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
 const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 let MemberUpdate = class MemberUpdate {
 };
 exports.MemberUpdate = MemberUpdate;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, graphql_1.Field)(() => String),
-    __metadata("design:type", typeof (_a = typeof Object !== "undefined" && Object) === "function" ? _a : Object)
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
 ], MemberUpdate.prototype, "_id", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -1512,7 +1542,7 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, graphql_1.Field)(() => member_enum_1.MemberStatus, { nullable: true }),
     __metadata("design:type", typeof (_c = typeof member_enum_1.MemberStatus !== "undefined" && member_enum_1.MemberStatus) === "function" ? _c : Object)
-], MemberUpdate.prototype, "MemberStatus", void 0);
+], MemberUpdate.prototype, "memberStatus", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, graphql_1.Field)(() => String, { nullable: true }),
@@ -1548,6 +1578,7 @@ __decorate([
 ], MemberUpdate.prototype, "memberAddress", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 100),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], MemberUpdate.prototype, "memberDesc", void 0);

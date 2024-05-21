@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
 import { ViewGroup } from '../../enums/view.enum';
 
@@ -8,20 +8,17 @@ export class View {
 	_id: ObjectId;
 
 	@Field(() => ViewGroup)
-  viewGroup: ViewGroup;
+	viewGroup: ViewGroup;
 
-  @Field(() => String)
-  viewRefId: ObjectId;
+	@Field(() => String)
+	viewRefId: ObjectId;
 
-  @Field(() => String)
-  memberId: ObjectId;
+	@Field(() => String)
+	memberId: ObjectId;
 
 	@Field(() => Date)
 	createdAt: Date;
 
 	@Field(() => Date)
 	updatedAt: Date;
-
-
-
 }
