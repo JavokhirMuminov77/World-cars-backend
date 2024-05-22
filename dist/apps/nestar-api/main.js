@@ -345,7 +345,7 @@ let AuthGuard = class AuthGuard {
             const request = context.getArgByIndex(2).req;
             const bearerToken = request.headers.authorization;
             if (!bearerToken)
-                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXITS);
+                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXIT);
             const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token);
             console.log('memberNick[auth] =>', authMember.memberNick);
             request.body.authMember = authMember;
@@ -399,7 +399,7 @@ let RolesGuard = class RolesGuard {
             const request = context.getArgByIndex(2).req;
             const bearerToken = request.headers.authorization;
             if (!bearerToken)
-                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXITS);
+                throw new common_1.BadRequestException(common_enum_1.Message.TOKEN_NOT_EXIT);
             const token = bearerToken.split(' ')[1], authMember = await this.authService.verifyToken(token), hasRole = () => roles.indexOf(authMember.memberType) > -1, hasPermission = hasRole();
             if (!authMember || !hasPermission)
                 throw new common_1.ForbiddenException(common_enum_1.Message.ONLY_SPECIFIC_ROLES_ALLOWED);
@@ -669,7 +669,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -686,6 +686,9 @@ const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./a
 const member_update_1 = __webpack_require__(/*! ../../libs/dto/member/member.update */ "./apps/nestar-api/src/libs/dto/member/member.update.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
+const graphql_upload_1 = __webpack_require__(/*! graphql-upload */ "graphql-upload");
+const fs_1 = __webpack_require__(/*! fs */ "fs");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
 let MemberResolver = class MemberResolver {
     constructor(memberService) {
         this.memberService = memberService;
@@ -728,6 +731,55 @@ let MemberResolver = class MemberResolver {
     async updateMemberByAdmin(input) {
         console.log('Mutation updateMemberByAdmin');
         return await this.memberService.updateMemberByAdmin(input);
+    }
+    async imageUploader({ createReadStream, filename, mimetype }, target) {
+        console.log('Mutation: imageUploader');
+        if (!filename)
+            throw new Error(common_enum_1.Message.UPLOAD_FAILED);
+        const validMime = config_1.validMimeTypes.includes(mimetype);
+        if (!validMime)
+            throw new Error(common_enum_1.Message.NOT_ALLOWED_FORMAT);
+        const imageName = (0, config_1.getSerialForImage)(filename);
+        const url = `uploads/${target}/${imageName}`;
+        const stream = createReadStream();
+        const result = await new Promise((resolve, reject) => {
+            stream
+                .pipe((0, fs_1.createWriteStream)(url))
+                .on('finish', async () => resolve(true))
+                .on('error', () => reject(false));
+        });
+        if (!result)
+            throw new Error(common_enum_1.Message.UPLOAD_FAILED);
+        return url;
+    }
+    async imagesUploader(files, target) {
+        console.log('Mutation: imagesUploader');
+        const uploadedImages = [];
+        const promisedList = files.map(async (img, index) => {
+            try {
+                const { filename, mimetype, encoding, createReadStream } = await img;
+                const validMime = config_1.validMimeTypes.includes(mimetype);
+                if (!validMime)
+                    throw new Error(common_enum_1.Message.PROVIDE_ALLOWED_FORMAT);
+                const imageName = (0, config_1.getSerialForImage)(filename);
+                const url = `uploads/${target}/${imageName}`;
+                const stream = createReadStream();
+                const result = await new Promise((resolve, reject) => {
+                    stream
+                        .pipe((0, fs_1.createWriteStream)(url))
+                        .on('finish', () => resolve(true))
+                        .on('error', () => reject(false));
+                });
+                if (!result)
+                    throw new Error(common_enum_1.Message.UPLOAD_FAILED);
+                uploadedImages[index] = url;
+            }
+            catch (err) {
+                console.log('Error, file missing!');
+            }
+        });
+        await Promise.all(promisedList);
+        return uploadedImages;
     }
 };
 exports.MemberResolver = MemberResolver;
@@ -807,6 +859,24 @@ __decorate([
     __metadata("design:paramtypes", [typeof (_u = typeof member_update_1.MemberUpdate !== "undefined" && member_update_1.MemberUpdate) === "function" ? _u : Object]),
     __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
 ], MemberResolver.prototype, "updateMemberByAdmin", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => String),
+    __param(0, (0, graphql_1.Args)({ name: 'file', type: () => graphql_upload_1.GraphQLUpload })),
+    __param(1, (0, graphql_1.Args)('target')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_w = typeof graphql_upload_1.FileUpload !== "undefined" && graphql_upload_1.FileUpload) === "function" ? _w : Object, typeof (_x = typeof String !== "undefined" && String) === "function" ? _x : Object]),
+    __metadata("design:returntype", typeof (_y = typeof Promise !== "undefined" && Promise) === "function" ? _y : Object)
+], MemberResolver.prototype, "imageUploader", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => [String]),
+    __param(0, (0, graphql_1.Args)('files', { type: () => [graphql_upload_1.GraphQLUpload] })),
+    __param(1, (0, graphql_1.Args)('target')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, typeof (_z = typeof String !== "undefined" && String) === "function" ? _z : Object]),
+    __metadata("design:returntype", typeof (_0 = typeof Promise !== "undefined" && Promise) === "function" ? _0 : Object)
+], MemberResolver.prototype, "imagesUploader", null);
 exports.MemberResolver = MemberResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _a : Object])
@@ -1621,10 +1691,11 @@ var Message;
     Message["BLOCKED_USER"] = "You have been blocked!";
     Message["WRONG_PASSWORD"] = "Wrong password, please try again!";
     Message["NOT_AUTHENTICATED"] = "You are not authenticated, Place login first!";
-    Message["TOKEN_NOT_EXITS"] = "Bearer Token is not provided!";
+    Message["TOKEN_NOT_EXIT"] = "Bearer Token is not provided!";
     Message["ONLY_SPECIFIC_ROLES_ALLOWED"] = "Allowed only for members with specific roles!";
     Message["NOT_ALLOWED_REQUEST"] = "Not Allowed Request!";
     Message["NOT_ALLOWED_FORMAT"] = "Please provide jpg, jpeg, or png images!";
+    Message["PROVIDE_ALLOWED_FORMAT"] = "PROVIDE_ALLOWED_FORMAT";
     Message["SELF_SUBSCRIPTION_DENIED"] = "Self subsecription is denied!";
 })(Message || (exports.Message = Message = {}));
 var Direction;
@@ -1632,7 +1703,9 @@ var Direction;
     Direction[Direction["ASC"] = 1] = "ASC";
     Direction[Direction["DESC"] = -1] = "DESC";
 })(Direction || (exports.Direction = Direction = {}));
-(0, graphql_1.registerEnumType)(Direction, { name: 'Direction', });
+(0, graphql_1.registerEnumType)(Direction, {
+    name: 'Direction',
+});
 
 
 /***/ }),
@@ -1993,6 +2066,26 @@ module.exports = require("class-validator");
 
 /***/ }),
 
+/***/ "express":
+/*!**************************!*\
+  !*** external "express" ***!
+  \**************************/
+/***/ ((module) => {
+
+module.exports = require("express");
+
+/***/ }),
+
+/***/ "graphql-upload":
+/*!*********************************!*\
+  !*** external "graphql-upload" ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = require("graphql-upload");
+
+/***/ }),
+
 /***/ "mongoose":
 /*!***************************!*\
   !*** external "mongoose" ***!
@@ -2020,6 +2113,16 @@ module.exports = require("rxjs/operators");
 /***/ ((module) => {
 
 module.exports = require("uuid");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/***/ ((module) => {
+
+module.exports = require("fs");
 
 /***/ }),
 
@@ -2073,10 +2176,15 @@ const core_1 = __webpack_require__(/*! @nestjs/core */ "@nestjs/core");
 const app_module_1 = __webpack_require__(/*! ./app.module */ "./apps/nestar-api/src/app.module.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const Loggin_interceptor_1 = __webpack_require__(/*! ./libs/interceptor/Loggin.interceptor */ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts");
+const graphql_upload_1 = __webpack_require__(/*! graphql-upload */ "graphql-upload");
+const express = __webpack_require__(/*! express */ "express");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalPipes(new common_1.ValidationPipe());
     app.useGlobalInterceptors(new Loggin_interceptor_1.LoggingInterceptor());
+    app.enableCors({ origin: true, credentials: true });
+    app.use((0, graphql_upload_1.graphqlUploadExpress)({ maxFileSize: 15000000, maxFiles: 10 }));
+    app.use('/uploads', express.static('./uploads'));
     await app.listen(process.env.PORT_API ?? 3000);
 }
 bootstrap();
