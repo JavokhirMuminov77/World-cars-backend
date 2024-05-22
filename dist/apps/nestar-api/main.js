@@ -777,7 +777,7 @@ __decorate([
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_l = typeof member_input_1.AgentInquiry !== "undefined" && member_input_1.AgentInquiry) === "function" ? _l : Object, typeof (_m = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _m : Object]),
+    __metadata("design:paramtypes", [typeof (_l = typeof member_input_1.AgentsInquiry !== "undefined" && member_input_1.AgentsInquiry) === "function" ? _l : Object, typeof (_m = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _m : Object]),
     __metadata("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
 ], MemberResolver.prototype, "getAgents", null);
 __decorate([
@@ -1157,10 +1157,18 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.shapeIntoMongoObjectId = exports.availableMembertSorts = exports.availableAgentSorts = void 0;
+exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableMembertSorts = exports.availableAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availableAgentSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews", "memberRank"];
 exports.availableMembertSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews"];
+const uuid_1 = __webpack_require__(/*! uuid */ "uuid");
+const path = __webpack_require__(/*! path */ "path");
+exports.validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+const getSerialForImage = (filename) => {
+    const ext = path.parse(filename).ext;
+    return (0, uuid_1.v4)() + ext;
+};
+exports.getSerialForImage = getSerialForImage;
 const shapeIntoMongoObjectId = (target) => {
     return typeof target == "string" ? new bson_1.ObjectId(target) : target;
 };
@@ -1187,7 +1195,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MembersInquiry = exports.AgentInquiry = exports.LoginInput = exports.MemberInput = void 0;
+exports.MembersInquiry = exports.AgentsInquiry = exports.LoginInput = exports.MemberInput = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
 const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
@@ -1254,40 +1262,40 @@ __decorate([
 AISearch = __decorate([
     (0, graphql_1.InputType)()
 ], AISearch);
-let AgentInquiry = class AgentInquiry {
+let AgentsInquiry = class AgentsInquiry {
 };
-exports.AgentInquiry = AgentInquiry;
+exports.AgentsInquiry = AgentsInquiry;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Min)(1),
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
-], AgentInquiry.prototype, "page", void 0);
+], AgentsInquiry.prototype, "page", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Min)(1),
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
-], AgentInquiry.prototype, "limit", void 0);
+], AgentsInquiry.prototype, "limit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsIn)(config_1.availableAgentSorts),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
-], AgentInquiry.prototype, "sort", void 0);
+], AgentsInquiry.prototype, "sort", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
     __metadata("design:type", typeof (_c = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _c : Object)
-], AgentInquiry.prototype, "direction", void 0);
+], AgentsInquiry.prototype, "direction", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, graphql_1.Field)(() => AISearch),
     __metadata("design:type", AISearch)
-], AgentInquiry.prototype, "search", void 0);
-exports.AgentInquiry = AgentInquiry = __decorate([
+], AgentsInquiry.prototype, "search", void 0);
+exports.AgentsInquiry = AgentsInquiry = __decorate([
     (0, graphql_1.InputType)()
-], AgentInquiry);
+], AgentsInquiry);
 let MISearch = class MISearch {
 };
 __decorate([
@@ -2002,6 +2010,26 @@ module.exports = require("mongoose");
 /***/ ((module) => {
 
 module.exports = require("rxjs/operators");
+
+/***/ }),
+
+/***/ "uuid":
+/*!***********************!*\
+  !*** external "uuid" ***!
+  \***********************/
+/***/ ((module) => {
+
+module.exports = require("uuid");
+
+/***/ }),
+
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/***/ ((module) => {
+
+module.exports = require("path");
 
 /***/ })
 
