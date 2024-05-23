@@ -123,7 +123,7 @@ exports.AppResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 let AppResolver = class AppResolver {
     sayHello() {
-        return "GraphQL API Server";
+        return 'GraphQL API SERVER';
     }
 };
 exports.AppResolver = AppResolver;
@@ -158,7 +158,7 @@ exports.AppService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 let AppService = class AppService {
     getHello() {
-        return 'Hello World!';
+        return 'Welcom to nestar API server';
     }
 };
 exports.AppService = AppService;
@@ -639,11 +639,9 @@ let MemberModule = class MemberModule {
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            mongoose_1.MongooseModule.forFeature([{ name: "Member", schema: Member_model_1.default }]), auth_module_1.AuthModule,
-            view_module_1.ViewModule
-        ],
-        providers: [member_resolver_1.MemberResolver, member_service_1.MemberService]
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Member', schema: Member_model_1.default }]), auth_module_1.AuthModule, view_module_1.ViewModule],
+        providers: [member_resolver_1.MemberResolver, member_service_1.MemberService],
+        exports: [member_service_1.MemberService],
     })
 ], MemberModule);
 
