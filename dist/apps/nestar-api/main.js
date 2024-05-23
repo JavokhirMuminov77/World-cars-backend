@@ -1040,6 +1040,11 @@ let MemberService = class MemberService {
             throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
         return result;
     }
+    async memberStatusEditor(input) {
+        console.log('executed!');
+        const { _id, targetKey, modifier } = input;
+        return await this.memberModel.findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
+    }
 };
 exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
@@ -1067,12 +1072,142 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const property_resolver_1 = __webpack_require__(/*! ./property.resolver */ "./apps/nestar-api/src/components/property/property.resolver.ts");
+const property_service_1 = __webpack_require__(/*! ./property.service */ "./apps/nestar-api/src/components/property/property.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const Property_model_1 = __webpack_require__(/*! ../../schemas/Property.model */ "./apps/nestar-api/src/schemas/Property.model.ts");
+const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
+const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
 let PropertyModule = class PropertyModule {
 };
 exports.PropertyModule = PropertyModule;
 exports.PropertyModule = PropertyModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'Property', schema: Property_model_1.default }]),
+            auth_module_1.AuthModule,
+            view_module_1.ViewModule,
+            member_module_1.MemberModule,
+        ],
+        providers: [property_resolver_1.PropertyResolver, property_service_1.PropertyService],
+    })
 ], PropertyModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/property/property.resolver.ts":
+/*!**********************************************************************!*\
+  !*** ./apps/nestar-api/src/components/property/property.resolver.ts ***!
+  \**********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PropertyResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const property_service_1 = __webpack_require__(/*! ./property.service */ "./apps/nestar-api/src/components/property/property.service.ts");
+const property_1 = __webpack_require__(/*! ../../libs/dto/property/property */ "./apps/nestar-api/src/libs/dto/property/property.ts");
+const property_input_1 = __webpack_require__(/*! ../../libs/dto/property/property.input */ "./apps/nestar-api/src/libs/dto/property/property.input.ts");
+const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let PropertyResolver = class PropertyResolver {
+    constructor(propertyService) {
+        this.propertyService = propertyService;
+    }
+    async createProperty(input, memberId) {
+        console.log('Mutation: createProperty');
+        input.memberId = memberId;
+        return await this.propertyService.createProperty(input);
+    }
+};
+exports.PropertyResolver = PropertyResolver;
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.AGENT),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)(() => property_1.Property),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof property_input_1.PropertyInput !== "undefined" && property_input_1.PropertyInput) === "function" ? _b : Object, typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object]),
+    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], PropertyResolver.prototype, "createProperty", null);
+exports.PropertyResolver = PropertyResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof property_service_1.PropertyService !== "undefined" && property_service_1.PropertyService) === "function" ? _a : Object])
+], PropertyResolver);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/property/property.service.ts":
+/*!*********************************************************************!*\
+  !*** ./apps/nestar-api/src/components/property/property.service.ts ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PropertyService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const member_service_1 = __webpack_require__(/*! ../member/member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+let PropertyService = class PropertyService {
+    constructor(propertyModel, memberService) {
+        this.propertyModel = propertyModel;
+        this.memberService = memberService;
+    }
+    async createProperty(input) {
+        try {
+            const result = await this.propertyModel.create(input);
+            await this.memberService.memberStatusEditor({ _id: result.memberId, targetKey: 'memberProperties', modifier: 1 });
+            return result;
+        }
+        catch (err) {
+            console.log('Error Service.modul:', err.message);
+            throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
+        }
+    }
+};
+exports.PropertyService = PropertyService;
+exports.PropertyService = PropertyService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)('Property')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object])
+], PropertyService);
 
 
 /***/ }),
@@ -1667,6 +1802,238 @@ exports.MemberUpdate = MemberUpdate = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/dto/property/property.input.ts":
+/*!*****************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/property/property.input.ts ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PropertyInput = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
+let PropertyInput = class PropertyInput {
+};
+exports.PropertyInput = PropertyInput;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyType),
+    __metadata("design:type", typeof (_a = typeof property_enum_1.PropertyType !== "undefined" && property_enum_1.PropertyType) === "function" ? _a : Object)
+], PropertyInput.prototype, "propertyType", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyLocation),
+    __metadata("design:type", typeof (_b = typeof property_enum_1.PropertyLocation !== "undefined" && property_enum_1.PropertyLocation) === "function" ? _b : Object)
+], PropertyInput.prototype, "propertyLocation", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 100),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], PropertyInput.prototype, "propertyAddress", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 100),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], PropertyInput.prototype, "propertyTitle", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => Number),
+    __metadata("design:type", Number)
+], PropertyInput.prototype, "propertyPrice", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => Number),
+    __metadata("design:type", Number)
+], PropertyInput.prototype, "propertySquare", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PropertyInput.prototype, "propertyBeds", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PropertyInput.prototype, "propertyRooms", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => [String]),
+    __metadata("design:type", String)
+], PropertyInput.prototype, "propertyImages", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(5, 500),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PropertyInput.prototype, "propertyDesc", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Boolean)
+], PropertyInput.prototype, "propertyBarter", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Boolean)
+], PropertyInput.prototype, "propertyRent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
+], PropertyInput.prototype, "constructedAt", void 0);
+exports.PropertyInput = PropertyInput = __decorate([
+    (0, graphql_1.InputType)()
+], PropertyInput);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/property/property.ts":
+/*!***********************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/property/property.ts ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Property = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
+let Property = class Property {
+};
+exports.Property = Property;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], Property.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => property_enum_1.PropertyType),
+    __metadata("design:type", typeof (_b = typeof property_enum_1.PropertyType !== "undefined" && property_enum_1.PropertyType) === "function" ? _b : Object)
+], Property.prototype, "propertyType", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => property_enum_1.PropertyStatus),
+    __metadata("design:type", typeof (_c = typeof property_enum_1.PropertyStatus !== "undefined" && property_enum_1.PropertyStatus) === "function" ? _c : Object)
+], Property.prototype, "propertyStatus", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => property_enum_1.PropertyLocation),
+    __metadata("design:type", typeof (_d = typeof property_enum_1.PropertyLocation !== "undefined" && property_enum_1.PropertyLocation) === "function" ? _d : Object)
+], Property.prototype, "propertyLocation", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Property.prototype, "propertyAddress", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Property.prototype, "propertyTitle", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Number),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyPrice", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Number),
+    __metadata("design:type", Number)
+], Property.prototype, "propertySquare", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyBeds", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyRooms", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyViews", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyLikes", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyComments", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Property.prototype, "propertyRank", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [String]),
+    __metadata("design:type", String)
+], Property.prototype, "propertyImages", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Property.prototype, "propertyDesc", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], Property.prototype, "propertyBarter", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], Property.prototype, "propertyRent", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object)
+], Property.prototype, "memberId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], Property.prototype, "soldAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
+], Property.prototype, "deletedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_h = typeof Date !== "undefined" && Date) === "function" ? _h : Object)
+], Property.prototype, "constructedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_j = typeof Date !== "undefined" && Date) === "function" ? _j : Object)
+], Property.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_k = typeof Date !== "undefined" && Date) === "function" ? _k : Object)
+], Property.prototype, "updatedAt", void 0);
+exports.Property = Property = __decorate([
+    (0, graphql_1.ObjectType)()
+], Property);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/enums/common.enum.ts":
 /*!*******************************************************!*\
   !*** ./apps/nestar-api/src/libs/enums/common.enum.ts ***!
@@ -1741,6 +2108,54 @@ var MemberAuthType;
     MemberAuthType["TELEGRAM"] = "TELEGRAM";
 })(MemberAuthType || (exports.MemberAuthType = MemberAuthType = {}));
 (0, graphql_1.registerEnumType)(MemberAuthType, { name: 'MemberAuthType' });
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/enums/property.enum.ts":
+/*!*********************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/property.enum.ts ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PropertyLocation = exports.PropertyStatus = exports.PropertyType = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var PropertyType;
+(function (PropertyType) {
+    PropertyType["APARTMENT"] = "APARTMENT";
+    PropertyType["VILLA"] = "VILLA";
+    PropertyType["HOUSE"] = "HOUSE";
+})(PropertyType || (exports.PropertyType = PropertyType = {}));
+(0, graphql_1.registerEnumType)(PropertyType, {
+    name: 'PropertyType',
+});
+var PropertyStatus;
+(function (PropertyStatus) {
+    PropertyStatus["HOLD"] = "HOLD";
+    PropertyStatus["ACTIVE"] = "ACTIVE";
+    PropertyStatus["SOLD"] = "SOLD";
+    PropertyStatus["DELETE"] = "DELETE";
+})(PropertyStatus || (exports.PropertyStatus = PropertyStatus = {}));
+(0, graphql_1.registerEnumType)(PropertyStatus, {
+    name: 'PropertyStatus',
+});
+var PropertyLocation;
+(function (PropertyLocation) {
+    PropertyLocation["SEOUL"] = "SEOUL";
+    PropertyLocation["BUSAN"] = "BUSAN";
+    PropertyLocation["INCHEON"] = "INCHEON";
+    PropertyLocation["DAEGU"] = "DAEGU";
+    PropertyLocation["GYEONGJU"] = "GYEONGJU";
+    PropertyLocation["GWANGJU"] = "GWANGJU";
+    PropertyLocation["CHONJU"] = "CHONJU";
+    PropertyLocation["DAEJON"] = "DAEJON";
+    PropertyLocation["JEJU"] = "JEJU";
+})(PropertyLocation || (exports.PropertyLocation = PropertyLocation = {}));
+(0, graphql_1.registerEnumType)(PropertyLocation, {
+    name: 'PropertyLocation',
+});
 
 
 /***/ }),
@@ -1920,6 +2335,108 @@ const MemberSchema = new mongoose_1.Schema({
     },
 }, { timestamps: true, collection: 'members' });
 exports["default"] = MemberSchema;
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/schemas/Property.model.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/Property.model.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const property_enum_1 = __webpack_require__(/*! ../libs/enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
+const PropertySchema = new mongoose_1.Schema({
+    propertyType: {
+        type: String,
+        enum: property_enum_1.PropertyType,
+        required: true,
+    },
+    propertyStatus: {
+        type: String,
+        enum: property_enum_1.PropertyStatus,
+        default: property_enum_1.PropertyStatus.ACTIVE,
+    },
+    propertyLocation: {
+        type: String,
+        enum: property_enum_1.PropertyLocation,
+        required: true,
+    },
+    propertyAddress: {
+        type: String,
+        required: true,
+    },
+    propertyTitle: {
+        type: String,
+        required: true,
+    },
+    propertyPrice: {
+        type: Number,
+        required: true,
+    },
+    propertySquare: {
+        type: Number,
+        required: true,
+    },
+    propertyBeds: {
+        type: Number,
+        required: true,
+    },
+    propertyRooms: {
+        type: Number,
+        required: true,
+    },
+    propertyViews: {
+        type: Number,
+        default: 0,
+    },
+    propertyLikes: {
+        type: Number,
+        default: 0,
+    },
+    propertyComments: {
+        type: Number,
+        default: 0,
+    },
+    propertyRank: {
+        type: Number,
+        default: 0,
+    },
+    propertyImages: {
+        type: [String],
+        required: true,
+    },
+    propertyDesc: {
+        type: String,
+    },
+    propertyBarter: {
+        type: Boolean,
+        default: false,
+    },
+    propertyRent: {
+        type: Boolean,
+        default: false,
+    },
+    memberId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Member',
+    },
+    soldAt: {
+        type: Date,
+    },
+    deletedAt: {
+        type: Date,
+    },
+    constructedAt: {
+        type: Date,
+    },
+}, { timestamps: true, collection: 'properties' });
+PropertySchema.index({ propertyType: 1, propertyLocation: 1, propertyTitle: 1, propertyPrice: 1 }, { unique: true });
+exports["default"] = PropertySchema;
 
 
 /***/ }),
