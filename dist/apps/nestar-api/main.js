@@ -1114,7 +1114,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -1129,6 +1129,7 @@ const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMe
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const property_update_1 = __webpack_require__(/*! ../../libs/dto/property/property.update */ "./apps/nestar-api/src/libs/dto/property/property.update.ts");
 let PropertyResolver = class PropertyResolver {
     constructor(propertyService) {
         this.propertyService = propertyService;
@@ -1142,6 +1143,33 @@ let PropertyResolver = class PropertyResolver {
         console.log('Query: getProperty');
         const propertyId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.propertyService.getProperty(memberId, propertyId);
+    }
+    async updateProperty(input, memberId) {
+        console.log('Mutation: updateProperty');
+        input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
+        return await this.propertyService.updateProperty(memberId, input);
+    }
+    async getProperties(input, memberId) {
+        console.log('Query: getProperties');
+        return await this.propertyService.getProperties(memberId, input);
+    }
+    async getAgentProperties(input, memberId) {
+        console.log('Query: getAgentProperties');
+        return await this.propertyService.getAgentProperties(memberId, input);
+    }
+    async getAllPropertiesByAdmin(input, memberId) {
+        console.log('Query: getAllPropertiesByAdmin!');
+        return await this.propertyService.getAllPropertiesByAdmin(input);
+    }
+    async updatePropertyByAdmin(input) {
+        console.log('Mutation: updatePropertyByAdmin!');
+        input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
+        return await this.propertyService.updatePropertyByAdmin(input);
+    }
+    async removePropertyByAdmin(input) {
+        console.log('Mutation: removePropertyByAdmin!');
+        const propertyId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.propertyService.removePropertyByAdmin(propertyId);
     }
 };
 exports.PropertyResolver = PropertyResolver;
@@ -1157,13 +1185,70 @@ __decorate([
 ], PropertyResolver.prototype, "createProperty", null);
 __decorate([
     (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
-    (0, mongoose_1.Query)((returns) => property_1.Property),
+    (0, graphql_1.Query)((returns) => property_1.Property),
     __param(0, (0, graphql_1.Args)('propertyId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object]),
     __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], PropertyResolver.prototype, "getProperty", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.AGENT),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)((returns) => property_1.Property),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_g = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _g : Object, typeof (_h = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _h : Object]),
+    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
+], PropertyResolver.prototype, "updateProperty", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, graphql_1.Query)((returns) => property_1.Properties),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_k = typeof property_input_1.PropertiesInquiry !== "undefined" && property_input_1.PropertiesInquiry) === "function" ? _k : Object, typeof (_l = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _l : Object]),
+    __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
+], PropertyResolver.prototype, "getProperties", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.AGENT),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Query)((returns) => property_1.Properties),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_o = typeof property_input_1.AgentPropertiesInquiry !== "undefined" && property_input_1.AgentPropertiesInquiry) === "function" ? _o : Object, typeof (_p = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _p : Object]),
+    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+], PropertyResolver.prototype, "getAgentProperties", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Query)((returns) => property_1.Properties),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_r = typeof property_input_1.AllPropertiesInquiry !== "undefined" && property_input_1.AllPropertiesInquiry) === "function" ? _r : Object, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
+    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
+], PropertyResolver.prototype, "getAllPropertiesByAdmin", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)((returns) => property_1.Property),
+    __param(0, (0, graphql_1.Args)('input')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_u = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _u : Object]),
+    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
+], PropertyResolver.prototype, "updatePropertyByAdmin", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)((returns) => property_1.Property),
+    __param(0, (0, graphql_1.Args)('propertyId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
+], PropertyResolver.prototype, "removePropertyByAdmin", null);
 exports.PropertyResolver = PropertyResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof property_service_1.PropertyService !== "undefined" && property_service_1.PropertyService) === "function" ? _a : Object])
@@ -1202,6 +1287,8 @@ const member_service_1 = __webpack_require__(/*! ../member/member.service */ "./
 const property_enum_1 = __webpack_require__(/*! ../../libs/enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
 const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
 const view_service_1 = __webpack_require__(/*! ../view/view.service */ "./apps/nestar-api/src/components/view/view.service.ts");
+const moment = __webpack_require__(/*! moment */ "moment");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let PropertyService = class PropertyService {
     constructor(propertyModel, memberService, viewService) {
         this.propertyModel = propertyModel;
@@ -1231,7 +1318,7 @@ let PropertyService = class PropertyService {
             const viewInput = { memberId: memberId, viewRefId: propertyId, viewGroup: view_enum_1.ViewGroup.PROPERTY };
             const newView = await this.viewService.recordView(viewInput);
             if (newView) {
-                await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyViews', modifier: 1 });
+                await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyviews', modifier: 1 });
                 targetProperty.propertyViews++;
             }
         }
@@ -1241,10 +1328,177 @@ let PropertyService = class PropertyService {
     async propertyStatsEditor(input) {
         const { _id, targetKey, modifier } = input;
         return await this.propertyModel
-            .findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, {
+            .findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, {
             new: true,
         })
             .exec();
+    }
+    async updateProperty(memberId, input) {
+        let { propertyStatus, soldAt, deletedAt } = input;
+        const search = {
+            _id: input._id,
+            memberId: memberId,
+            propertyStatus: property_enum_1.PropertyStatus.ACTIVE,
+        };
+        if (propertyStatus === property_enum_1.PropertyStatus.SOLD)
+            soldAt = moment().toDate();
+        else if (propertyStatus === property_enum_1.PropertyStatus.DELETE)
+            deletedAt = moment().toDate();
+        const result = await this.propertyModel.findOneAndUpdate(search, input, { new: true }).exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        if (soldAt || deletedAt) {
+            await this.memberService.memberStatusEditor({
+                _id: memberId,
+                targetKey: 'memberProperties',
+                modifier: -1,
+            });
+        }
+        return result;
+    }
+    async getProperties(memberId, input) {
+        const match = { propertyStatus: property_enum_1.PropertyStatus.ACTIVE };
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        this.shapeMatchQuery(match, input);
+        console.log('match', match);
+        const result = await this.propertyModel
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    shapeMatchQuery(match, input) {
+        const { memberId, locationList, roomsList, bedsList, typeList, periodsRange, pricesRange, squaresRange, options, text, } = input.search;
+        if (memberId)
+            match.memberId = (0, config_1.shapeIntoMongoObjectId)(memberId);
+        if (locationList)
+            match.propertyLocation = { $in: locationList };
+        if (roomsList)
+            match.propertyRooms = { $in: roomsList };
+        if (bedsList)
+            match.propertyBeds = { $in: bedsList };
+        if (typeList)
+            match.propertyType = { $in: typeList };
+        if (pricesRange)
+            match.propertyPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
+        if (periodsRange)
+            match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
+        if (squaresRange)
+            match.squaresRange = { $gte: squaresRange.start, $lte: squaresRange.end };
+        if (text)
+            match.propertyTitle = { $regex: new RegExp(text, 'i') };
+        if (options) {
+            match['$or'] = options.map((ele) => {
+                return { [ele]: true };
+            });
+        }
+    }
+    async getAgentProperties(memberId, input) {
+        const { propertyStatus } = input.search;
+        if (propertyStatus === property_enum_1.PropertyStatus.DELETE)
+            throw new common_1.BadRequestException(common_enum_1.Message.NOT_ALLOWED_REQUEST);
+        const match = {
+            memberId: memberId,
+            propertyStatus: propertyStatus ?? { $ne: property_enum_1.PropertyStatus.DELETE },
+        };
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        const result = await this.propertyModel
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async getAllPropertiesByAdmin(input) {
+        const { propertyStatus, propertyLocationList } = input.search;
+        const match = {};
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        if (propertyStatus)
+            match.propertyStatus = propertyStatus;
+        if (propertyLocationList)
+            match.propertyLocationList = { $in: propertyLocationList };
+        const result = await this.propertyModel
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async updatePropertyByAdmin(input) {
+        let { propertyStatus, soldAt, deletedAt } = input;
+        const search = {
+            _id: input._id,
+            propertyStatus: property_enum_1.PropertyStatus.ACTIVE,
+        };
+        if (propertyStatus === property_enum_1.PropertyStatus.SOLD)
+            soldAt = moment().toDate();
+        else if (propertyStatus === property_enum_1.PropertyStatus.DELETE)
+            deletedAt = moment().toDate();
+        const result = await this.propertyModel
+            .findOneAndUpdate(search, input, {
+            new: true,
+        })
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        if (soldAt || deletedAt) {
+            await this.memberService.memberStatusEditor({
+                _id: result.memberId,
+                targetKey: 'memberProperties',
+                modifier: -1,
+            });
+        }
+        return result;
+    }
+    async removePropertyByAdmin(propertyId) {
+        const search = { _id: propertyId, propertyStatus: property_enum_1.PropertyStatus.DELETE };
+        const result = await this.propertyModel.findOneAndDelete(search).exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.REMOVE_FAILED);
+        return result;
     }
 };
 exports.PropertyService = PropertyService;
@@ -1407,10 +1661,19 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableMembertSorts = exports.availableAgentSorts = void 0;
+exports.lookupMember = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
-exports.availableAgentSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews", "memberRank"];
-exports.availableMembertSorts = ["createdAt", "updatedAt", "memberLikes", "memberViews"];
+exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
+exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
+exports.availableOptions = ['propertyBarter', 'propertyRent'];
+exports.availablePropertySorts = [
+    'createdAt',
+    'updatedAt',
+    'propertyLikes',
+    'propertyViews',
+    'propertyRank',
+    'propertyPrice',
+];
 const uuid_1 = __webpack_require__(/*! uuid */ "uuid");
 const path = __webpack_require__(/*! path */ "path");
 exports.validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
@@ -1420,9 +1683,17 @@ const getSerialForImage = (filename) => {
 };
 exports.getSerialForImage = getSerialForImage;
 const shapeIntoMongoObjectId = (target) => {
-    return typeof target == "string" ? new bson_1.ObjectId(target) : target;
+    return typeof target === 'string' ? new bson_1.ObjectId(target) : target;
 };
 exports.shapeIntoMongoObjectId = shapeIntoMongoObjectId;
+exports.lookupMember = {
+    $lookup: {
+        from: 'members',
+        localField: 'memberId',
+        foreignField: '_id',
+        as: 'memberData',
+    },
+};
 
 
 /***/ }),
@@ -1529,7 +1800,7 @@ __decorate([
 ], AgentsInquiry.prototype, "limit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(config_1.availableAgentSorts),
+    (0, class_validator_1.IsIn)(config_1.availbleAgentSorts),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], AgentsInquiry.prototype, "sort", void 0);
@@ -1583,7 +1854,7 @@ __decorate([
 ], MembersInquiry.prototype, "limit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(config_1.availableMembertSorts),
+    (0, class_validator_1.IsIn)(config_1.availbleMemberSorts),
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], MembersInquiry.prototype, "sort", void 0);
@@ -1863,12 +2134,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PropertyInput = void 0;
+exports.AllPropertiesInquiry = exports.ALPISearch = exports.AgentPropertiesInquiry = exports.APISearch = exports.PropertiesInquiry = exports.PISearch = exports.PeriodsRange = exports.SquaresRange = exports.PricesRange = exports.PropertyInput = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
 const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./apps/nestar-api/src/libs/config.ts");
+const common_enum_1 = __webpack_require__(/*! ../../enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 let PropertyInput = class PropertyInput {
 };
 exports.PropertyInput = PropertyInput;
@@ -1921,7 +2195,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, graphql_1.Field)(() => [String]),
-    __metadata("design:type", String)
+    __metadata("design:type", Array)
 ], PropertyInput.prototype, "propertyImages", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -1947,6 +2221,234 @@ __decorate([
 exports.PropertyInput = PropertyInput = __decorate([
     (0, graphql_1.InputType)()
 ], PropertyInput);
+let PricesRange = class PricesRange {
+};
+exports.PricesRange = PricesRange;
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PricesRange.prototype, "start", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PricesRange.prototype, "end", void 0);
+exports.PricesRange = PricesRange = __decorate([
+    (0, graphql_1.InputType)()
+], PricesRange);
+let SquaresRange = class SquaresRange {
+};
+exports.SquaresRange = SquaresRange;
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], SquaresRange.prototype, "start", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], SquaresRange.prototype, "end", void 0);
+exports.SquaresRange = SquaresRange = __decorate([
+    (0, graphql_1.InputType)()
+], SquaresRange);
+let PeriodsRange = class PeriodsRange {
+};
+exports.PeriodsRange = PeriodsRange;
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_d = typeof Date !== "undefined" && Date) === "function" ? _d : Object)
+], PeriodsRange.prototype, "start", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], PeriodsRange.prototype, "end", void 0);
+exports.PeriodsRange = PeriodsRange = __decorate([
+    (0, graphql_1.InputType)()
+], PeriodsRange);
+let PISearch = class PISearch {
+};
+exports.PISearch = PISearch;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", typeof (_f = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _f : Object)
+], PISearch.prototype, "memberId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [property_enum_1.PropertyLocation], { nullable: true }),
+    __metadata("design:type", Array)
+], PISearch.prototype, "locationList", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [property_enum_1.PropertyType], { nullable: true }),
+    __metadata("design:type", Array)
+], PISearch.prototype, "typeList", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [graphql_1.Int], { nullable: true }),
+    __metadata("design:type", Array)
+], PISearch.prototype, "roomsList", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [graphql_1.Int], { nullable: true }),
+    __metadata("design:type", Array)
+], PISearch.prototype, "bedsList", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availableOptions, { each: true }),
+    (0, graphql_1.Field)(() => [String], { nullable: true }),
+    __metadata("design:type", Array)
+], PISearch.prototype, "options", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => PricesRange, { nullable: true }),
+    __metadata("design:type", PricesRange)
+], PISearch.prototype, "pricesRange", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => PeriodsRange, { nullable: true }),
+    __metadata("design:type", PeriodsRange)
+], PISearch.prototype, "periodsRange", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => SquaresRange, { nullable: true }),
+    __metadata("design:type", SquaresRange)
+], PISearch.prototype, "squaresRange", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PISearch.prototype, "text", void 0);
+exports.PISearch = PISearch = __decorate([
+    (0, graphql_1.InputType)()
+], PISearch);
+let PropertiesInquiry = class PropertiesInquiry {
+};
+exports.PropertiesInquiry = PropertiesInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PropertiesInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PropertiesInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availablePropertySorts),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PropertiesInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_g = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _g : Object)
+], PropertiesInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => PISearch),
+    __metadata("design:type", PISearch)
+], PropertiesInquiry.prototype, "search", void 0);
+exports.PropertiesInquiry = PropertiesInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], PropertiesInquiry);
+let APISearch = class APISearch {
+};
+exports.APISearch = APISearch;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyStatus, { nullable: true }),
+    __metadata("design:type", typeof (_h = typeof property_enum_1.PropertyStatus !== "undefined" && property_enum_1.PropertyStatus) === "function" ? _h : Object)
+], APISearch.prototype, "propertyStatus", void 0);
+exports.APISearch = APISearch = __decorate([
+    (0, graphql_1.InputType)()
+], APISearch);
+let AgentPropertiesInquiry = class AgentPropertiesInquiry {
+};
+exports.AgentPropertiesInquiry = AgentPropertiesInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AgentPropertiesInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AgentPropertiesInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availablePropertySorts),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], AgentPropertiesInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_j = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _j : Object)
+], AgentPropertiesInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => APISearch),
+    __metadata("design:type", APISearch)
+], AgentPropertiesInquiry.prototype, "search", void 0);
+exports.AgentPropertiesInquiry = AgentPropertiesInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], AgentPropertiesInquiry);
+let ALPISearch = class ALPISearch {
+};
+exports.ALPISearch = ALPISearch;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyStatus, { nullable: true }),
+    __metadata("design:type", typeof (_k = typeof property_enum_1.PropertyStatus !== "undefined" && property_enum_1.PropertyStatus) === "function" ? _k : Object)
+], ALPISearch.prototype, "propertyStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [property_enum_1.PropertyLocation], { nullable: true }),
+    __metadata("design:type", Array)
+], ALPISearch.prototype, "propertyLocationList", void 0);
+exports.ALPISearch = ALPISearch = __decorate([
+    (0, graphql_1.InputType)()
+], ALPISearch);
+let AllPropertiesInquiry = class AllPropertiesInquiry {
+};
+exports.AllPropertiesInquiry = AllPropertiesInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AllPropertiesInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AllPropertiesInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availablePropertySorts),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], AllPropertiesInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_l = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _l : Object)
+], AllPropertiesInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => ALPISearch),
+    __metadata("design:type", ALPISearch)
+], AllPropertiesInquiry.prototype, "search", void 0);
+exports.AllPropertiesInquiry = AllPropertiesInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], AllPropertiesInquiry);
 
 
 /***/ }),
@@ -1969,7 +2471,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Property = void 0;
+exports.Properties = exports.Property = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
@@ -2080,6 +2582,135 @@ __decorate([
 exports.Property = Property = __decorate([
     (0, graphql_1.ObjectType)()
 ], Property);
+let Properties = class Properties {
+};
+exports.Properties = Properties;
+__decorate([
+    (0, graphql_1.Field)(() => [Property]),
+    __metadata("design:type", Array)
+], Properties.prototype, "list", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [member_1.TotalCounter], { nullable: true }),
+    __metadata("design:type", Array)
+], Properties.prototype, "metaCounter", void 0);
+exports.Properties = Properties = __decorate([
+    (0, graphql_1.ObjectType)()
+], Properties);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/property/property.update.ts":
+/*!******************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/property/property.update.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PropertyUpdate = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let PropertyUpdate = class PropertyUpdate {
+};
+exports.PropertyUpdate = PropertyUpdate;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], PropertyUpdate.prototype, "_id", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyType, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof property_enum_1.PropertyType !== "undefined" && property_enum_1.PropertyType) === "function" ? _b : Object)
+], PropertyUpdate.prototype, "propertyType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyStatus, { nullable: true }),
+    __metadata("design:type", typeof (_c = typeof property_enum_1.PropertyStatus !== "undefined" && property_enum_1.PropertyStatus) === "function" ? _c : Object)
+], PropertyUpdate.prototype, "propertyStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => property_enum_1.PropertyLocation, { nullable: true }),
+    __metadata("design:type", typeof (_d = typeof property_enum_1.PropertyLocation !== "undefined" && property_enum_1.PropertyLocation) === "function" ? _d : Object)
+], PropertyUpdate.prototype, "propertyLocation", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 100),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PropertyUpdate.prototype, "propertyAddress", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 100),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PropertyUpdate.prototype, "propertyTitle", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Number, { nullable: true }),
+    __metadata("design:type", Number)
+], PropertyUpdate.prototype, "propertyPrice", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Number, { nullable: true }),
+    __metadata("design:type", Number)
+], PropertyUpdate.prototype, "propertySquare", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], PropertyUpdate.prototype, "propertyBeds", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], PropertyUpdate.prototype, "propertyRooms", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => [String], { nullable: true }),
+    __metadata("design:type", Array)
+], PropertyUpdate.prototype, "propertyImages", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(5, 500),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PropertyUpdate.prototype, "propertyDesc", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Boolean)
+], PropertyUpdate.prototype, "propertyBarter", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Boolean)
+], PropertyUpdate.prototype, "propertyRent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], PropertyUpdate.prototype, "constructedAt", void 0);
+exports.PropertyUpdate = PropertyUpdate = __decorate([
+    (0, graphql_1.InputType)()
+], PropertyUpdate);
 
 
 /***/ }),
@@ -2649,6 +3280,16 @@ module.exports = require("express");
 /***/ ((module) => {
 
 module.exports = require("graphql-upload");
+
+/***/ }),
+
+/***/ "moment":
+/*!*************************!*\
+  !*** external "moment" ***!
+  \*************************/
+/***/ ((module) => {
+
+module.exports = require("moment");
 
 /***/ }),
 
