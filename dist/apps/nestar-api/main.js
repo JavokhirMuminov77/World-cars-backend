@@ -488,12 +488,276 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BoardArticleModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const board_article_resolver_1 = __webpack_require__(/*! ./board-article.resolver */ "./apps/nestar-api/src/components/board-article/board-article.resolver.ts");
+const board_article_service_1 = __webpack_require__(/*! ./board-article.service */ "./apps/nestar-api/src/components/board-article/board-article.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const BoardArticle_model_1 = __webpack_require__(/*! ../../schemas/BoardArticle.model */ "./apps/nestar-api/src/schemas/BoardArticle.model.ts");
+const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
+const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
 let BoardArticleModule = class BoardArticleModule {
 };
 exports.BoardArticleModule = BoardArticleModule;
 exports.BoardArticleModule = BoardArticleModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([
+                {
+                    name: 'BoardArticle',
+                    schema: BoardArticle_model_1.default,
+                },
+            ]),
+            auth_module_1.AuthModule,
+            member_module_1.MemberModule,
+            view_module_1.ViewModule
+        ],
+        providers: [board_article_resolver_1.BoardArticleResolver, board_article_service_1.BoardArticleService],
+        exports: [board_article_service_1.BoardArticleService],
+    })
 ], BoardArticleModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/board-article/board-article.resolver.ts":
+/*!********************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/board-article/board-article.resolver.ts ***!
+  \********************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const board_article_service_1 = __webpack_require__(/*! ./board-article.service */ "./apps/nestar-api/src/components/board-article/board-article.service.ts");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const board_article_input_1 = __webpack_require__(/*! ../../libs/dto/board-article/board-article.input */ "./apps/nestar-api/src/libs/dto/board-article/board-article.input.ts");
+const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const board_article_1 = __webpack_require__(/*! ../../libs/dto/board-article/board-article */ "./apps/nestar-api/src/libs/dto/board-article/board-article.ts");
+const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const board_article_update_1 = __webpack_require__(/*! ../../libs/dto/board-article/board-article.update */ "./apps/nestar-api/src/libs/dto/board-article/board-article.update.ts");
+let BoardArticleResolver = class BoardArticleResolver {
+    constructor(boardArticleService) {
+        this.boardArticleService = boardArticleService;
+    }
+    async createBoardArticle(input, memberId) {
+        console.log('Mutation: createBoardArticle');
+        return await this.boardArticleService.createBoardArticle(memberId, input);
+    }
+    async getBoardArticle(input, memberId) {
+        console.log('Query: getProperty');
+        const articleId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.boardArticleService.getBoardArticle(memberId, articleId);
+    }
+    async updateBoardArticle(input, memberId) {
+        console.log('Mutation: updateBoardArticle');
+        input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
+        return await this.boardArticleService.updateBoardArticle(memberId, input);
+    }
+    async geteBoardArticles(input, memberId) {
+        console.log('Query: getBoardArticles');
+        return await this.boardArticleService.getBoardArticle(memberId, input);
+    }
+};
+exports.BoardArticleResolver = BoardArticleResolver;
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof board_article_input_1.BoardArticleInput !== "undefined" && board_article_input_1.BoardArticleInput) === "function" ? _b : Object, typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object]),
+    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], BoardArticleResolver.prototype, "createBoardArticle", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, graphql_1.Mutation)((returns) => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('articleId')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object]),
+    __metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
+], BoardArticleResolver.prototype, "getBoardArticle", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)(() => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_g = typeof board_article_update_1.BoardArticleUpdate !== "undefined" && board_article_update_1.BoardArticleUpdate) === "function" ? _g : Object, typeof (_h = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _h : Object]),
+    __metadata("design:returntype", typeof (_j = typeof Promise !== "undefined" && Promise) === "function" ? _j : Object)
+], BoardArticleResolver.prototype, "updateBoardArticle", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, common_1.Query)((returns) => board_article_1.BoardArticles),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_k = typeof board_article_input_1.BoardArticlesInquiry !== "undefined" && board_article_input_1.BoardArticlesInquiry) === "function" ? _k : Object, typeof (_l = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _l : Object]),
+    __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
+], BoardArticleResolver.prototype, "geteBoardArticles", null);
+exports.BoardArticleResolver = BoardArticleResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof board_article_service_1.BoardArticleService !== "undefined" && board_article_service_1.BoardArticleService) === "function" ? _a : Object])
+], BoardArticleResolver);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/board-article/board-article.service.ts":
+/*!*******************************************************************************!*\
+  !*** ./apps/nestar-api/src/components/board-article/board-article.service.ts ***!
+  \*******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_service_1 = __webpack_require__(/*! ../member/member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const view_service_1 = __webpack_require__(/*! ../view/view.service */ "./apps/nestar-api/src/components/view/view.service.ts");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const board_article_enum_1 = __webpack_require__(/*! ../../libs/enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
+const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+let BoardArticleService = class BoardArticleService {
+    constructor(boardArticleModule, memberService, viewService) {
+        this.boardArticleModule = boardArticleModule;
+        this.memberService = memberService;
+        this.viewService = viewService;
+    }
+    async createBoardArticle(memberId, input) {
+        input.memberId = memberId;
+        try {
+            const result = await this.boardArticleModule.create(input);
+            await this.memberService.memberStatusEditor({
+                _id: memberId,
+                targetKey: 'memberArticles',
+                modifier: 1,
+            });
+            return result;
+        }
+        catch (err) {
+            console.log('Error, Service.modul:', err.message);
+            throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
+        }
+    }
+    async getBoardArticle(memberId, articleId) {
+        const search = {
+            _id: articleId,
+            articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE,
+        };
+        const targetBoardArticle = await this.boardArticleModule.findOne(search).lean().exec();
+        if (!targetBoardArticle)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        if (memberId) {
+            const viewInput = { memberId: memberId, viewRefId: articleId, viewGroup: view_enum_1.ViewGroup.ARTICLE };
+            const newView = await this.viewService.recordView(viewInput);
+            if (newView) {
+                await this.boardArticleStatsEditor({ _id: articleId, targetKey: 'articleViews', modifier: 1 });
+                targetBoardArticle.articleViews++;
+            }
+        }
+        targetBoardArticle.memberData = await this.memberService.getMember(null, targetBoardArticle.memberId);
+        return targetBoardArticle;
+    }
+    async updateBoardArticle(memberId, input) {
+        const { _id, articleStatus } = input;
+        const result = await this.boardArticleModule
+            .findOneAndUpdate({ _id: _id, memberId: memberId, articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE }, input, {
+            new: true,
+        })
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        if (articleStatus === board_article_enum_1.BoardArticleStatus.DELETE) {
+            await this.memberService.memberStatusEditor({
+                _id: memberId,
+                targetKey: 'memberArticles',
+                modifier: -1,
+            });
+        }
+        return result;
+    }
+    async getBoardArticles(memberId, input) {
+        const { articleCategory, text } = input.search;
+        const match = { articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE };
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        if (articleCategory)
+            match.articleCategory = articleCategory;
+        if (text)
+            match.articleTitle = { $regex: new RegExp(text, 'i') };
+        if (input.search?.memberId) {
+            match.memberId = (0, config_1.shapeIntoMongoObjectId)(input.search.memberId);
+        }
+        console.log('match:', match);
+        const result = await this.boardArticleModule
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    mataCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async boardArticleStatsEditor(input) {
+        const { _id, targetKey, modifier } = input;
+        return await this.boardArticleModule
+            .findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, {
+            new: true,
+        })
+            .exec();
+    }
+};
+exports.BoardArticleService = BoardArticleService;
+exports.BoardArticleService = BoardArticleService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)('BoardArticle')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object])
+], BoardArticleService);
 
 
 /***/ }),
@@ -1698,6 +1962,324 @@ exports.lookupMember = {
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/dto/board-article/board-article.input.ts":
+/*!***************************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/board-article/board-article.input.ts ***!
+  \***************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AllBoardArticlesInquiry = exports.BoardArticlesInquiry = exports.BoardArticleInput = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const board_article_enum_1 = __webpack_require__(/*! ../../enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
+const common_enum_1 = __webpack_require__(/*! ../../enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+let BoardArticleInput = class BoardArticleInput {
+};
+exports.BoardArticleInput = BoardArticleInput;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleCategory),
+    __metadata("design:type", typeof (_a = typeof board_article_enum_1.BoardArticleCategory !== "undefined" && board_article_enum_1.BoardArticleCategory) === "function" ? _a : Object)
+], BoardArticleInput.prototype, "articleCategory", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 50),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], BoardArticleInput.prototype, "articleTitle", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 250),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], BoardArticleInput.prototype, "articleContent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticleInput.prototype, "articleImage", void 0);
+exports.BoardArticleInput = BoardArticleInput = __decorate([
+    (0, graphql_1.InputType)()
+], BoardArticleInput);
+let BAISearch = class BAISearch {
+};
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleCategory, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof board_article_enum_1.BoardArticleCategory !== "undefined" && board_article_enum_1.BoardArticleCategory) === "function" ? _b : Object)
+], BAISearch.prototype, "articleCategory", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BAISearch.prototype, "text", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object)
+], BAISearch.prototype, "memberId", void 0);
+BAISearch = __decorate([
+    (0, graphql_1.InputType)()
+], BAISearch);
+let BoardArticlesInquiry = class BoardArticlesInquiry {
+};
+exports.BoardArticlesInquiry = BoardArticlesInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], BoardArticlesInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], BoardArticlesInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['createdAt', 'updatedAt', 'articleLikes', 'articleViews']),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticlesInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_d = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _d : Object)
+], BoardArticlesInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => BAISearch),
+    __metadata("design:type", BAISearch)
+], BoardArticlesInquiry.prototype, "search", void 0);
+exports.BoardArticlesInquiry = BoardArticlesInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], BoardArticlesInquiry);
+let ABAISearch = class ABAISearch {
+};
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleStatus, { nullable: true }),
+    __metadata("design:type", typeof (_e = typeof board_article_enum_1.BoardArticleStatus !== "undefined" && board_article_enum_1.BoardArticleStatus) === "function" ? _e : Object)
+], ABAISearch.prototype, "articleStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleCategory, { nullable: true }),
+    __metadata("design:type", typeof (_f = typeof board_article_enum_1.BoardArticleCategory !== "undefined" && board_article_enum_1.BoardArticleCategory) === "function" ? _f : Object)
+], ABAISearch.prototype, "articleCategory", void 0);
+ABAISearch = __decorate([
+    (0, graphql_1.InputType)()
+], ABAISearch);
+let AllBoardArticlesInquiry = class AllBoardArticlesInquiry {
+};
+exports.AllBoardArticlesInquiry = AllBoardArticlesInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AllBoardArticlesInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], AllBoardArticlesInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['createdAt', 'updatedAt', 'articleLikes', 'articleViews']),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], AllBoardArticlesInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_g = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _g : Object)
+], AllBoardArticlesInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => ABAISearch),
+    __metadata("design:type", ABAISearch)
+], AllBoardArticlesInquiry.prototype, "search", void 0);
+exports.AllBoardArticlesInquiry = AllBoardArticlesInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], AllBoardArticlesInquiry);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/board-article/board-article.ts":
+/*!*********************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/board-article/board-article.ts ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticles = exports.BoardArticle = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const board_article_enum_1 = __webpack_require__(/*! ../../enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_1 = __webpack_require__(/*! ../member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+let BoardArticle = class BoardArticle {
+};
+exports.BoardArticle = BoardArticle;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], BoardArticle.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleCategory),
+    __metadata("design:type", typeof (_b = typeof board_article_enum_1.BoardArticleCategory !== "undefined" && board_article_enum_1.BoardArticleCategory) === "function" ? _b : Object)
+], BoardArticle.prototype, "articleCategory", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleStatus),
+    __metadata("design:type", typeof (_c = typeof board_article_enum_1.BoardArticleStatus !== "undefined" && board_article_enum_1.BoardArticleStatus) === "function" ? _c : Object)
+], BoardArticle.prototype, "articleStatus", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], BoardArticle.prototype, "articleTitle", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], BoardArticle.prototype, "articleContent", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticle.prototype, "articleImage", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], BoardArticle.prototype, "articleViews", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], BoardArticle.prototype, "articleLikes", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], BoardArticle.prototype, "articleComments", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_d = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _d : Object)
+], BoardArticle.prototype, "memberId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_e = typeof Date !== "undefined" && Date) === "function" ? _e : Object)
+], BoardArticle.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], BoardArticle.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
+    __metadata("design:type", typeof (_g = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _g : Object)
+], BoardArticle.prototype, "memberData", void 0);
+exports.BoardArticle = BoardArticle = __decorate([
+    (0, graphql_1.ObjectType)()
+], BoardArticle);
+let BoardArticles = class BoardArticles {
+};
+exports.BoardArticles = BoardArticles;
+__decorate([
+    (0, graphql_1.Field)(() => [BoardArticle]),
+    __metadata("design:type", Array)
+], BoardArticles.prototype, "list", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [member_1.TotalCounter], { nullable: true }),
+    __metadata("design:type", Array)
+], BoardArticles.prototype, "metaCounter", void 0);
+exports.BoardArticles = BoardArticles = __decorate([
+    (0, graphql_1.ObjectType)()
+], BoardArticles);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/board-article/board-article.update.ts":
+/*!****************************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/board-article/board-article.update.ts ***!
+  \****************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleUpdate = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const board_article_enum_1 = __webpack_require__(/*! ../../enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let BoardArticleUpdate = class BoardArticleUpdate {
+};
+exports.BoardArticleUpdate = BoardArticleUpdate;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], BoardArticleUpdate.prototype, "_id", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => board_article_enum_1.BoardArticleStatus, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof board_article_enum_1.BoardArticleStatus !== "undefined" && board_article_enum_1.BoardArticleStatus) === "function" ? _b : Object)
+], BoardArticleUpdate.prototype, "articleStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 50),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticleUpdate.prototype, "articleTitle", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(3, 250),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticleUpdate.prototype, "articleContent", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], BoardArticleUpdate.prototype, "articleImage", void 0);
+exports.BoardArticleUpdate = BoardArticleUpdate = __decorate([
+    (0, graphql_1.InputType)()
+], BoardArticleUpdate);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/dto/member/member.input.ts":
 /*!*************************************************************!*\
   !*** ./apps/nestar-api/src/libs/dto/member/member.input.ts ***!
@@ -2715,6 +3297,38 @@ exports.PropertyUpdate = PropertyUpdate = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/enums/board-article.enum.ts":
+/*!**************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/board-article.enum.ts ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BoardArticleStatus = exports.BoardArticleCategory = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var BoardArticleCategory;
+(function (BoardArticleCategory) {
+    BoardArticleCategory["FREE"] = "FREE";
+    BoardArticleCategory["RECOMMEND"] = "RECOMMEND";
+    BoardArticleCategory["NEWS"] = "NEWS";
+    BoardArticleCategory["HUMOR"] = "HUMOR";
+})(BoardArticleCategory || (exports.BoardArticleCategory = BoardArticleCategory = {}));
+(0, graphql_1.registerEnumType)(BoardArticleCategory, {
+    name: 'BoardArticleCategory',
+});
+var BoardArticleStatus;
+(function (BoardArticleStatus) {
+    BoardArticleStatus["ACTIVE"] = "ACTIVE";
+    BoardArticleStatus["DELETE"] = "DELETE";
+})(BoardArticleStatus || (exports.BoardArticleStatus = BoardArticleStatus = {}));
+(0, graphql_1.registerEnumType)(BoardArticleStatus, {
+    name: 'BoardArticleStatus',
+});
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/enums/common.enum.ts":
 /*!*******************************************************!*\
   !*** ./apps/nestar-api/src/libs/enums/common.enum.ts ***!
@@ -2908,6 +3522,61 @@ exports.LoggingInterceptor = LoggingInterceptor;
 exports.LoggingInterceptor = LoggingInterceptor = __decorate([
     (0, common_1.Injectable)()
 ], LoggingInterceptor);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/schemas/BoardArticle.model.ts":
+/*!***********************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/BoardArticle.model.ts ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const board_article_enum_1 = __webpack_require__(/*! ../libs/enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
+const BoardArticleSchema = new mongoose_1.Schema({
+    articleCategory: {
+        type: String,
+        enum: board_article_enum_1.BoardArticleCategory,
+        required: true,
+    },
+    articleStatus: {
+        type: String,
+        enum: board_article_enum_1.BoardArticleStatus,
+        default: board_article_enum_1.BoardArticleStatus.ACTIVE,
+    },
+    articleTitle: {
+        type: String,
+        required: true,
+    },
+    articleContent: {
+        type: String,
+        required: true,
+    },
+    articleImage: {
+        type: String,
+    },
+    articleLikes: {
+        type: Number,
+        default: 0,
+    },
+    articleViews: {
+        type: Number,
+        default: 0,
+    },
+    articleComments: {
+        type: Number,
+        default: 0,
+    },
+    memberId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Member',
+    },
+}, { timestamps: true, collection: 'boardArticles' });
+exports["default"] = BoardArticleSchema;
 
 
 /***/ }),
