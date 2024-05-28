@@ -490,8 +490,8 @@ exports.BoardArticleModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const board_article_resolver_1 = __webpack_require__(/*! ./board-article.resolver */ "./apps/nestar-api/src/components/board-article/board-article.resolver.ts");
 const board_article_service_1 = __webpack_require__(/*! ./board-article.service */ "./apps/nestar-api/src/components/board-article/board-article.service.ts");
-const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const BoardArticle_model_1 = __webpack_require__(/*! ../../schemas/BoardArticle.model */ "./apps/nestar-api/src/schemas/BoardArticle.model.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
 const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
@@ -501,15 +501,10 @@ exports.BoardArticleModule = BoardArticleModule;
 exports.BoardArticleModule = BoardArticleModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forFeature([
-                {
-                    name: 'BoardArticle',
-                    schema: BoardArticle_model_1.default,
-                },
-            ]),
+            mongoose_1.MongooseModule.forFeature([{ name: 'BoardArticle', schema: BoardArticle_model_1.default }]),
             auth_module_1.AuthModule,
             member_module_1.MemberModule,
-            view_module_1.ViewModule
+            view_module_1.ViewModule,
         ],
         providers: [board_article_resolver_1.BoardArticleResolver, board_article_service_1.BoardArticleService],
         exports: [board_article_service_1.BoardArticleService],
@@ -698,15 +693,15 @@ const board_article_enum_1 = __webpack_require__(/*! ../../libs/enums/board-arti
 const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let BoardArticleService = class BoardArticleService {
-    constructor(boardArticleModule, memberService, viewService) {
-        this.boardArticleModule = boardArticleModule;
+    constructor(boardArticleModel, memberService, viewService) {
+        this.boardArticleModel = boardArticleModel;
         this.memberService = memberService;
         this.viewService = viewService;
     }
     async createBoardArticle(memberId, input) {
         input.memberId = memberId;
         try {
-            const result = await this.boardArticleModule.create(input);
+            const result = await this.boardArticleModel.create(input);
             await this.memberService.memberStatusEditor({
                 _id: memberId,
                 targetKey: 'memberArticles',
@@ -715,7 +710,7 @@ let BoardArticleService = class BoardArticleService {
             return result;
         }
         catch (err) {
-            console.log('Error, Service.modul:', err.message);
+            console.log('Error, Service.model:', err.message);
             throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
         }
     }
@@ -724,9 +719,7 @@ let BoardArticleService = class BoardArticleService {
             _id: articleId,
             articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE,
         };
-        const targetBoardArticle = await this.boardArticleModule.findOne(search).lean().exec();
-        if (!targetBoardArticle)
-            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        const targetBoardArticle = await this.boardArticleModel.findOne(search).lean().exec();
         if (memberId) {
             const viewInput = { memberId: memberId, viewRefId: articleId, viewGroup: view_enum_1.ViewGroup.ARTICLE };
             const newView = await this.viewService.recordView(viewInput);
@@ -740,7 +733,7 @@ let BoardArticleService = class BoardArticleService {
     }
     async updateBoardArticle(memberId, input) {
         const { _id, articleStatus } = input;
-        const result = await this.boardArticleModule
+        const result = await this.boardArticleModel
             .findOneAndUpdate({ _id: _id, memberId: memberId, articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE }, input, {
             new: true,
         })
@@ -768,7 +761,7 @@ let BoardArticleService = class BoardArticleService {
             match.memberId = (0, config_1.shapeIntoMongoObjectId)(input.search.memberId);
         }
         console.log('match:', match);
-        const result = await this.boardArticleModule
+        const result = await this.boardArticleModel
             .aggregate([
             { $match: match },
             { $sort: sort },
@@ -780,7 +773,7 @@ let BoardArticleService = class BoardArticleService {
                         config_1.lookupMember,
                         { $unwind: '$memberData' },
                     ],
-                    mataCounter: [{ $count: 'total' }],
+                    metaCounter: [{ $count: 'total' }],
                 },
             },
         ])
@@ -793,11 +786,12 @@ let BoardArticleService = class BoardArticleService {
         const { articleStatus, articleCategory } = input.search;
         const match = {};
         const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        console.log('match:', match);
         if (articleStatus)
             match.articleStatus = articleStatus;
         if (articleCategory)
             match.articleCategory = articleCategory;
-        const result = await this.boardArticleModule
+        const result = await this.boardArticleModel
             .aggregate([
             { $match: match },
             { $sort: sort },
@@ -809,18 +803,18 @@ let BoardArticleService = class BoardArticleService {
                         config_1.lookupMember,
                         { $unwind: '$memberData' },
                     ],
-                    metaCOunter: [{ $count: 'total' }],
+                    metaCounter: [{ $count: 'total' }],
                 },
             },
         ])
             .exec();
-        if (!result)
+        if (!result.length)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
     }
     async updateBoardArticleByAdmin(input) {
         const { _id, articleStatus } = input;
-        const result = await this.boardArticleModule
+        const result = await this.boardArticleModel
             .findOneAndUpdate({ _id: _id, articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE }, input, {
             new: true,
         })
@@ -838,14 +832,14 @@ let BoardArticleService = class BoardArticleService {
     }
     async removeBoardArticleByAdmin(articleId) {
         const search = { _id: articleId, articleStatus: board_article_enum_1.BoardArticleStatus.DELETE };
-        const result = await this.boardArticleModule.findOneAndDelete(search).exec();
+        const result = await this.boardArticleModel.findOneAndDelete(search).exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.REMOVE_FAILED);
         return result;
     }
     async boardArticleStatsEditor(input) {
         const { _id, targetKey, modifier } = input;
-        return await this.boardArticleModule
+        return await this.boardArticleModel
             .findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, {
             new: true,
         })
@@ -878,12 +872,266 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommentModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const comment_resolver_1 = __webpack_require__(/*! ./comment.resolver */ "./apps/nestar-api/src/components/comment/comment.resolver.ts");
+const comment_service_1 = __webpack_require__(/*! ./comment.service */ "./apps/nestar-api/src/components/comment/comment.service.ts");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const Comment_model_1 = __webpack_require__(/*! ../../schemas/Comment.model */ "./apps/nestar-api/src/schemas/Comment.model.ts");
+const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
+const property_module_1 = __webpack_require__(/*! ../property/property.module */ "./apps/nestar-api/src/components/property/property.module.ts");
+const board_article_module_1 = __webpack_require__(/*! ../board-article/board-article.module */ "./apps/nestar-api/src/components/board-article/board-article.module.ts");
 let CommentModule = class CommentModule {
 };
 exports.CommentModule = CommentModule;
 exports.CommentModule = CommentModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'Comment', schema: Comment_model_1.default }]),
+            auth_module_1.AuthModule,
+            member_module_1.MemberModule,
+            property_module_1.PropertyModule,
+            board_article_module_1.BoardArticleModule,
+        ],
+        providers: [comment_resolver_1.CommentResolver, comment_service_1.CommentService],
+    })
 ], CommentModule);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/comment/comment.resolver.ts":
+/*!********************************************************************!*\
+  !*** ./apps/nestar-api/src/components/comment/comment.resolver.ts ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentResolver = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const comment_service_1 = __webpack_require__(/*! ./comment.service */ "./apps/nestar-api/src/components/comment/comment.service.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
+const comment_update_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.update */ "./apps/nestar-api/src/libs/dto/comment/comment.update.ts");
+const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
+const comment_input_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.input */ "./apps/nestar-api/src/libs/dto/comment/comment.input.ts");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
+const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
+const comment_1 = __webpack_require__(/*! ../../libs/dto/comment/comment */ "./apps/nestar-api/src/libs/dto/comment/comment.ts");
+let CommentResolver = class CommentResolver {
+    constructor(commentService) {
+        this.commentService = commentService;
+    }
+    async createComment(input, memberId) {
+        console.log('Mutation: createComment');
+        return await this.commentService.createComment(memberId, input);
+    }
+    async updateComment(input, memberId) {
+        console.log('Mutation: updateComment!');
+        input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
+        return await this.commentService.updateComment(memberId, input);
+    }
+    async getComments(input, memberId) {
+        console.log('Query: getComments!');
+        input.search.commentRefId = (0, config_1.shapeIntoMongoObjectId)(input.search.commentRefId);
+        return await this.commentService.getComments(memberId, input);
+    }
+    async removeCommentByAdmin(input) {
+        console.log('Mutation: removeCommentByAdmin!');
+        const commentId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.commentService.removeCommentByAdmin(commentId);
+    }
+};
+exports.CommentResolver = CommentResolver;
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => comment_1.Comment),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_b = typeof comment_input_1.CommentInput !== "undefined" && comment_input_1.CommentInput) === "function" ? _b : Object, typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object]),
+    __metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], CommentResolver.prototype, "createComment", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => comment_1.Comment),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_e = typeof comment_update_1.CommentUpdate !== "undefined" && comment_update_1.CommentUpdate) === "function" ? _e : Object, typeof (_f = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _f : Object]),
+    __metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+], CommentResolver.prototype, "updateComment", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, graphql_1.Query)((returns) => comment_1.Comments),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_h = typeof comment_input_1.CommentsInquiry !== "undefined" && comment_input_1.CommentsInquiry) === "function" ? _h : Object, typeof (_j = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _j : Object]),
+    __metadata("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+], CommentResolver.prototype, "getComments", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)((returns) => comment_1.Comment),
+    __param(0, (0, graphql_1.Args)('commentId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
+], CommentResolver.prototype, "removeCommentByAdmin", null);
+exports.CommentResolver = CommentResolver = __decorate([
+    (0, graphql_1.Resolver)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof comment_service_1.CommentService !== "undefined" && comment_service_1.CommentService) === "function" ? _a : Object])
+], CommentResolver);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/components/comment/comment.service.ts":
+/*!*******************************************************************!*\
+  !*** ./apps/nestar-api/src/components/comment/comment.service.ts ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_service_1 = __webpack_require__(/*! ../member/member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
+const property_service_1 = __webpack_require__(/*! ../property/property.service */ "./apps/nestar-api/src/components/property/property.service.ts");
+const board_article_service_1 = __webpack_require__(/*! ../board-article/board-article.service */ "./apps/nestar-api/src/components/board-article/board-article.service.ts");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const comment_enum_1 = __webpack_require__(/*! ../../libs/enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+let CommentService = class CommentService {
+    constructor(commentModel, memberService, propertyService, boardArticleServise) {
+        this.commentModel = commentModel;
+        this.memberService = memberService;
+        this.propertyService = propertyService;
+        this.boardArticleServise = boardArticleServise;
+    }
+    async createComment(memberId, input) {
+        input.memberId = memberId;
+        let result = null;
+        try {
+            result = await this.commentModel.create(input);
+        }
+        catch (err) {
+            console.log('Error. Service.model', err.message);
+            throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
+        }
+        switch (input.commentGroup) {
+            case comment_enum_1.CommentGroup.PROPERTY:
+                await this.propertyService.propertyStatsEditor({
+                    _id: input.commentRefId,
+                    targetKey: 'propertyComments',
+                    modifier: 1,
+                });
+                break;
+            case comment_enum_1.CommentGroup.ARTICLE:
+                await this.boardArticleServise.boardArticleStatsEditor({
+                    _id: input.commentRefId,
+                    targetKey: 'articleComments',
+                    modifier: 1,
+                });
+                break;
+            case comment_enum_1.CommentGroup.MEMBER:
+                await this.memberService.memberStatusEditor({
+                    _id: input.commentRefId,
+                    targetKey: 'memberComments',
+                    modifier: 1,
+                });
+                break;
+        }
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.CREATE_FAILED);
+        return result;
+    }
+    async updateComment(memberId, input) {
+        const { _id } = input;
+        const result = await this.commentModel
+            .findOneAndUpdate({
+            _id: _id,
+            memberId: memberId,
+            commentStatus: comment_enum_1.CommentStatus.ACTIVE,
+        }, input, {
+            new: true,
+        })
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        return result;
+    }
+    async getComments(memberId, input) {
+        const { commentRefId } = input.search;
+        const match = { commentRefId: commentRefId, commentStatus: comment_enum_1.CommentStatus.ACTIVE };
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        const result = await this.commentModel
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async removeCommentByAdmin(input) {
+        const result = await this.commentModel.findByIdAndDelete(input);
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.REMOVE_FAILED);
+        return result;
+    }
+};
+exports.CommentService = CommentService;
+exports.CommentService = CommentService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)('Comment')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof property_service_1.PropertyService !== "undefined" && property_service_1.PropertyService) === "function" ? _c : Object, typeof (_d = typeof board_article_service_1.BoardArticleService !== "undefined" && board_article_service_1.BoardArticleService) === "function" ? _d : Object])
+], CommentService);
 
 
 /***/ }),
@@ -906,8 +1154,8 @@ exports.ComponentsModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const member_module_1 = __webpack_require__(/*! ./member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
 const property_module_1 = __webpack_require__(/*! ./property/property.module */ "./apps/nestar-api/src/components/property/property.module.ts");
-const comment_module_1 = __webpack_require__(/*! ./comment/comment.module */ "./apps/nestar-api/src/components/comment/comment.module.ts");
 const auth_module_1 = __webpack_require__(/*! ./auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
+const comment_module_1 = __webpack_require__(/*! ./comment/comment.module */ "./apps/nestar-api/src/components/comment/comment.module.ts");
 const like_module_1 = __webpack_require__(/*! ./like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
 const view_module_1 = __webpack_require__(/*! ./view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
 const follow_module_1 = __webpack_require__(/*! ./follow/follow.module */ "./apps/nestar-api/src/components/follow/follow.module.ts");
@@ -917,7 +1165,16 @@ let ComponentsModule = class ComponentsModule {
 exports.ComponentsModule = ComponentsModule;
 exports.ComponentsModule = ComponentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [member_module_1.MemberModule, property_module_1.PropertyModule, comment_module_1.CommentModule, auth_module_1.AuthModule, like_module_1.LikeModule, view_module_1.ViewModule, follow_module_1.FollowModule, board_article_module_1.BoardArticleModule]
+        imports: [
+            member_module_1.MemberModule,
+            auth_module_1.AuthModule,
+            property_module_1.PropertyModule,
+            board_article_module_1.BoardArticleModule,
+            like_module_1.LikeModule,
+            view_module_1.ViewModule,
+            comment_module_1.CommentModule,
+            follow_module_1.FollowModule,
+        ],
     })
 ], ComponentsModule);
 
@@ -1405,7 +1662,7 @@ let MemberService = class MemberService {
     async memberStatusEditor(input) {
         console.log('executed!');
         const { _id, targetKey, modifier } = input;
-        return await this.memberModel.findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
+        return await this.memberModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
     }
 };
 exports.MemberService = MemberService;
@@ -1453,6 +1710,7 @@ exports.PropertyModule = PropertyModule = __decorate([
             member_module_1.MemberModule,
         ],
         providers: [property_resolver_1.PropertyResolver, property_service_1.PropertyService],
+        exports: [property_service_1.PropertyService],
     })
 ], PropertyModule);
 
@@ -2025,7 +2283,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lookupMember = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
+exports.lookupMember = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -2038,6 +2296,8 @@ exports.availablePropertySorts = [
     'propertyRank',
     'propertyPrice',
 ];
+exports.availableBoardArticleSorts = ['createdAt', 'updatedAt', 'articleLikes', 'articleViews'];
+exports.availableCommentSorts = ['createdAt', 'updatedAt'];
 const uuid_1 = __webpack_require__(/*! uuid */ "uuid");
 const path = __webpack_require__(/*! path */ "path");
 exports.validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
@@ -2376,6 +2636,233 @@ __decorate([
 exports.BoardArticleUpdate = BoardArticleUpdate = __decorate([
     (0, graphql_1.InputType)()
 ], BoardArticleUpdate);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/comment/comment.input.ts":
+/*!***************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/comment/comment.input.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentsInquiry = exports.CommentInput = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const comment_enum_1 = __webpack_require__(/*! ../../enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
+const common_enum_1 = __webpack_require__(/*! ../../enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./apps/nestar-api/src/libs/config.ts");
+let CommentInput = class CommentInput {
+};
+exports.CommentInput = CommentInput;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => comment_enum_1.CommentGroup),
+    __metadata("design:type", typeof (_a = typeof comment_enum_1.CommentGroup !== "undefined" && comment_enum_1.CommentGroup) === "function" ? _a : Object)
+], CommentInput.prototype, "commentGroup", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(1, 100),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], CommentInput.prototype, "commentContent", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object)
+], CommentInput.prototype, "commentRefId", void 0);
+exports.CommentInput = CommentInput = __decorate([
+    (0, graphql_1.InputType)()
+], CommentInput);
+let CISearch = class CISearch {
+};
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object)
+], CISearch.prototype, "commentRefId", void 0);
+CISearch = __decorate([
+    (0, graphql_1.InputType)()
+], CISearch);
+let CommentsInquiry = class CommentsInquiry {
+};
+exports.CommentsInquiry = CommentsInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CommentsInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CommentsInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(config_1.availableCommentSorts),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], CommentsInquiry.prototype, "sort", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => common_enum_1.Direction, { nullable: true }),
+    __metadata("design:type", typeof (_d = typeof common_enum_1.Direction !== "undefined" && common_enum_1.Direction) === "function" ? _d : Object)
+], CommentsInquiry.prototype, "direction", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => CISearch),
+    __metadata("design:type", CISearch)
+], CommentsInquiry.prototype, "search", void 0);
+exports.CommentsInquiry = CommentsInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], CommentsInquiry);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/comment/comment.ts":
+/*!*********************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/comment/comment.ts ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g, _h;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Comments = exports.Comment = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const comment_enum_1 = __webpack_require__(/*! ../../enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
+const member_1 = __webpack_require__(/*! ../member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+let Comment = class Comment {
+};
+exports.Comment = Comment;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], Comment.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => comment_enum_1.CommentStatus),
+    __metadata("design:type", typeof (_b = typeof comment_enum_1.CommentStatus !== "undefined" && comment_enum_1.CommentStatus) === "function" ? _b : Object)
+], Comment.prototype, "commentStatus", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => comment_enum_1.CommentGroup),
+    __metadata("design:type", typeof (_c = typeof comment_enum_1.CommentGroup !== "undefined" && comment_enum_1.CommentGroup) === "function" ? _c : Object)
+], Comment.prototype, "commentGroup", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", String)
+], Comment.prototype, "commentContent", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_d = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _d : Object)
+], Comment.prototype, "commentRefId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object)
+], Comment.prototype, "memberId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], Comment.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
+], Comment.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
+    __metadata("design:type", typeof (_h = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _h : Object)
+], Comment.prototype, "memberData", void 0);
+exports.Comment = Comment = __decorate([
+    (0, graphql_1.ObjectType)()
+], Comment);
+let Comments = class Comments {
+};
+exports.Comments = Comments;
+__decorate([
+    (0, graphql_1.Field)(() => [Comment]),
+    __metadata("design:type", Array)
+], Comments.prototype, "list", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [member_1.TotalCounter], { nullable: true }),
+    __metadata("design:type", Array)
+], Comments.prototype, "metaCounter", void 0);
+exports.Comments = Comments = __decorate([
+    (0, graphql_1.ObjectType)()
+], Comments);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/comment/comment.update.ts":
+/*!****************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/comment/comment.update.ts ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentUpdate = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const comment_enum_1 = __webpack_require__(/*! ../../enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let CommentUpdate = class CommentUpdate {
+};
+exports.CommentUpdate = CommentUpdate;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], CommentUpdate.prototype, "_id", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => comment_enum_1.CommentStatus, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof comment_enum_1.CommentStatus !== "undefined" && comment_enum_1.CommentStatus) === "function" ? _b : Object)
+], CommentUpdate.prototype, "commentStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Length)(1, 100),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], CommentUpdate.prototype, "commentContent", void 0);
+exports.CommentUpdate = CommentUpdate = __decorate([
+    (0, graphql_1.InputType)()
+], CommentUpdate);
 
 
 /***/ }),
@@ -3429,6 +3916,37 @@ var BoardArticleStatus;
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/enums/comment.enum.ts":
+/*!********************************************************!*\
+  !*** ./apps/nestar-api/src/libs/enums/comment.enum.ts ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommentGroup = exports.CommentStatus = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+var CommentStatus;
+(function (CommentStatus) {
+    CommentStatus["ACTIVE"] = "ACTIVE";
+    CommentStatus["DELETE"] = "DELETE";
+})(CommentStatus || (exports.CommentStatus = CommentStatus = {}));
+(0, graphql_1.registerEnumType)(CommentStatus, {
+    name: 'CommentStatus',
+});
+var CommentGroup;
+(function (CommentGroup) {
+    CommentGroup["MEMBER"] = "MEMBER";
+    CommentGroup["ARTICLE"] = "ARTICLE";
+    CommentGroup["PROPERTY"] = "PROPERTY";
+})(CommentGroup || (exports.CommentGroup = CommentGroup = {}));
+(0, graphql_1.registerEnumType)(CommentGroup, {
+    name: 'CommentGroup',
+});
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/enums/common.enum.ts":
 /*!*******************************************************!*\
   !*** ./apps/nestar-api/src/libs/enums/common.enum.ts ***!
@@ -3677,6 +4195,45 @@ const BoardArticleSchema = new mongoose_1.Schema({
     },
 }, { timestamps: true, collection: 'boardArticles' });
 exports["default"] = BoardArticleSchema;
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/schemas/Comment.model.ts":
+/*!******************************************************!*\
+  !*** ./apps/nestar-api/src/schemas/Comment.model.ts ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const comment_enum_1 = __webpack_require__(/*! ../libs/enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
+const CommentSchema = new mongoose_1.Schema({
+    commentStatus: {
+        type: String,
+        enum: comment_enum_1.CommentStatus,
+        default: comment_enum_1.CommentStatus.ACTIVE,
+    },
+    commentGroup: {
+        type: String,
+        enum: comment_enum_1.CommentGroup,
+        required: true,
+    },
+    commentContent: {
+        type: String,
+        required: true,
+    },
+    commentRefId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+    },
+    memberId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+    },
+}, { timestamps: true, collection: 'comments' });
+exports["default"] = CommentSchema;
 
 
 /***/ }),
