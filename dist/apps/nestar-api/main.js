@@ -538,7 +538,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BoardArticleResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -552,6 +552,9 @@ const board_article_1 = __webpack_require__(/*! ../../libs/dto/board-article/boa
 const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 const board_article_update_1 = __webpack_require__(/*! ../../libs/dto/board-article/board-article.update */ "./apps/nestar-api/src/libs/dto/board-article/board-article.update.ts");
+const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
 let BoardArticleResolver = class BoardArticleResolver {
     constructor(boardArticleService) {
         this.boardArticleService = boardArticleService;
@@ -572,7 +575,21 @@ let BoardArticleResolver = class BoardArticleResolver {
     }
     async geteBoardArticles(input, memberId) {
         console.log('Query: getBoardArticles');
-        return await this.boardArticleService.getBoardArticle(memberId, input);
+        return await this.boardArticleService.getBoardArticles(memberId, input);
+    }
+    async getAllBoardArticlesByAdmin(input, memberId) {
+        console.log('Query: getAllBoardArticlesByAdmin');
+        return await this.boardArticleService.getAllBoardArticlesByAdmin(input);
+    }
+    async updateBoardArticleByAdmin(input, memberId) {
+        console.log('Mutation: updateBoardArticleByAdmin');
+        input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
+        return await this.boardArticleService.updateBoardArticleByAdmin(input);
+    }
+    async removeBoardArticleByAdmin(input, memberId) {
+        console.log('Mutation: removeBoardArticleByAdmin');
+        const articleId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.boardArticleService.removeBoardArticleByAdmin(articleId);
     }
 };
 exports.BoardArticleResolver = BoardArticleResolver;
@@ -605,13 +622,42 @@ __decorate([
 ], BoardArticleResolver.prototype, "updateBoardArticle", null);
 __decorate([
     (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
-    (0, common_1.Query)((returns) => board_article_1.BoardArticles),
+    (0, graphql_1.Query)((returns) => board_article_1.BoardArticles),
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_k = typeof board_article_input_1.BoardArticlesInquiry !== "undefined" && board_article_input_1.BoardArticlesInquiry) === "function" ? _k : Object, typeof (_l = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _l : Object]),
     __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
 ], BoardArticleResolver.prototype, "geteBoardArticles", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Query)((returns) => board_article_1.BoardArticles),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_o = typeof board_article_input_1.AllBoardArticlesInquiry !== "undefined" && board_article_input_1.AllBoardArticlesInquiry) === "function" ? _o : Object, typeof (_p = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _p : Object]),
+    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+], BoardArticleResolver.prototype, "getAllBoardArticlesByAdmin", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, graphql_1.Mutation)(() => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_r = typeof board_article_update_1.BoardArticleUpdate !== "undefined" && board_article_update_1.BoardArticleUpdate) === "function" ? _r : Object, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
+    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
+], BoardArticleResolver.prototype, "updateBoardArticleByAdmin", null);
+__decorate([
+    (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, graphql_1.Mutation)((returns) => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('articleId')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_u = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _u : Object]),
+    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
+], BoardArticleResolver.prototype, "removeBoardArticleByAdmin", null);
 exports.BoardArticleResolver = BoardArticleResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof board_article_service_1.BoardArticleService !== "undefined" && board_article_service_1.BoardArticleService) === "function" ? _a : Object])
@@ -742,6 +788,60 @@ let BoardArticleService = class BoardArticleService {
         if (!result.length)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
+    }
+    async getAllBoardArticlesByAdmin(input) {
+        const { articleStatus, articleCategory } = input.search;
+        const match = {};
+        const sort = { [input?.sort ?? 'createdAt']: input?.direction ?? common_enum_1.Direction.DESC };
+        if (articleStatus)
+            match.articleStatus = articleStatus;
+        if (articleCategory)
+            match.articleCategory = articleCategory;
+        const result = await this.boardArticleModule
+            .aggregate([
+            { $match: match },
+            { $sort: sort },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        config_1.lookupMember,
+                        { $unwind: '$memberData' },
+                    ],
+                    metaCOunter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async updateBoardArticleByAdmin(input) {
+        const { _id, articleStatus } = input;
+        const result = await this.boardArticleModule
+            .findOneAndUpdate({ _id: _id, articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE }, input, {
+            new: true,
+        })
+            .exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
+        if (articleStatus === board_article_enum_1.BoardArticleStatus.DELETE) {
+            await this.memberService.memberStatusEditor({
+                _id: result.memberId,
+                targetKey: 'memberArticles',
+                modifier: -1,
+            });
+        }
+        return result;
+    }
+    async removeBoardArticleByAdmin(articleId) {
+        const search = { _id: articleId, articleStatus: board_article_enum_1.BoardArticleStatus.DELETE };
+        const result = await this.boardArticleModule.findOneAndDelete(search).exec();
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.REMOVE_FAILED);
+        return result;
     }
     async boardArticleStatsEditor(input) {
         const { _id, targetKey, modifier } = input;
