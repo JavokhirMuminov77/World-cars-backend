@@ -495,6 +495,7 @@ const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose
 const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
 const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
+const like_module_1 = __webpack_require__(/*! ../like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
 let BoardArticleModule = class BoardArticleModule {
 };
 exports.BoardArticleModule = BoardArticleModule;
@@ -505,6 +506,7 @@ exports.BoardArticleModule = BoardArticleModule = __decorate([
             auth_module_1.AuthModule,
             member_module_1.MemberModule,
             view_module_1.ViewModule,
+            like_module_1.LikeModule
         ],
         providers: [board_article_resolver_1.BoardArticleResolver, board_article_service_1.BoardArticleService],
         exports: [board_article_service_1.BoardArticleService],
@@ -533,7 +535,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BoardArticleResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -571,6 +573,11 @@ let BoardArticleResolver = class BoardArticleResolver {
     async getBoardArticles(input, memberId) {
         console.log('Query: getBoardArticles');
         return await this.boardArticleService.getBoardArticles(memberId, input);
+    }
+    async likeTargetBoardArticle(input, memberId) {
+        console.log('Mutation: LikeTargetBoardArticle');
+        const likeRefId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.boardArticleService.likeTargetBoardArticle(memberId, likeRefId);
     }
     async getAllBoardArticlesByAdmin(input, memberId) {
         console.log('Query: getAllBoardArticleByAdmin!');
@@ -625,14 +632,23 @@ __decorate([
     __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
 ], BoardArticleResolver.prototype, "getBoardArticles", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Query)(() => board_article_1.BoardArticle),
+    __param(0, (0, graphql_1.Args)('articleId')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_o = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _o : Object]),
+    __metadata("design:returntype", typeof (_p = typeof Promise !== "undefined" && Promise) === "function" ? _p : Object)
+], BoardArticleResolver.prototype, "likeTargetBoardArticle", null);
+__decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Query)((returns) => board_article_1.BoardArticles),
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_o = typeof board_article_input_1.AllBoardArticlesInquiry !== "undefined" && board_article_input_1.AllBoardArticlesInquiry) === "function" ? _o : Object, typeof (_p = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _p : Object]),
-    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+    __metadata("design:paramtypes", [typeof (_q = typeof board_article_input_1.AllBoardArticlesInquiry !== "undefined" && board_article_input_1.AllBoardArticlesInquiry) === "function" ? _q : Object, typeof (_r = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _r : Object]),
+    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
 ], BoardArticleResolver.prototype, "getAllBoardArticlesByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -640,8 +656,8 @@ __decorate([
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_r = typeof board_article_update_1.BoardArticleUpdate !== "undefined" && board_article_update_1.BoardArticleUpdate) === "function" ? _r : Object, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
-    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
+    __metadata("design:paramtypes", [typeof (_t = typeof board_article_update_1.BoardArticleUpdate !== "undefined" && board_article_update_1.BoardArticleUpdate) === "function" ? _t : Object, typeof (_u = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _u : Object]),
+    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
 ], BoardArticleResolver.prototype, "updateBoardArticleByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -650,7 +666,7 @@ __decorate([
     __param(0, (0, graphql_1.Args)('articleId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_u = typeof Promise !== "undefined" && Promise) === "function" ? _u : Object)
+    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
 ], BoardArticleResolver.prototype, "removeBoardArticleByAdmin", null);
 exports.BoardArticleResolver = BoardArticleResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -679,7 +695,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c;
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BoardArticleService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -691,11 +707,14 @@ const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ ".
 const board_article_enum_1 = __webpack_require__(/*! ../../libs/enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
 const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const like_service_1 = __webpack_require__(/*! ../like/like.service */ "./apps/nestar-api/src/components/like/like.service.ts");
+const like_enum_1 = __webpack_require__(/*! ../../libs/enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
 let BoardArticleService = class BoardArticleService {
-    constructor(boardArticleModel, memberService, viewService) {
+    constructor(boardArticleModel, memberService, viewService, likeService) {
         this.boardArticleModel = boardArticleModel;
         this.memberService = memberService;
         this.viewService = viewService;
+        this.likeService = likeService;
     }
     async createBoardArticle(memberId, input) {
         input.memberId = memberId;
@@ -781,6 +800,21 @@ let BoardArticleService = class BoardArticleService {
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
     }
+    async likeTargetBoardArticle(memberId, likeRefId) {
+        const target = await this.boardArticleModel.findOne({ _id: likeRefId, articleStatus: board_article_enum_1.BoardArticleStatus.ACTIVE }).exec();
+        if (!target)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        const input = {
+            memberId: memberId,
+            likeRefId: likeRefId,
+            likeGroup: like_enum_1.LikeGroup.MEMBER,
+        };
+        const modifier = await this.likeService.toggleLike(input);
+        const result = await this.boardArticleStatsEditor({ _id: likeRefId, targetKey: 'articleLikes', modifier: modifier });
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.SOMETHING_WENT_WRONG);
+        return result;
+    }
     async getAllBoardArticlesByAdmin(input) {
         const { articleStatus, articleCategory } = input.search;
         const match = {};
@@ -849,7 +883,7 @@ exports.BoardArticleService = BoardArticleService;
 exports.BoardArticleService = BoardArticleService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('BoardArticle')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object, typeof (_d = typeof like_service_1.LikeService !== "undefined" && like_service_1.LikeService) === "function" ? _d : Object])
 ], BoardArticleService);
 
 
