@@ -745,6 +745,8 @@ let BoardArticleService = class BoardArticleService {
                 await this.boardArticleStatsEditor({ _id: articleId, targetKey: 'articleViews', modifier: 1 });
                 targetBoardArticle.articleViews++;
             }
+            const LikeInput = { memberId: memberId, likeRefId: memberId, likeGroup: like_enum_1.LikeGroup.ARTICLE };
+            targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(LikeInput);
         }
         targetBoardArticle.memberData = await this.memberService.getMember(null, targetBoardArticle.memberId);
         return targetBoardArticle;
@@ -1329,6 +1331,11 @@ let LikeService = class LikeService {
         console.log(`- Like modifier ${modifier} -`);
         return modifier;
     }
+    async checkLikeExistence(input) {
+        const { memberId, likeRefId } = input;
+        const result = await this.likeModel.findOne({ memberId: memberId, likeRefId }).exec();
+        return result ? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }] : [];
+    }
 };
 exports.LikeService = LikeService;
 exports.LikeService = LikeService = __decorate([
@@ -1730,6 +1737,8 @@ let MemberService = class MemberService {
                 await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
                 targetMember.memberViews++;
             }
+            const LikeInput = { memberId: memberId, likeRefId: targetId, likeGroup: like_enum_1.LikeGroup.MEMBER };
+            targetMember.meLiked = await this.likeService.checkLikeExistence(LikeInput);
         }
         return targetMember;
     }
@@ -2107,6 +2116,8 @@ let PropertyService = class PropertyService {
                 await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyviews', modifier: 1 });
                 targetProperty.propertyViews++;
             }
+            const LikeInput = { memberId: memberId, likeRefId: propertyId, likeGroup: like_enum_1.LikeGroup.MEMBER };
+            targetProperty.meLiked = await this.likeService.checkLikeExistence(LikeInput);
         }
         targetProperty.memberData = await this.memberService.getMember(null, targetProperty.memberId);
         return targetProperty;
@@ -2683,6 +2694,7 @@ const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const board_article_enum_1 = __webpack_require__(/*! ../../enums/board-article.enum */ "./apps/nestar-api/src/libs/enums/board-article.enum.ts");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const member_1 = __webpack_require__(/*! ../member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+const like_1 = __webpack_require__(/*! ../like/like */ "./apps/nestar-api/src/libs/dto/like/like.ts");
 let BoardArticle = class BoardArticle {
 };
 exports.BoardArticle = BoardArticle;
@@ -2738,6 +2750,10 @@ __decorate([
     (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
     __metadata("design:type", typeof (_g = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _g : Object)
 ], BoardArticle.prototype, "memberData", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
+    __metadata("design:type", Array)
+], BoardArticle.prototype, "meLiked", void 0);
 exports.BoardArticle = BoardArticle = __decorate([
     (0, graphql_1.ObjectType)()
 ], BoardArticle);
@@ -3046,6 +3062,80 @@ exports.CommentUpdate = CommentUpdate = __decorate([
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/libs/dto/like/like.ts":
+/*!***************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/like/like.ts ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g, _h;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Like = exports.MeLiked = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const like_enum_1 = __webpack_require__(/*! ../../enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let MeLiked = class MeLiked {
+};
+exports.MeLiked = MeLiked;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], MeLiked.prototype, "memberId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object)
+], MeLiked.prototype, "likeRefId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], MeLiked.prototype, "myFavorite", void 0);
+exports.MeLiked = MeLiked = __decorate([
+    (0, graphql_1.ObjectType)()
+], MeLiked);
+let Like = class Like {
+};
+exports.Like = Like;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object)
+], Like.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => like_enum_1.LikeGroup),
+    __metadata("design:type", typeof (_d = typeof like_enum_1.LikeGroup !== "undefined" && like_enum_1.LikeGroup) === "function" ? _d : Object)
+], Like.prototype, "likeGroup", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object)
+], Like.prototype, "likeRefId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_f = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _f : Object)
+], Like.prototype, "memberId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
+], Like.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_h = typeof Date !== "undefined" && Date) === "function" ? _h : Object)
+], Like.prototype, "updatedAt", void 0);
+exports.Like = Like = __decorate([
+    (0, graphql_1.ObjectType)()
+], Like);
+
+
+/***/ }),
+
 /***/ "./apps/nestar-api/src/libs/dto/member/member.input.ts":
 /*!*************************************************************!*\
   !*** ./apps/nestar-api/src/libs/dto/member/member.input.ts ***!
@@ -3245,6 +3335,7 @@ exports.Members = exports.TotalCounter = exports.Member = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
+const like_1 = __webpack_require__(/*! ../like/like */ "./apps/nestar-api/src/libs/dto/like/like.ts");
 let Member = class Member {
 };
 exports.Member = Member;
@@ -3348,6 +3439,10 @@ __decorate([
     (0, graphql_1.Field)(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Member.prototype, "accessToken", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
+    __metadata("design:type", Array)
+], Member.prototype, "meLiked", void 0);
 exports.Member = Member = __decorate([
     (0, graphql_1.ObjectType)()
 ], Member);
@@ -3824,6 +3919,7 @@ const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
 const member_1 = __webpack_require__(/*! ../member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+const like_1 = __webpack_require__(/*! ../like/like */ "./apps/nestar-api/src/libs/dto/like/like.ts");
 let Property = class Property {
 };
 exports.Property = Property;
@@ -3927,6 +4023,10 @@ __decorate([
     (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
     __metadata("design:type", typeof (_l = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _l : Object)
 ], Property.prototype, "memberData", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
+    __metadata("design:type", Array)
+], Property.prototype, "meLiked", void 0);
 exports.Property = Property = __decorate([
     (0, graphql_1.ObjectType)()
 ], Property);
