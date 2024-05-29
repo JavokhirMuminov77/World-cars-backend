@@ -1808,6 +1808,7 @@ const Property_model_1 = __webpack_require__(/*! ../../schemas/Property.model */
 const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
 const member_module_1 = __webpack_require__(/*! ../member/member.module */ "./apps/nestar-api/src/components/member/member.module.ts");
+const like_module_1 = __webpack_require__(/*! ../like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
 let PropertyModule = class PropertyModule {
 };
 exports.PropertyModule = PropertyModule;
@@ -1818,6 +1819,7 @@ exports.PropertyModule = PropertyModule = __decorate([
             auth_module_1.AuthModule,
             view_module_1.ViewModule,
             member_module_1.MemberModule,
+            like_module_1.LikeModule
         ],
         providers: [property_resolver_1.PropertyResolver, property_service_1.PropertyService],
         exports: [property_service_1.PropertyService],
@@ -1846,7 +1848,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -1862,6 +1864,7 @@ const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 const property_update_1 = __webpack_require__(/*! ../../libs/dto/property/property.update */ "./apps/nestar-api/src/libs/dto/property/property.update.ts");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
 let PropertyResolver = class PropertyResolver {
     constructor(propertyService) {
         this.propertyService = propertyService;
@@ -1888,6 +1891,11 @@ let PropertyResolver = class PropertyResolver {
     async getAgentProperties(input, memberId) {
         console.log('Query: getAgentProperties');
         return await this.propertyService.getAgentProperties(memberId, input);
+    }
+    async likeTargetProperty(input, memberId) {
+        console.log('Mutation: LikeTargetMember');
+        const likeRefId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.propertyService.likeTargetProperty(memberId, likeRefId);
     }
     async getAllPropertiesByAdmin(input, memberId) {
         console.log('Query: getAllPropertiesByAdmin!');
@@ -1954,14 +1962,23 @@ __decorate([
     __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
 ], PropertyResolver.prototype, "getAgentProperties", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Query)(() => property_1.Property),
+    __param(0, (0, graphql_1.Args)('memberId')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_r = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _r : Object]),
+    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
+], PropertyResolver.prototype, "likeTargetProperty", null);
+__decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Query)((returns) => property_1.Properties),
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_r = typeof property_input_1.AllPropertiesInquiry !== "undefined" && property_input_1.AllPropertiesInquiry) === "function" ? _r : Object, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
-    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
+    __metadata("design:paramtypes", [typeof (_t = typeof property_input_1.AllPropertiesInquiry !== "undefined" && property_input_1.AllPropertiesInquiry) === "function" ? _t : Object, typeof (_u = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _u : Object]),
+    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
 ], PropertyResolver.prototype, "getAllPropertiesByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -1969,8 +1986,8 @@ __decorate([
     (0, graphql_1.Mutation)((returns) => property_1.Property),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_u = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _u : Object]),
-    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
+    __metadata("design:paramtypes", [typeof (_w = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _w : Object]),
+    __metadata("design:returntype", typeof (_x = typeof Promise !== "undefined" && Promise) === "function" ? _x : Object)
 ], PropertyResolver.prototype, "updatePropertyByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -1979,7 +1996,7 @@ __decorate([
     __param(0, (0, graphql_1.Args)('propertyId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
+    __metadata("design:returntype", typeof (_y = typeof Promise !== "undefined" && Promise) === "function" ? _y : Object)
 ], PropertyResolver.prototype, "removePropertyByAdmin", null);
 exports.PropertyResolver = PropertyResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -2008,7 +2025,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c;
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -2021,11 +2038,14 @@ const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./app
 const view_service_1 = __webpack_require__(/*! ../view/view.service */ "./apps/nestar-api/src/components/view/view.service.ts");
 const moment = __webpack_require__(/*! moment */ "moment");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const like_service_1 = __webpack_require__(/*! ../like/like.service */ "./apps/nestar-api/src/components/like/like.service.ts");
+const like_enum_1 = __webpack_require__(/*! ../../libs/enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
 let PropertyService = class PropertyService {
-    constructor(propertyModel, memberService, viewService) {
+    constructor(propertyModel, memberService, viewService, likeService) {
         this.propertyModel = propertyModel;
         this.memberService = memberService;
         this.viewService = viewService;
+        this.likeService = likeService;
     }
     async createProperty(input) {
         try {
@@ -2170,6 +2190,21 @@ let PropertyService = class PropertyService {
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         return result[0];
     }
+    async likeTargetProperty(memberId, likeRefId) {
+        const target = await this.propertyModel.findOne({ _id: likeRefId, propertyStatus: property_enum_1.PropertyStatus.ACTIVE }).exec();
+        if (!target)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        const input = {
+            memberId: memberId,
+            likeRefId: likeRefId,
+            likeGroup: like_enum_1.LikeGroup.MEMBER,
+        };
+        const modifier = await this.likeService.toggleLike(input);
+        const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.SOMETHING_WENT_WRONG);
+        return result;
+    }
     async getAllPropertiesByAdmin(input) {
         const { propertyStatus, propertyLocationList } = input.search;
         const match = {};
@@ -2237,7 +2272,7 @@ exports.PropertyService = PropertyService;
 exports.PropertyService = PropertyService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Property')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof member_service_1.MemberService !== "undefined" && member_service_1.MemberService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object, typeof (_d = typeof like_service_1.LikeService !== "undefined" && like_service_1.LikeService) === "function" ? _d : Object])
 ], PropertyService);
 
 
