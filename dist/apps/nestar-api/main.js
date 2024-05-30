@@ -575,7 +575,7 @@ let BoardArticleResolver = class BoardArticleResolver {
         return await this.boardArticleService.getBoardArticles(memberId, input);
     }
     async likeTargetBoardArticle(input, memberId) {
-        console.log('Mutation: LikeTargetBoardArticle');
+        console.log('Mutation: likeTargetBoardArticle');
         const likeRefId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.boardArticleService.likeTargetBoardArticle(memberId, likeRefId);
     }
@@ -633,7 +633,7 @@ __decorate([
 ], BoardArticleResolver.prototype, "getBoardArticles", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, graphql_1.Query)(() => board_article_1.BoardArticle),
+    (0, graphql_1.Mutation)(() => board_article_1.BoardArticle),
     __param(0, (0, graphql_1.Args)('articleId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
@@ -1462,8 +1462,8 @@ let MemberResolver = class MemberResolver {
         delete input._id;
         return await this.memberService.updateMember(memberId, input);
     }
-    async likeTargetMmeber(input, memberId) {
-        console.log('Mutation: LikeTargetMember');
+    async likeTargetMember(input, memberId) {
+        console.log('Mutation: likeTargetMember');
         const likeRefId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.memberService.likeTargetMember(memberId, likeRefId);
     }
@@ -1586,13 +1586,13 @@ __decorate([
 ], MemberResolver.prototype, "updateMember", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, graphql_1.Query)(() => member_1.Members),
+    (0, graphql_1.Mutation)(() => member_1.Member),
     __param(0, (0, graphql_1.Args)('memberId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
     __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
-], MemberResolver.prototype, "likeTargetMmeber", null);
+], MemberResolver.prototype, "likeTargetMember", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
@@ -1936,7 +1936,7 @@ let PropertyResolver = class PropertyResolver {
         return await this.propertyService.getAgentProperties(memberId, input);
     }
     async likeTargetProperty(input, memberId) {
-        console.log('Mutation: LikeTargetMember');
+        console.log('Mutation: likeTargetMember');
         const likeRefId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.propertyService.likeTargetProperty(memberId, likeRefId);
     }
@@ -2006,8 +2006,8 @@ __decorate([
 ], PropertyResolver.prototype, "getAgentProperties", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, graphql_1.Query)(() => property_1.Property),
-    __param(0, (0, graphql_1.Args)('memberId')),
+    (0, graphql_1.Mutation)(() => property_1.Property),
+    __param(0, (0, graphql_1.Args)('propertyId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, typeof (_r = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _r : Object]),
