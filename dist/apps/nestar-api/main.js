@@ -745,6 +745,7 @@ let BoardArticleService = class BoardArticleService {
                 await this.boardArticleStatsEditor({ _id: articleId, targetKey: 'articleViews', modifier: 1 });
                 targetBoardArticle.articleViews++;
             }
+            (0, config_1.lookupAuthMemberLiked)(memberId);
             const LikeInput = { memberId: memberId, likeRefId: memberId, likeGroup: like_enum_1.LikeGroup.ARTICLE };
             targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(LikeInput);
         }
@@ -1454,6 +1455,7 @@ let FollowService = class FollowService {
                     list: [
                         { $skip: (page - 1) * limit },
                         { $limit: limit },
+                        (0, config_1.lookupAuthMemberLiked)(memberId, "$followerId"),
                         config_1.lookupFpllowingData,
                         { $unwind: '$followingData' },
                     ],
@@ -1481,6 +1483,7 @@ let FollowService = class FollowService {
                     list: [
                         { $skip: (page - 1) * limit },
                         { $limit: limit },
+                        (0, config_1.lookupAuthMemberLiked)(memberId, "$followerId"),
                         config_1.lookupFpllowingData,
                         { $unwind: '$followingData' },
                     ],
@@ -1934,6 +1937,7 @@ const view_service_1 = __webpack_require__(/*! ../view/view.service */ "./apps/n
 const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
 const like_enum_1 = __webpack_require__(/*! ../../libs/enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
 const like_service_1 = __webpack_require__(/*! ../like/like.service */ "./apps/nestar-api/src/components/like/like.service.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let MemberService = class MemberService {
     constructor(memberModel, followModel, authService, viewService, likeService) {
         this.memberModel = memberModel;
@@ -2028,7 +2032,10 @@ let MemberService = class MemberService {
             { $sort: sort },
             {
                 $facet: {
-                    list: [{ $skip: (input.page - 1) * input.limit }, { $limit: input.limit }],
+                    list: [{ $skip: (input.page - 1) * input.limit },
+                        { $limit: input.limit },
+                        (0, config_1.lookupAuthMemberLiked)(memberId),
+                    ],
                     metaCounter: [{ $count: 'total' }],
                 },
             },

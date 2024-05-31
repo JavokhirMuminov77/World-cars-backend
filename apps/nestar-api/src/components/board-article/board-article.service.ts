@@ -14,7 +14,7 @@ import { StatisticModifier, T } from '../../libs/types/common';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
-import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
+import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -59,7 +59,9 @@ export class BoardArticleService {
 				targetBoardArticle.articleViews++;
 			}
 
-			//meLiked
+			lookupAuthMemberLiked(memberId)
+
+			
 			const LikeInput = {memberId: memberId, likeRefId: memberId, likeGroup: LikeGroup.ARTICLE};
 			targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(LikeInput);
 		}
