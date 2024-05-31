@@ -1277,17 +1277,86 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FollowResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const follow_service_1 = __webpack_require__(/*! ./follow.service */ "./apps/nestar-api/src/components/follow/follow.service.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
+const follow_1 = __webpack_require__(/*! ../../libs/dto/follow/follow */ "./apps/nestar-api/src/libs/dto/follow/follow.ts");
+const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
+const follow_input_1 = __webpack_require__(/*! ../../libs/dto/follow/follow.input */ "./apps/nestar-api/src/libs/dto/follow/follow.input.ts");
 let FollowResolver = class FollowResolver {
     constructor(followService) {
         this.followService = followService;
     }
+    async subscribe(input, memberId) {
+        console.log('Mutation: subscribe');
+        const followingId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.followService.subscribe(memberId, followingId);
+    }
+    async unsubcribe(input, memberId) {
+        console.log('Mutation: unsubscribe');
+        const followingId = (0, config_1.shapeIntoMongoObjectId)(input);
+        return await this.followService.unsubscribe(memberId, followingId);
+    }
+    async getMemberFollowings(input, memberId) {
+        console.log('Query: getMemberFollowings');
+        const { followerId } = input.search;
+        input.search.followerId = (0, config_1.shapeIntoMongoObjectId)(followerId);
+        return await this.followService.getMemberFollowings(memberId, input);
+    }
+    async getMemberFollowers(input, memberId) {
+        console.log('Query: getMemberFollowers');
+        const { followingId } = input.search;
+        input.search.followerId = (0, config_1.shapeIntoMongoObjectId)(followingId);
+        return await this.followService.getMemberFollowers(memberId, input);
+    }
 };
 exports.FollowResolver = FollowResolver;
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => follow_1.Follower),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object]),
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], FollowResolver.prototype, "subscribe", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Mutation)((returns) => follow_1.Follower),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_d = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _d : Object]),
+    __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+], FollowResolver.prototype, "unsubcribe", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, graphql_1.Query)((returns) => follow_1.Followings),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)(' _id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_f = typeof follow_input_1.FollowInquiry !== "undefined" && follow_input_1.FollowInquiry) === "function" ? _f : Object, typeof (_g = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _g : Object]),
+    __metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
+], FollowResolver.prototype, "getMemberFollowings", null);
+__decorate([
+    (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
+    (0, graphql_1.Query)((returns) => follow_1.Followers),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)(' _id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_j = typeof follow_input_1.FollowInquiry !== "undefined" && follow_input_1.FollowInquiry) === "function" ? _j : Object, typeof (_k = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _k : Object]),
+    __metadata("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
+], FollowResolver.prototype, "getMemberFollowers", null);
 exports.FollowResolver = FollowResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [typeof (_a = typeof follow_service_1.FollowService !== "undefined" && follow_service_1.FollowService) === "function" ? _a : Object])
@@ -1322,10 +1391,107 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const member_service_1 = __webpack_require__(/*! ../member/member.service */ "./apps/nestar-api/src/components/member/member.service.ts");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let FollowService = class FollowService {
+    unsubscribe(memberId, followingId) {
+        throw new Error('Method not implemented.');
+    }
     constructor(followModel, memberService) {
         this.followModel = followModel;
         this.memberService = memberService;
+    }
+    async subscribe(followerId, followingId) {
+        if (followingId.toString() === followingId.toString()) {
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.SELF_SUBSCRIPTION_DENIED);
+        }
+        const targetMember = await this.memberService.getMember(null, followingId);
+        if (!targetMember)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        const result = await this.registerSubscription(followerId, followingId);
+        await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1 });
+        await this.memberService.memberStatusEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: 1 });
+        return result;
+    }
+    async registerSubscription(followerId, followingId) {
+        try {
+            return await this.followModel.create({
+                followingId: followingId,
+                followerId: followerId,
+            });
+        }
+        catch (err) {
+            console.log('Error, Service.model:', err.message);
+            throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
+        }
+    }
+    async unsubcribe(followerId, followingId) {
+        const targetMember = await this.memberService.getMember(null, followingId);
+        if (!targetMember)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        const result = await this.followModel.findOneAndDelete({
+            followingId: followingId,
+            followerId: followerId,
+        });
+        if (!result)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollings', modifier: -1 });
+        await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowers', modifier: -1 });
+        return result;
+    }
+    async getMemberFollowings(memberId, input) {
+        const { page, limit, search } = input;
+        if (!search?.followerId)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.BAD_REQUEST);
+        const match = { followerId: search?.followerId };
+        console.log('match:', match);
+        const result = await this.followModel
+            .aggregate([
+            { $match: match },
+            { $sort: { createdAt: common_enum_1.Direction.DESC } },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        config_1.lookupFpllowingData,
+                        { $unwind: '$followingData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
+    }
+    async getMemberFollowers(memberId, input) {
+        const { page, limit, search } = input;
+        if (!search?.followingId)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.BAD_REQUEST);
+        const match = { followingId: search?.followingId };
+        console.log('match:', match);
+        const result = await this.followModel
+            .aggregate([
+            { $match: match },
+            { $sort: { createdAt: common_enum_1.Direction.DESC } },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        config_1.lookupFpllowingData,
+                        { $unwind: '$followingData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        if (!result.length)
+            throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
+        return result[0];
     }
 };
 exports.FollowService = FollowService;
@@ -2569,7 +2735,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lookupMember = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
+exports.lookupFollowerData = exports.lookupFpllowingData = exports.lookupMember = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -2602,6 +2768,22 @@ exports.lookupMember = {
         localField: 'memberId',
         foreignField: '_id',
         as: 'memberData',
+    },
+};
+exports.lookupFpllowingData = {
+    $lookup: {
+        from: 'members',
+        localField: 'followingId',
+        foreignField: '_id',
+        as: 'followingData',
+    },
+};
+exports.lookupFollowerData = {
+    $lookup: {
+        from: 'members',
+        localField: 'followerId',
+        foreignField: '_id',
+        as: 'followerData',
     },
 };
 
@@ -3154,6 +3336,219 @@ __decorate([
 exports.CommentUpdate = CommentUpdate = __decorate([
     (0, graphql_1.InputType)()
 ], CommentUpdate);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/follow/follow.input.ts":
+/*!*************************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/follow/follow.input.ts ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.FollowInquiry = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+let FollowSearch = class FollowSearch {
+};
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], FollowSearch.prototype, "followingId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object)
+], FollowSearch.prototype, "followerId", void 0);
+FollowSearch = __decorate([
+    (0, graphql_1.InputType)()
+], FollowSearch);
+let FollowInquiry = class FollowInquiry {
+};
+exports.FollowInquiry = FollowInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], FollowInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], FollowInquiry.prototype, "limit", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, graphql_1.Field)(() => FollowSearch),
+    __metadata("design:type", FollowSearch)
+], FollowInquiry.prototype, "search", void 0);
+exports.FollowInquiry = FollowInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], FollowInquiry);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/libs/dto/follow/follow.ts":
+/*!*******************************************************!*\
+  !*** ./apps/nestar-api/src/libs/dto/follow/follow.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Followers = exports.Followings = exports.Following = exports.Follower = exports.MeFollowed = void 0;
+const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
+const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
+const member_1 = __webpack_require__(/*! ../member/member */ "./apps/nestar-api/src/libs/dto/member/member.ts");
+const like_1 = __webpack_require__(/*! ../like/like */ "./apps/nestar-api/src/libs/dto/like/like.ts");
+let MeFollowed = class MeFollowed {
+};
+exports.MeFollowed = MeFollowed;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object)
+], MeFollowed.prototype, "followingId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object)
+], MeFollowed.prototype, "followerId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], MeFollowed.prototype, "myFollowing", void 0);
+exports.MeFollowed = MeFollowed = __decorate([
+    (0, graphql_1.ObjectType)()
+], MeFollowed);
+let Follower = class Follower {
+};
+exports.Follower = Follower;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_c = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _c : Object)
+], Follower.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_d = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _d : Object)
+], Follower.prototype, "followingId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_e = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _e : Object)
+], Follower.prototype, "followerId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_f = typeof Date !== "undefined" && Date) === "function" ? _f : Object)
+], Follower.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_g = typeof Date !== "undefined" && Date) === "function" ? _g : Object)
+], Follower.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
+    __metadata("design:type", Array)
+], Follower.prototype, "meLiked", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [MeFollowed], { nullable: true }),
+    __metadata("design:type", Array)
+], Follower.prototype, "meFollowed", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
+    __metadata("design:type", typeof (_h = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _h : Object)
+], Follower.prototype, "followerData", void 0);
+exports.Follower = Follower = __decorate([
+    (0, graphql_1.ObjectType)()
+], Follower);
+let Following = class Following {
+};
+exports.Following = Following;
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_j = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _j : Object)
+], Following.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_k = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _k : Object)
+], Following.prototype, "followingId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => String),
+    __metadata("design:type", typeof (_l = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _l : Object)
+], Following.prototype, "followerId", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_m = typeof Date !== "undefined" && Date) === "function" ? _m : Object)
+], Following.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date),
+    __metadata("design:type", typeof (_o = typeof Date !== "undefined" && Date) === "function" ? _o : Object)
+], Following.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
+    __metadata("design:type", Array)
+], Following.prototype, "meLiked", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [MeFollowed], { nullable: true }),
+    __metadata("design:type", Array)
+], Following.prototype, "meFollowed", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => member_1.Member, { nullable: true }),
+    __metadata("design:type", typeof (_p = typeof member_1.Member !== "undefined" && member_1.Member) === "function" ? _p : Object)
+], Following.prototype, "followingData", void 0);
+exports.Following = Following = __decorate([
+    (0, graphql_1.ObjectType)()
+], Following);
+let Followings = class Followings {
+};
+exports.Followings = Followings;
+__decorate([
+    (0, graphql_1.Field)(() => [Following]),
+    __metadata("design:type", Array)
+], Followings.prototype, "list", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [member_1.TotalCounter], { nullable: true }),
+    __metadata("design:type", Array)
+], Followings.prototype, "metaCounter", void 0);
+exports.Followings = Followings = __decorate([
+    (0, graphql_1.ObjectType)()
+], Followings);
+let Followers = class Followers {
+};
+exports.Followers = Followers;
+__decorate([
+    (0, graphql_1.Field)(() => [Follower]),
+    __metadata("design:type", Array)
+], Followers.prototype, "list", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [member_1.TotalCounter], { nullable: true }),
+    __metadata("design:type", Array)
+], Followers.prototype, "metaCounter", void 0);
+exports.Followers = Followers = __decorate([
+    (0, graphql_1.ObjectType)()
+], Followers);
 
 
 /***/ }),
