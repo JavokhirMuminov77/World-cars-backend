@@ -1251,7 +1251,7 @@ exports.FollowModule = FollowModule = __decorate([
                 },
             ]),
             auth_module_1.AuthModule,
-            member_module_1.MemberModule,
+            (0, common_1.forwardRef)(() => member_module_1.MemberModule),
         ],
         providers: [follow_resolver_1.FollowResolver, follow_service_1.FollowService],
         exports: [follow_service_1.FollowService],
@@ -1632,15 +1632,18 @@ const Member_model_1 = __webpack_require__(/*! ../../schemas/Member.model */ "./
 const auth_module_1 = __webpack_require__(/*! ../auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 const view_module_1 = __webpack_require__(/*! ../view/view.module */ "./apps/nestar-api/src/components/view/view.module.ts");
 const like_module_1 = __webpack_require__(/*! ../like/like.module */ "./apps/nestar-api/src/components/like/like.module.ts");
+const Follow_model_1 = __webpack_require__(/*! ../../schemas/Follow.model */ "./apps/nestar-api/src/schemas/Follow.model.ts");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'Member', schema: Member_model_1.default }]),
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: 'Member', schema: Member_model_1.default }]),
+            mongoose_1.MongooseModule.forFeature([{ name: 'Follow', schema: Follow_model_1.default }]),
             auth_module_1.AuthModule,
             view_module_1.ViewModule,
-            like_module_1.LikeModule
+            like_module_1.LikeModule,
         ],
         providers: [member_resolver_1.MemberResolver, member_service_1.MemberService],
         exports: [member_service_1.MemberService],
@@ -1918,7 +1921,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -1932,8 +1935,9 @@ const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./app
 const like_enum_1 = __webpack_require__(/*! ../../libs/enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
 const like_service_1 = __webpack_require__(/*! ../like/like.service */ "./apps/nestar-api/src/components/like/like.service.ts");
 let MemberService = class MemberService {
-    constructor(memberModel, authService, viewService, likeService) {
+    constructor(memberModel, followModel, authService, viewService, likeService) {
         this.memberModel = memberModel;
+        this.followModel = followModel;
         this.authService = authService;
         this.viewService = viewService;
         this.likeService = likeService;
@@ -2001,8 +2005,13 @@ let MemberService = class MemberService {
             }
             const LikeInput = { memberId: memberId, likeRefId: targetId, likeGroup: like_enum_1.LikeGroup.MEMBER };
             targetMember.meLiked = await this.likeService.checkLikeExistence(LikeInput);
+            targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
         }
         return targetMember;
+    }
+    async checkSubscription(followerId, followingId) {
+        const result = await this.followModel.findOne({ followingId: followingId, followerId: followerId }).exec();
+        return result ? [{ followingId: followingId, followerId: followerId, myFollowing: true }] : [];
     }
     async getAgents(memberId, input) {
         const { text } = input.search;
@@ -2084,7 +2093,8 @@ exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)('Member')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _b : Object, typeof (_c = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _c : Object, typeof (_d = typeof like_service_1.LikeService !== "undefined" && like_service_1.LikeService) === "function" ? _d : Object])
+    __param(1, (0, mongoose_1.InjectModel)('Follow')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _a : Object, typeof (_b = typeof mongoose_2.Model !== "undefined" && mongoose_2.Model) === "function" ? _b : Object, typeof (_c = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _c : Object, typeof (_d = typeof view_service_1.ViewService !== "undefined" && view_service_1.ViewService) === "function" ? _d : Object, typeof (_e = typeof like_service_1.LikeService !== "undefined" && like_service_1.LikeService) === "function" ? _e : Object])
 ], MemberService);
 
 
@@ -3827,6 +3837,7 @@ const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
 const member_enum_1 = __webpack_require__(/*! ../../enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 const like_1 = __webpack_require__(/*! ../like/like */ "./apps/nestar-api/src/libs/dto/like/like.ts");
+const follow_1 = __webpack_require__(/*! ../follow/follow */ "./apps/nestar-api/src/libs/dto/follow/follow.ts");
 let Member = class Member {
 };
 exports.Member = Member;
@@ -3934,6 +3945,10 @@ __decorate([
     (0, graphql_1.Field)(() => [like_1.MeLiked], { nullable: true }),
     __metadata("design:type", Array)
 ], Member.prototype, "meLiked", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [follow_1.MeFollowed], { nullable: true }),
+    __metadata("design:type", Array)
+], Member.prototype, "meFollowed", void 0);
 exports.Member = Member = __decorate([
     (0, graphql_1.ObjectType)()
 ], Member);

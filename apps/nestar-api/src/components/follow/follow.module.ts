@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { FollowResolver } from './follow.resolver';
 import { FollowService } from './follow.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -16,7 +16,7 @@ import { MemberModule } from '../member/member.module';
     },
   ]),
   AuthModule,
-  MemberModule,
+  forwardRef(() => MemberModule ) ,
 ],
   providers: [FollowResolver, FollowService],
   exports:[FollowService],
