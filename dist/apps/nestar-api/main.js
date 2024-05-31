@@ -1456,6 +1456,10 @@ let FollowService = class FollowService {
                         { $skip: (page - 1) * limit },
                         { $limit: limit },
                         (0, config_1.lookupAuthMemberLiked)(memberId, "$followerId"),
+                        (0, config_1.lookupAuthMemberFollowed)({
+                            followerId: memberId,
+                            followingId: '$followingData',
+                        }),
                         config_1.lookupFpllowingData,
                         { $unwind: '$followingData' },
                     ],
@@ -1484,6 +1488,10 @@ let FollowService = class FollowService {
                         { $skip: (page - 1) * limit },
                         { $limit: limit },
                         (0, config_1.lookupAuthMemberLiked)(memberId, "$followerId"),
+                        (0, config_1.lookupAuthMemberFollowed)({
+                            followerId: memberId,
+                            followingId: '$ffollowerData',
+                        }),
                         config_1.lookupFpllowingData,
                         { $unwind: '$followingData' },
                     ],
@@ -2753,7 +2761,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lookupFollowerData = exports.lookupFpllowingData = exports.lookupMember = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
+exports.lookupFollowerData = exports.lookupFpllowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -2811,6 +2819,38 @@ const lookupAuthMemberLiked = (memberId, targetRefId = '$_id') => {
     };
 };
 exports.lookupAuthMemberLiked = lookupAuthMemberLiked;
+const lookupAuthMemberFollowed = (input) => {
+    const { followerId, followingId } = input;
+    return {
+        $lookup: {
+            from: 'follows',
+            let: {
+                localFollowerId: followerId,
+                localFollowingId: followingId,
+                localMyFavorite: true,
+            },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $and: [{ $eq: ['$followerId', '$$localFollowerId'] }, { $eq: ['$followingId', '$$localFollowingId'] }],
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        followerId: 1,
+                        followingId: 1,
+                        myFavorite: '$$localMyFavorite',
+                    }
+                }
+            ],
+            as: 'meFollowed',
+        },
+    };
+};
+exports.lookupAuthMemberFollowed = lookupAuthMemberFollowed;
 exports.lookupMember = {
     $lookup: {
         from: 'members',
