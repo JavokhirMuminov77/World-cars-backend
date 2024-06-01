@@ -15,14 +15,14 @@ export class FollowService {
   ) {}
 
   public async subscribe(followerId: ObjectId, followingId: ObjectId): Promise<Follower> {
-    if(followingId.toString() === followingId.toString() ) {
+    if(followerId.toString() === followingId.toString() ) {
       throw new InternalServerErrorException(Message.SELF_SUBSCRIPTION_DENIED);
     }
 
     const targetMember = await this.memberService.getMember(null, followingId);
     if(!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-    const result  = await this.registerSubscription(followerId, followingId);
+    const result  = await this.registerSubscription(null, followingId);
 
 
     await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1});
@@ -51,7 +51,7 @@ export class FollowService {
     const result = await this.followModel.findOneAndDelete({
       followingId: followingId,
       followerId: followerId,
-    });
+    }).exec();
     if(!result) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
     await this.memberService.memberStatusEditor({_id: followerId, targetKey: 'memberFollings', modifier: -1});

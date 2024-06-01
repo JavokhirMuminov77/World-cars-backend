@@ -1400,13 +1400,13 @@ let FollowService = class FollowService {
         this.memberService = memberService;
     }
     async subscribe(followerId, followingId) {
-        if (followingId.toString() === followingId.toString()) {
+        if (followerId.toString() === followingId.toString()) {
             throw new common_1.InternalServerErrorException(common_enum_1.Message.SELF_SUBSCRIPTION_DENIED);
         }
         const targetMember = await this.memberService.getMember(null, followingId);
         if (!targetMember)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
-        const result = await this.registerSubscription(followerId, followingId);
+        const result = await this.registerSubscription(null, followingId);
         await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1 });
         await this.memberService.memberStatusEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: 1 });
         return result;
@@ -1430,7 +1430,7 @@ let FollowService = class FollowService {
         const result = await this.followModel.findOneAndDelete({
             followingId: followingId,
             followerId: followerId,
-        });
+        }).exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
         await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollings', modifier: -1 });
