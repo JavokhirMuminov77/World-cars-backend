@@ -5,14 +5,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Schema } from 'mongoose';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { FollowInquiry } from '../../libs/dto/follow/follow.input';
-import { lookupAuthMemberFollowed, lookupAuthMemberLiked, lookupFpllowingData } from '../../libs/config';
+import { lookupAuthMemberFollowed, lookupAuthMemberLiked, lookupFollowingData } from '../../libs/config';
 import { T } from '../../libs/types/common';
 
 @Injectable()
 export class FollowService {
-  unsubscribe(memberId: Schema.Types.ObjectId, followingId: any): Follower | PromiseLike<Follower> {
-    throw new Error('Method not implemented.');
-  }
   constructor (
     @InjectModel('Follow') private readonly followModel: Model<Follower | Following>, private readonly memberService: MemberService,
   ) {}
@@ -47,7 +44,7 @@ export class FollowService {
   }
 
 
-  public async unsubcribe(followerId: ObjectId, followingId: ObjectId):Promise<Follower> {
+  public async unsubscribe(followerId: ObjectId, followingId: ObjectId):Promise<Follower> {
     const targetMember = await this.memberService.getMember(null, followingId);
     if(!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
@@ -84,7 +81,7 @@ export class FollowService {
               followerId: memberId,
               followingId:'$followingData',
             }),
-            lookupFpllowingData,
+            lookupFollowingData,
             {$unwind: '$followingData'},
           ],
           metaCounter: [{$count: 'total'}],
@@ -120,7 +117,7 @@ export class FollowService {
               followerId: memberId,
               followingId:'$ffollowerData',
             }),
-            lookupFpllowingData,
+            lookupFollowingData,
             {$unwind: '$followingData'},
           ],
           metaCounter: [{$count: 'total'}],

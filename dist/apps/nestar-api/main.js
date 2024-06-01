@@ -1303,7 +1303,7 @@ let FollowResolver = class FollowResolver {
         const followingId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.followService.subscribe(memberId, followingId);
     }
-    async unsubcribe(input, memberId) {
+    async unsubscribe(input, memberId) {
         console.log('Mutation: unsubscribe');
         const followingId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.followService.unsubscribe(memberId, followingId);
@@ -1339,7 +1339,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, typeof (_d = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _d : Object]),
     __metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
-], FollowResolver.prototype, "unsubcribe", null);
+], FollowResolver.prototype, "unsubscribe", null);
 __decorate([
     (0, common_1.UseGuards)(without_guard_1.WithoutGuard),
     (0, graphql_1.Query)((returns) => follow_1.Followings),
@@ -1395,9 +1395,6 @@ const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let FollowService = class FollowService {
-    unsubscribe(memberId, followingId) {
-        throw new Error('Method not implemented.');
-    }
     constructor(followModel, memberService) {
         this.followModel = followModel;
         this.memberService = memberService;
@@ -1426,7 +1423,7 @@ let FollowService = class FollowService {
             throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
         }
     }
-    async unsubcribe(followerId, followingId) {
+    async unsubscribe(followerId, followingId) {
         const targetMember = await this.memberService.getMember(null, followingId);
         if (!targetMember)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
@@ -1460,7 +1457,7 @@ let FollowService = class FollowService {
                             followerId: memberId,
                             followingId: '$followingData',
                         }),
-                        config_1.lookupFpllowingData,
+                        config_1.lookupFollowingData,
                         { $unwind: '$followingData' },
                     ],
                     metaCounter: [{ $count: 'total' }],
@@ -1492,7 +1489,7 @@ let FollowService = class FollowService {
                             followerId: memberId,
                             followingId: '$ffollowerData',
                         }),
-                        config_1.lookupFpllowingData,
+                        config_1.lookupFollowingData,
                         { $unwind: '$followingData' },
                     ],
                     metaCounter: [{ $count: 'total' }],
@@ -2761,7 +2758,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lookupFollowerData = exports.lookupFpllowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
+exports.lookupFollowerData = exports.lookupFollowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -2859,7 +2856,7 @@ exports.lookupMember = {
         as: 'memberData',
     },
 };
-exports.lookupFpllowingData = {
+exports.lookupFollowingData = {
     $lookup: {
         from: 'members',
         localField: 'followingId',

@@ -116,7 +116,7 @@ export const lookupMember = {
 	},
 };
 
-export const lookupFpllowingData = {
+export const lookupFollowingData = {
 	$lookup: {
 		from: 'members',
 		localField: 'followingId',
