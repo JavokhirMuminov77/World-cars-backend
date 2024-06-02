@@ -22,7 +22,7 @@ export class FollowService {
     const targetMember = await this.memberService.getMember(null, followingId);
     if(!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-    const result  = await this.registerSubscription(null, followingId);
+    const result  = await this.registerSubscription(followerId, followingId);
 
 
     await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1});

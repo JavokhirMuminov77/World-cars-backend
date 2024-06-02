@@ -70,6 +70,7 @@ const apollo_1 = __webpack_require__(/*! @nestjs/apollo */ "@nestjs/apollo");
 const app_resolve_1 = __webpack_require__(/*! ./app.resolve */ "./apps/nestar-api/src/app.resolve.ts");
 const components_module_1 = __webpack_require__(/*! ./components/components.module */ "./apps/nestar-api/src/components/components.module.ts");
 const database_module_1 = __webpack_require__(/*! ./database/database.module */ "./apps/nestar-api/src/database/database.module.ts");
+const socket_module_1 = __webpack_require__(/*! ./socket/socket.module */ "./apps/nestar-api/src/socket/socket.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -93,6 +94,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             components_module_1.ComponentsModule,
             database_module_1.DatabaseModule,
+            socket_module_1.SocketModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, app_resolve_1.AppResolver],
@@ -1406,7 +1408,7 @@ let FollowService = class FollowService {
         const targetMember = await this.memberService.getMember(null, followingId);
         if (!targetMember)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.NO_DATA_FOUND);
-        const result = await this.registerSubscription(null, followingId);
+        const result = await this.registerSubscription(followerId, followingId);
         await this.memberService.memberStatusEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1 });
         await this.memberService.memberStatusEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: 1 });
         return result;
@@ -5553,6 +5555,90 @@ exports["default"] = LikeSchema;
 
 /***/ }),
 
+/***/ "./apps/nestar-api/src/socket/socket.gateway.ts":
+/*!******************************************************!*\
+  !*** ./apps/nestar-api/src/socket/socket.gateway.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SocketGateway = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const websockets_1 = __webpack_require__(/*! @nestjs/websockets */ "@nestjs/websockets");
+let SocketGateway = class SocketGateway {
+    constructor() {
+        this.logger = new common_1.Logger('SocketEventsGateway');
+        this.summaryClient = 0;
+    }
+    afterInit(server) {
+        this.logger.log(`WebSocket Server Initialized total: ${this.summaryClient}`);
+    }
+    handleConnection(client, ...args) {
+        this.summaryClient++;
+        this.logger.log(`== Client connected total: ${this.summaryClient} ==`);
+    }
+    handleDisconnect(client) {
+        this.summaryClient--;
+        this.logger.log(`==Client disconnected left total: ${this.summaryClient}==`);
+    }
+    handleMessage(client, payload) {
+        return 'Hello world';
+    }
+};
+exports.SocketGateway = SocketGateway;
+__decorate([
+    (0, websockets_1.SubscribeMessage)('message'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_a = typeof WebSocket !== "undefined" && WebSocket) === "function" ? _a : Object, Object]),
+    __metadata("design:returntype", String)
+], SocketGateway.prototype, "handleMessage", null);
+exports.SocketGateway = SocketGateway = __decorate([
+    (0, websockets_1.WebSocketGateway)({ transports: ['websoket'], secure: false })
+], SocketGateway);
+
+
+/***/ }),
+
+/***/ "./apps/nestar-api/src/socket/socket.module.ts":
+/*!*****************************************************!*\
+  !*** ./apps/nestar-api/src/socket/socket.module.ts ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SocketModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const socket_gateway_1 = __webpack_require__(/*! ./socket.gateway */ "./apps/nestar-api/src/socket/socket.gateway.ts");
+let SocketModule = class SocketModule {
+};
+exports.SocketModule = SocketModule;
+exports.SocketModule = SocketModule = __decorate([
+    (0, common_1.Module)({
+        providers: [socket_gateway_1.SocketGateway]
+    })
+], SocketModule);
+
+
+/***/ }),
+
 /***/ "@nestjs/apollo":
 /*!*********************************!*\
   !*** external "@nestjs/apollo" ***!
@@ -5630,6 +5716,26 @@ module.exports = require("@nestjs/jwt");
 /***/ ((module) => {
 
 module.exports = require("@nestjs/mongoose");
+
+/***/ }),
+
+/***/ "@nestjs/platform-ws":
+/*!**************************************!*\
+  !*** external "@nestjs/platform-ws" ***!
+  \**************************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/platform-ws");
+
+/***/ }),
+
+/***/ "@nestjs/websockets":
+/*!*************************************!*\
+  !*** external "@nestjs/websockets" ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/websockets");
 
 /***/ }),
 
@@ -5785,6 +5891,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const Loggin_interceptor_1 = __webpack_require__(/*! ./libs/interceptor/Loggin.interceptor */ "./apps/nestar-api/src/libs/interceptor/Loggin.interceptor.ts");
 const graphql_upload_1 = __webpack_require__(/*! graphql-upload */ "graphql-upload");
 const express = __webpack_require__(/*! express */ "express");
+const platform_ws_1 = __webpack_require__(/*! @nestjs/platform-ws */ "@nestjs/platform-ws");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalPipes(new common_1.ValidationPipe());
@@ -5792,6 +5899,7 @@ async function bootstrap() {
     app.enableCors({ origin: true, credentials: true });
     app.use((0, graphql_upload_1.graphqlUploadExpress)({ maxFileSize: 15000000, maxFiles: 10 }));
     app.use('/uploads', express.static('./uploads'));
+    app.useWebSocketAdapter(new platform_ws_1.WsAdapter(app));
     await app.listen(process.env.PORT_API ?? 3000);
 }
 bootstrap();
