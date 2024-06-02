@@ -1578,6 +1578,8 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ "./apps/nestar-api/src/libs/enums/common.enum.ts");
+const like_enum_1 = __webpack_require__(/*! ../../libs/enums/like.enum */ "./apps/nestar-api/src/libs/enums/like.enum.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let LikeService = class LikeService {
     constructor(likeModel) {
         this.likeModel = likeModel;
@@ -1605,6 +1607,36 @@ let LikeService = class LikeService {
         const { memberId, likeRefId } = input;
         const result = await this.likeModel.findOne({ memberId: memberId, likeRefId }).exec();
         return result ? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }] : [];
+    }
+    async getFavoriteProperties(memberId, input) {
+        const { page, limit } = input;
+        const match = { likeGroup: like_enum_1.LikeGroup.PROPERTY, memberId: memberId };
+        const data = await this.likeModel.aggregate([
+            { $match: match },
+            { $sort: { updatedAt: -1 } },
+            {
+                $lookup: {
+                    from: 'properties',
+                    localField: 'likeRefId',
+                    foreignField: '_id',
+                    as: 'favoriteProperty',
+                },
+            },
+            { $unwind: '$favoriteProperty' },
+            {
+                $facet: {
+                    list: [{ $skip: (page - 1) * limit }, { $limit: limit }, config_1.lookupFavorite,
+                        { $unwind: '$favoriteProperty.memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                }
+            }
+        ])
+            .exec();
+        const result = { list: [], metaCounter: data[0].metaCounter };
+        result.list = data[0].list.map((ele) => ele.favoriteProperty);
+        console.log("result", result);
+        return result;
     }
 };
 exports.LikeService = LikeService;
@@ -2175,7 +2207,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
@@ -2214,6 +2246,14 @@ let PropertyResolver = class PropertyResolver {
     async getProperties(input, memberId) {
         console.log('Query: getProperties');
         return await this.propertyService.getProperties(memberId, input);
+    }
+    async getFavorites(input, memberId) {
+        console.log('Query: getFavorites');
+        return await this.propertyService.getFavorites(memberId, input);
+    }
+    async getVisited(input, memberId) {
+        console.log('Query: getVisited');
+        return await this.propertyService.getVisited(memberId, input);
     }
     async getAgentProperties(input, memberId) {
         console.log('Query: getAgentProperties');
@@ -2279,14 +2319,32 @@ __decorate([
     __metadata("design:returntype", typeof (_m = typeof Promise !== "undefined" && Promise) === "function" ? _m : Object)
 ], PropertyResolver.prototype, "getProperties", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Query)((returns) => property_1.Properties),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_o = typeof property_input_1.OrdinaryInquiry !== "undefined" && property_input_1.OrdinaryInquiry) === "function" ? _o : Object, typeof (_p = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _p : Object]),
+    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+], PropertyResolver.prototype, "getFavorites", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, graphql_1.Query)((returns) => property_1.Properties),
+    __param(0, (0, graphql_1.Args)('input')),
+    __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_r = typeof property_input_1.OrdinaryInquiry !== "undefined" && property_input_1.OrdinaryInquiry) === "function" ? _r : Object, typeof (_s = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _s : Object]),
+    __metadata("design:returntype", typeof (_t = typeof Promise !== "undefined" && Promise) === "function" ? _t : Object)
+], PropertyResolver.prototype, "getVisited", null);
+__decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.AGENT),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, graphql_1.Query)((returns) => property_1.Properties),
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_o = typeof property_input_1.AgentPropertiesInquiry !== "undefined" && property_input_1.AgentPropertiesInquiry) === "function" ? _o : Object, typeof (_p = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _p : Object]),
-    __metadata("design:returntype", typeof (_q = typeof Promise !== "undefined" && Promise) === "function" ? _q : Object)
+    __metadata("design:paramtypes", [typeof (_u = typeof property_input_1.AgentPropertiesInquiry !== "undefined" && property_input_1.AgentPropertiesInquiry) === "function" ? _u : Object, typeof (_v = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _v : Object]),
+    __metadata("design:returntype", typeof (_w = typeof Promise !== "undefined" && Promise) === "function" ? _w : Object)
 ], PropertyResolver.prototype, "getAgentProperties", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
@@ -2294,8 +2352,8 @@ __decorate([
     __param(0, (0, graphql_1.Args)('propertyId')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, typeof (_r = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _r : Object]),
-    __metadata("design:returntype", typeof (_s = typeof Promise !== "undefined" && Promise) === "function" ? _s : Object)
+    __metadata("design:paramtypes", [String, typeof (_x = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _x : Object]),
+    __metadata("design:returntype", typeof (_y = typeof Promise !== "undefined" && Promise) === "function" ? _y : Object)
 ], PropertyResolver.prototype, "likeTargetProperty", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -2304,8 +2362,8 @@ __decorate([
     __param(0, (0, graphql_1.Args)('input')),
     __param(1, (0, authMember_decorator_1.AuthMember)('_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_t = typeof property_input_1.AllPropertiesInquiry !== "undefined" && property_input_1.AllPropertiesInquiry) === "function" ? _t : Object, typeof (_u = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _u : Object]),
-    __metadata("design:returntype", typeof (_v = typeof Promise !== "undefined" && Promise) === "function" ? _v : Object)
+    __metadata("design:paramtypes", [typeof (_z = typeof property_input_1.AllPropertiesInquiry !== "undefined" && property_input_1.AllPropertiesInquiry) === "function" ? _z : Object, typeof (_0 = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _0 : Object]),
+    __metadata("design:returntype", typeof (_1 = typeof Promise !== "undefined" && Promise) === "function" ? _1 : Object)
 ], PropertyResolver.prototype, "getAllPropertiesByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -2313,8 +2371,8 @@ __decorate([
     (0, graphql_1.Mutation)((returns) => property_1.Property),
     __param(0, (0, graphql_1.Args)('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_w = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _w : Object]),
-    __metadata("design:returntype", typeof (_x = typeof Promise !== "undefined" && Promise) === "function" ? _x : Object)
+    __metadata("design:paramtypes", [typeof (_2 = typeof property_update_1.PropertyUpdate !== "undefined" && property_update_1.PropertyUpdate) === "function" ? _2 : Object]),
+    __metadata("design:returntype", typeof (_3 = typeof Promise !== "undefined" && Promise) === "function" ? _3 : Object)
 ], PropertyResolver.prototype, "updatePropertyByAdmin", null);
 __decorate([
     (0, roles_decorator_1.Roles)(member_enum_1.MemberType.ADMIN),
@@ -2323,7 +2381,7 @@ __decorate([
     __param(0, (0, graphql_1.Args)('propertyId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_y = typeof Promise !== "undefined" && Promise) === "function" ? _y : Object)
+    __metadata("design:returntype", typeof (_4 = typeof Promise !== "undefined" && Promise) === "function" ? _4 : Object)
 ], PropertyResolver.prototype, "removePropertyByAdmin", null);
 exports.PropertyResolver = PropertyResolver = __decorate([
     (0, graphql_1.Resolver)(),
@@ -2489,6 +2547,12 @@ let PropertyService = class PropertyService {
                 return { [ele]: true };
             });
         }
+    }
+    async getFavorites(memberId, input) {
+        return await this.likeService.getFavoriteProperties(memberId, input);
+    }
+    async getVisited(memberId, input) {
+        return await this.likeService.getFavoriteProperties(memberId, input);
     }
     async getAgentProperties(memberId, input) {
         const { propertyStatus } = input.search;
@@ -2666,6 +2730,8 @@ exports.ViewService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const view_enum_1 = __webpack_require__(/*! ../../libs/enums/view.enum */ "./apps/nestar-api/src/libs/enums/view.enum.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let ViewService = class ViewService {
     constructor(viewModule) {
         this.viewModule = viewModule;
@@ -2683,6 +2749,39 @@ let ViewService = class ViewService {
         const { memberId, viewRefId } = input;
         const search = { memberId: memberId, viewRefId: viewRefId };
         return await this.viewModule.findOne(search).exec();
+    }
+    async getVisitedProperties(memberId, input) {
+        const { page, limit } = input;
+        const match = { viewGroup: view_enum_1.ViewGroup.PROPERTY, memberId: memberId };
+        const data = await this.viewModule
+            .aggregate([
+            { $match: match },
+            { $sort: { updatedAt: -1 } },
+            {
+                $lookup: {
+                    from: 'properties',
+                    localField: 'viewRefId',
+                    foreignField: '_id',
+                    as: 'visitedProperty',
+                },
+            },
+            { $unwind: '$visitedProperty' },
+            {
+                $facet: {
+                    list: [
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        config_1.lookupVisit,
+                        { $unwind: '$visitedProperty.memberData' },
+                    ],
+                    metaCounter: [{ $count: 'total' }],
+                },
+            },
+        ])
+            .exec();
+        const result = { list: [], metaCounter: data[0].metaCounter };
+        result.list = data[0].list.map((ele) => ele.visitedProperty);
+        return result;
     }
 };
 exports.ViewService = ViewService;
@@ -2758,7 +2857,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lookupFollowerData = exports.lookupFollowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
+exports.lookupVisit = exports.lookupFavorite = exports.lookupFollowerData = exports.lookupFollowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
 const bson_1 = __webpack_require__(/*! bson */ "bson");
 exports.availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
 exports.availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
@@ -2870,6 +2969,22 @@ exports.lookupFollowerData = {
         localField: 'followerId',
         foreignField: '_id',
         as: 'followerData',
+    },
+};
+exports.lookupFavorite = {
+    $lookup: {
+        from: 'members',
+        localField: 'favoriteProperty.memberId',
+        foreignField: '_id',
+        as: 'favoriteProperty.memberData',
+    },
+};
+exports.lookupVisit = {
+    $lookup: {
+        from: 'members',
+        localField: 'visitedProperty.memberId',
+        foreignField: '_id',
+        as: 'visitedProperty.memberData',
     },
 };
 
@@ -4161,7 +4276,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AllPropertiesInquiry = exports.ALPISearch = exports.AgentPropertiesInquiry = exports.APISearch = exports.PropertiesInquiry = exports.PISearch = exports.PeriodsRange = exports.SquaresRange = exports.PricesRange = exports.PropertyInput = void 0;
+exports.OrdinaryInquiry = exports.AllPropertiesInquiry = exports.ALPISearch = exports.AgentPropertiesInquiry = exports.APISearch = exports.PropertiesInquiry = exports.PISearch = exports.PeriodsRange = exports.SquaresRange = exports.PricesRange = exports.PropertyInput = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
 const property_enum_1 = __webpack_require__(/*! ../../enums/property.enum */ "./apps/nestar-api/src/libs/enums/property.enum.ts");
@@ -4474,6 +4589,24 @@ __decorate([
 exports.AllPropertiesInquiry = AllPropertiesInquiry = __decorate([
     (0, graphql_1.InputType)()
 ], AllPropertiesInquiry);
+let OrdinaryInquiry = class OrdinaryInquiry {
+};
+exports.OrdinaryInquiry = OrdinaryInquiry;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], OrdinaryInquiry.prototype, "page", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Min)(1),
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], OrdinaryInquiry.prototype, "limit", void 0);
+exports.OrdinaryInquiry = OrdinaryInquiry = __decorate([
+    (0, graphql_1.InputType)()
+], OrdinaryInquiry);
 
 
 /***/ }),
