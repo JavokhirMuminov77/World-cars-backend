@@ -115,10 +115,10 @@ export class FollowService {
             lookupAuthMemberLiked(memberId, "$followerId"),
             lookupAuthMemberFollowed({
               followerId: memberId,
-              followingId:'$ffollowerData',
+              followingId:'$followerData',
             }),
             lookupFollowingData,
-            {$unwind: '$followingData'},
+            {$unwind: '$followerData'},
           ],
           metaCounter: [{$count: 'total'}],
         },

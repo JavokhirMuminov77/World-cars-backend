@@ -70,7 +70,7 @@ export class LikeService {
     ])
     .exec();
 
-    const result:Properties = {list: [], metaCounter: data[0].metaCounter};
+    const result: Properties = {list: [], metaCounter: data[0].metaCounter};
     result.list = data[0].list.map((ele) => ele.favoriteProperty);
     console.log("result", result);
     return result;
