@@ -1256,7 +1256,7 @@ exports.FollowModule = FollowModule = __decorate([
             auth_module_1.AuthModule,
             (0, common_1.forwardRef)(() => member_module_1.MemberModule),
         ],
-        providers: [follow_resolver_1.FollowResolver, follow_service_1.FollowService],
+        providers: [follow_service_1.FollowService, follow_resolver_1.FollowResolver],
         exports: [follow_service_1.FollowService],
     })
 ], FollowModule);
@@ -1489,10 +1489,10 @@ let FollowService = class FollowService {
                         (0, config_1.lookupAuthMemberLiked)(memberId, "$followerId"),
                         (0, config_1.lookupAuthMemberFollowed)({
                             followerId: memberId,
-                            followingId: '$ffollowerData',
+                            followingId: '$followerData',
                         }),
                         config_1.lookupFollowingData,
-                        { $unwind: '$followingData' },
+                        { $unwind: '$followerData' },
                     ],
                     metaCounter: [{ $count: 'total' }],
                 },
@@ -2554,7 +2554,7 @@ let PropertyService = class PropertyService {
         return await this.likeService.getFavoriteProperties(memberId, input);
     }
     async getVisited(memberId, input) {
-        return await this.likeService.getFavoriteProperties(memberId, input);
+        return await this.viewService.getVisitedProperties(memberId, input);
     }
     async getAgentProperties(memberId, input) {
         const { propertyStatus } = input.search;
