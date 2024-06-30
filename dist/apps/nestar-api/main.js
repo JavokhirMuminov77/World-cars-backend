@@ -2528,13 +2528,13 @@ let PropertyService = class PropertyService {
         const { memberId, locationList, roomsList, bedsList, typeList, periodsRange, pricesRange, squaresRange, options, text, } = input.search;
         if (memberId)
             match.memberId = (0, config_1.shapeIntoMongoObjectId)(memberId);
-        if (locationList)
+        if (locationList && locationList.length)
             match.propertyLocation = { $in: locationList };
-        if (roomsList)
+        if (roomsList && roomsList.length)
             match.propertyRooms = { $in: roomsList };
-        if (bedsList)
+        if (bedsList && bedsList.length)
             match.propertyBeds = { $in: bedsList };
-        if (typeList)
+        if (typeList && typeList.length)
             match.propertyType = { $in: typeList };
         if (pricesRange)
             match.propertyPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
