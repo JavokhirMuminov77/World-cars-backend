@@ -1,5 +1,4 @@
 /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./apps/nestar-api/src/app.controller.ts":
@@ -8,6 +7,7 @@
   \***********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -52,6 +52,7 @@ exports.AppController = AppController = __decorate([
   \*******************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -110,6 +111,7 @@ exports.AppModule = AppModule = __decorate([
   \********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -148,6 +150,7 @@ exports.AppResolver = AppResolver = __decorate([
   \********************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -177,6 +180,7 @@ exports.AppService = AppService = __decorate([
   \************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -216,6 +220,7 @@ exports.AuthModule = AuthModule = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -275,6 +280,7 @@ exports.AuthService = AuthService = __decorate([
   \********************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthMember = void 0;
@@ -305,6 +311,7 @@ exports.AuthMember = (0, common_1.createParamDecorator)((data, context) => {
   \***************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Roles = void 0;
@@ -321,6 +328,7 @@ exports.Roles = Roles;
   \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -370,6 +378,7 @@ exports.AuthGuard = AuthGuard = __decorate([
   \*******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -426,6 +435,7 @@ exports.RolesGuard = RolesGuard = __decorate([
   \*********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -480,6 +490,7 @@ exports.WithoutGuard = WithoutGuard = __decorate([
   \******************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -524,6 +535,7 @@ exports.BoardArticleModule = BoardArticleModule = __decorate([
   \********************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -684,6 +696,7 @@ exports.BoardArticleResolver = BoardArticleResolver = __decorate([
   \*******************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -900,6 +913,7 @@ exports.BoardArticleService = BoardArticleService = __decorate([
   \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -943,6 +957,7 @@ exports.CommentModule = CommentModule = __decorate([
   \********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1048,6 +1063,7 @@ exports.CommentResolver = CommentResolver = __decorate([
   \*******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1158,7 +1174,7 @@ let CommentService = class CommentService {
         return result[0];
     }
     async removeCommentByAdmin(input) {
-        const result = await this.commentModel.findByIdAndDelete(input);
+        const result = await this.commentModel.findByIdAndDelete(input).exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.REMOVE_FAILED);
         return result;
@@ -1180,6 +1196,7 @@ exports.CommentService = CommentService = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1225,6 +1242,7 @@ exports.ComponentsModule = ComponentsModule = __decorate([
   \****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1270,6 +1288,7 @@ exports.FollowModule = FollowModule = __decorate([
   \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1374,6 +1393,7 @@ exports.FollowResolver = FollowResolver = __decorate([
   \*****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1520,6 +1540,7 @@ exports.FollowService = FollowService = __decorate([
   \************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1560,6 +1581,7 @@ exports.LikeModule = LikeModule = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1657,6 +1679,7 @@ exports.LikeService = LikeService = __decorate([
   \****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1701,6 +1724,7 @@ exports.MemberModule = MemberModule = __decorate([
   \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1950,6 +1974,7 @@ exports.MemberResolver = MemberResolver = __decorate([
   \*****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2152,6 +2177,7 @@ exports.MemberService = MemberService = __decorate([
   \********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2196,6 +2222,7 @@ exports.PropertyModule = PropertyModule = __decorate([
   \**********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2399,6 +2426,7 @@ exports.PropertyResolver = PropertyResolver = __decorate([
   \*********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2680,6 +2708,7 @@ exports.PropertyService = PropertyService = __decorate([
   \************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2713,6 +2742,7 @@ exports.ViewModule = ViewModule = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2802,6 +2832,7 @@ exports.ViewService = ViewService = __decorate([
   \*********************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2857,6 +2888,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
   \********************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.lookupVisit = exports.lookupFavorite = exports.lookupFollowerData = exports.lookupFollowingData = exports.lookupMember = exports.lookupAuthMemberFollowed = exports.lookupAuthMemberLiked = exports.shapeIntoMongoObjectId = exports.getSerialForImage = exports.validMimeTypes = exports.availableCommentSorts = exports.availableBoardArticleSorts = exports.availablePropertySorts = exports.availableOptions = exports.availbleMemberSorts = exports.availbleAgentSorts = void 0;
@@ -2999,6 +3031,7 @@ exports.lookupVisit = {
   \***************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3158,6 +3191,7 @@ exports.AllBoardArticlesInquiry = AllBoardArticlesInquiry = __decorate([
   \*********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3262,6 +3296,7 @@ exports.BoardArticles = BoardArticles = __decorate([
   \****************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3322,6 +3357,7 @@ exports.BoardArticleUpdate = BoardArticleUpdate = __decorate([
   \***************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3417,6 +3453,7 @@ exports.CommentsInquiry = CommentsInquiry = __decorate([
   \*********************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3500,6 +3537,7 @@ exports.Comments = Comments = __decorate([
   \****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3549,6 +3587,7 @@ exports.CommentUpdate = CommentUpdate = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3613,6 +3652,7 @@ exports.FollowInquiry = FollowInquiry = __decorate([
   \*******************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3762,6 +3802,7 @@ exports.Followers = Followers = __decorate([
   \***************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3836,6 +3877,7 @@ exports.Like = Like = __decorate([
   \*************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4013,6 +4055,7 @@ exports.MembersInquiry = MembersInquiry = __decorate([
   \*******************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4179,6 +4222,7 @@ exports.Members = Members = __decorate([
   \**************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4266,6 +4310,7 @@ exports.MemberUpdate = MemberUpdate = __decorate([
   \*****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4619,6 +4664,7 @@ exports.OrdinaryInquiry = OrdinaryInquiry = __decorate([
   \***********************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4771,6 +4817,7 @@ exports.Properties = Properties = __decorate([
   \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4886,6 +4933,7 @@ exports.PropertyUpdate = PropertyUpdate = __decorate([
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BoardArticleStatus = exports.BoardArticleCategory = void 0;
@@ -4918,6 +4966,7 @@ var BoardArticleStatus;
   \********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommentGroup = exports.CommentStatus = void 0;
@@ -4949,6 +4998,7 @@ var CommentGroup;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Direction = exports.Message = void 0;
@@ -4992,6 +5042,7 @@ var Direction;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LikeGroup = void 0;
@@ -5015,6 +5066,7 @@ var LikeGroup;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MemberAuthType = exports.MemberStatus = exports.MemberType = void 0;
@@ -5050,6 +5102,7 @@ var MemberAuthType;
   \*********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PropertyLocation = exports.PropertyStatus = exports.PropertyType = void 0;
@@ -5097,6 +5150,7 @@ var PropertyLocation;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewGroup = void 0;
@@ -5120,6 +5174,7 @@ var ViewGroup;
   \********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5169,6 +5224,7 @@ exports.LoggingInterceptor = LoggingInterceptor = __decorate([
   \***********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5224,6 +5280,7 @@ exports["default"] = BoardArticleSchema;
   \******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5263,6 +5320,7 @@ exports["default"] = CommentSchema;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5288,6 +5346,7 @@ exports["default"] = FollowSchema;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5395,6 +5454,7 @@ exports["default"] = MemberSchema;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5497,6 +5557,7 @@ exports["default"] = PropertySchema;
   \***************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5529,6 +5590,7 @@ exports["default"] = ViewSchema;
   \***************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
@@ -5559,53 +5621,8 @@ exports["default"] = LikeSchema;
 /*!******************************************************!*\
   !*** ./apps/nestar-api/src/socket/socket.gateway.ts ***!
   \******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ (() => {
 
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SocketGateway = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const websockets_1 = __webpack_require__(/*! @nestjs/websockets */ "@nestjs/websockets");
-let SocketGateway = class SocketGateway {
-    constructor() {
-        this.logger = new common_1.Logger('SocketEventsGateway');
-        this.summaryClient = 0;
-    }
-    afterInit(server) {
-        this.logger.log(`WebSocket Server Initialized total: ${this.summaryClient}`);
-    }
-    handleConnection(client, ...args) {
-        this.summaryClient++;
-        this.logger.log(`== Client connected total: ${this.summaryClient} ==`);
-    }
-    handleDisconnect(client) {
-        this.summaryClient--;
-        this.logger.log(`==Client disconnected left total: ${this.summaryClient}==`);
-    }
-    handleMessage(client, payload) {
-        return 'Hello world';
-    }
-};
-exports.SocketGateway = SocketGateway;
-__decorate([
-    (0, websockets_1.SubscribeMessage)('message'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof WebSocket !== "undefined" && WebSocket) === "function" ? _a : Object, Object]),
-    __metadata("design:returntype", String)
-], SocketGateway.prototype, "handleMessage", null);
-exports.SocketGateway = SocketGateway = __decorate([
-    (0, websockets_1.WebSocketGateway)({ transports: ['websoket'], secure: false })
-], SocketGateway);
 
 
 /***/ }),
@@ -5616,6 +5633,7 @@ exports.SocketGateway = SocketGateway = __decorate([
   \*****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5627,11 +5645,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SocketModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const socket_gateway_1 = __webpack_require__(/*! ./socket.gateway */ "./apps/nestar-api/src/socket/socket.gateway.ts");
+const auth_module_1 = __webpack_require__(/*! ../components/auth/auth.module */ "./apps/nestar-api/src/components/auth/auth.module.ts");
 let SocketModule = class SocketModule {
 };
 exports.SocketModule = SocketModule;
 exports.SocketModule = SocketModule = __decorate([
     (0, common_1.Module)({
+        imports: [auth_module_1.AuthModule],
         providers: [socket_gateway_1.SocketGateway]
     })
 ], SocketModule);
@@ -5645,6 +5665,7 @@ exports.SocketModule = SocketModule = __decorate([
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/apollo");
 
 /***/ }),
@@ -5655,6 +5676,7 @@ module.exports = require("@nestjs/apollo");
   \********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/axios");
 
 /***/ }),
@@ -5665,6 +5687,7 @@ module.exports = require("@nestjs/axios");
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/common");
 
 /***/ }),
@@ -5675,6 +5698,7 @@ module.exports = require("@nestjs/common");
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/config");
 
 /***/ }),
@@ -5685,6 +5709,7 @@ module.exports = require("@nestjs/config");
   \*******************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/core");
 
 /***/ }),
@@ -5695,6 +5720,7 @@ module.exports = require("@nestjs/core");
   \**********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/graphql");
 
 /***/ }),
@@ -5705,6 +5731,7 @@ module.exports = require("@nestjs/graphql");
   \******************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/jwt");
 
 /***/ }),
@@ -5715,6 +5742,7 @@ module.exports = require("@nestjs/jwt");
   \***********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/mongoose");
 
 /***/ }),
@@ -5725,17 +5753,8 @@ module.exports = require("@nestjs/mongoose");
   \**************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("@nestjs/platform-ws");
-
-/***/ }),
-
-/***/ "@nestjs/websockets":
-/*!*************************************!*\
-  !*** external "@nestjs/websockets" ***!
-  \*************************************/
-/***/ ((module) => {
-
-module.exports = require("@nestjs/websockets");
 
 /***/ }),
 
@@ -5745,6 +5764,7 @@ module.exports = require("@nestjs/websockets");
   \***************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("bcryptjs");
 
 /***/ }),
@@ -5755,6 +5775,7 @@ module.exports = require("bcryptjs");
   \***********************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("bson");
 
 /***/ }),
@@ -5765,6 +5786,7 @@ module.exports = require("bson");
   \**********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("class-validator");
 
 /***/ }),
@@ -5775,6 +5797,7 @@ module.exports = require("class-validator");
   \**************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("express");
 
 /***/ }),
@@ -5785,6 +5808,7 @@ module.exports = require("express");
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("graphql-upload");
 
 /***/ }),
@@ -5795,6 +5819,7 @@ module.exports = require("graphql-upload");
   \*************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("moment");
 
 /***/ }),
@@ -5805,6 +5830,7 @@ module.exports = require("moment");
   \***************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("mongoose");
 
 /***/ }),
@@ -5815,6 +5841,7 @@ module.exports = require("mongoose");
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("rxjs/operators");
 
 /***/ }),
@@ -5825,6 +5852,7 @@ module.exports = require("rxjs/operators");
   \***********************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("uuid");
 
 /***/ }),
@@ -5835,6 +5863,7 @@ module.exports = require("uuid");
   \*********************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("fs");
 
 /***/ }),
@@ -5845,6 +5874,7 @@ module.exports = require("fs");
   \***********************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("path");
 
 /***/ })
@@ -5877,8 +5907,9 @@ module.exports = require("path");
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
+"use strict";
 var exports = __webpack_exports__;
 /*!*************************************!*\
   !*** ./apps/nestar-api/src/main.ts ***!
