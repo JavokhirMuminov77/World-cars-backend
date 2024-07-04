@@ -961,18 +961,18 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommentResolver = void 0;
 const graphql_1 = __webpack_require__(/*! @nestjs/graphql */ "@nestjs/graphql");
 const comment_service_1 = __webpack_require__(/*! ./comment.service */ "./apps/nestar-api/src/components/comment/comment.service.ts");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const auth_guard_1 = __webpack_require__(/*! ../auth/guards/auth.guard */ "./apps/nestar-api/src/components/auth/guards/auth.guard.ts");
-const comment_update_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.update */ "./apps/nestar-api/src/libs/dto/comment/comment.update.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const comment_input_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.input */ "./apps/nestar-api/src/libs/dto/comment/comment.input.ts");
 const authMember_decorator_1 = __webpack_require__(/*! ../auth/decoratots/authMember.decorator */ "./apps/nestar-api/src/components/auth/decoratots/authMember.decorator.ts");
 const mongoose_1 = __webpack_require__(/*! mongoose */ "mongoose");
-const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
-const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
-const comment_input_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.input */ "./apps/nestar-api/src/libs/dto/comment/comment.input.ts");
-const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
-const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
-const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
 const comment_1 = __webpack_require__(/*! ../../libs/dto/comment/comment */ "./apps/nestar-api/src/libs/dto/comment/comment.ts");
+const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
+const comment_update_1 = __webpack_require__(/*! ../../libs/dto/comment/comment.update */ "./apps/nestar-api/src/libs/dto/comment/comment.update.ts");
+const without_guard_1 = __webpack_require__(/*! ../auth/guards/without.guard */ "./apps/nestar-api/src/components/auth/guards/without.guard.ts");
+const roles_guard_1 = __webpack_require__(/*! ../auth/guards/roles.guard */ "./apps/nestar-api/src/components/auth/guards/roles.guard.ts");
+const roles_decorator_1 = __webpack_require__(/*! ../auth/decoratots/roles.decorator */ "./apps/nestar-api/src/components/auth/decoratots/roles.decorator.ts");
+const member_enum_1 = __webpack_require__(/*! ../../libs/enums/member.enum */ "./apps/nestar-api/src/libs/enums/member.enum.ts");
 let CommentResolver = class CommentResolver {
     constructor(commentService) {
         this.commentService = commentService;
@@ -982,17 +982,17 @@ let CommentResolver = class CommentResolver {
         return await this.commentService.createComment(memberId, input);
     }
     async updateComment(input, memberId) {
-        console.log('Mutation: updateComment!');
+        console.log('Mutation: updateComment');
         input._id = (0, config_1.shapeIntoMongoObjectId)(input._id);
         return await this.commentService.updateComment(memberId, input);
     }
     async getComments(input, memberId) {
-        console.log('Query: getComments!');
+        console.log('Query: getComments');
         input.search.commentRefId = (0, config_1.shapeIntoMongoObjectId)(input.search.commentRefId);
         return await this.commentService.getComments(memberId, input);
     }
     async removeCommentByAdmin(input) {
-        console.log('Mutation: removeCommentByAdmin!');
+        console.log('Mutation: removeCommentByAdmin');
         const commentId = (0, config_1.shapeIntoMongoObjectId)(input);
         return await this.commentService.removeCommentByAdmin(commentId);
     }
@@ -1074,11 +1074,11 @@ const common_enum_1 = __webpack_require__(/*! ../../libs/enums/common.enum */ ".
 const comment_enum_1 = __webpack_require__(/*! ../../libs/enums/comment.enum */ "./apps/nestar-api/src/libs/enums/comment.enum.ts");
 const config_1 = __webpack_require__(/*! ../../libs/config */ "./apps/nestar-api/src/libs/config.ts");
 let CommentService = class CommentService {
-    constructor(commentModel, memberService, propertyService, boardArticleServise) {
+    constructor(commentModel, memberService, propertyService, boardArticleService) {
         this.commentModel = commentModel;
         this.memberService = memberService;
         this.propertyService = propertyService;
-        this.boardArticleServise = boardArticleServise;
+        this.boardArticleService = boardArticleService;
     }
     async createComment(memberId, input) {
         input.memberId = memberId;
@@ -1087,7 +1087,7 @@ let CommentService = class CommentService {
             result = await this.commentModel.create(input);
         }
         catch (err) {
-            console.log('Error. Service.model', err.message);
+            console.log('Error, Service.model:', err.message);
             throw new common_1.BadRequestException(common_enum_1.Message.CREATE_FAILED);
         }
         switch (input.commentGroup) {
@@ -1099,7 +1099,7 @@ let CommentService = class CommentService {
                 });
                 break;
             case comment_enum_1.CommentGroup.ARTICLE:
-                await this.boardArticleServise.boardArticleStatsEditor({
+                await this.boardArticleService.boardArticleStatsEditor({
                     _id: input.commentRefId,
                     targetKey: 'articleComments',
                     modifier: 1,
@@ -1124,9 +1124,7 @@ let CommentService = class CommentService {
             _id: _id,
             memberId: memberId,
             commentStatus: comment_enum_1.CommentStatus.ACTIVE,
-        }, input, {
-            new: true,
-        })
+        }, input, { new: true })
             .exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
@@ -1765,7 +1763,7 @@ let MemberResolver = class MemberResolver {
         return await this.memberService.getAgents(memberId, input);
     }
     async updateMember(input, memberId) {
-        console.log('Mutation updateMember');
+        console.log('Mutation: updateMember');
         delete input._id;
         return await this.memberService.updateMember(memberId, input);
     }
@@ -2020,9 +2018,7 @@ let MemberService = class MemberService {
             .findOneAndUpdate({
             _id: memberId,
             memberStatus: member_enum_1.MemberStatus.ACTIVE,
-        }, input, {
-            new: true,
-        })
+        }, input, { new: true })
             .exec();
         if (!result)
             throw new common_1.InternalServerErrorException(common_enum_1.Message.UPDATE_FAILED);
