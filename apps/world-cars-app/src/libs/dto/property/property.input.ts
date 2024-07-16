@@ -31,19 +31,19 @@ export class PropertyInput {
 
 	@IsNotEmpty()
 	@Field(() => Number)
-	propertySquare: number;
+	propertySize: number;
+
+	// @IsNotEmpty()
+	// @IsInt()
+	// @Min(1)
+	// @Field(() => Int)
+	// propertyBeds: number;
 
 	@IsNotEmpty()
 	@IsInt()
-	@Min(1)
+	@Min(2)
 	@Field(() => Int)
-	propertyBeds: number;
-
-	@IsNotEmpty()
-	@IsInt()
-	@Min(1)
-	@Field(() => Int)
-	propertyRooms: number;
+	propertySeat: number;
 
 	@IsNotEmpty()
 	@Field(() => [String])
@@ -112,11 +112,11 @@ export class PISearch {
 
 	@IsOptional()
 	@Field(() => [Int], { nullable: true })
-	roomsList?: Number[];
+	seatList?: Number[];
 
-	@IsOptional()
-	@Field(() => [Int], { nullable: true })
-	bedsList?: Number[];
+	// @IsOptional()
+	// @Field(() => [Int], { nullable: true })
+	// bedsList?: Number[];
 
 	@IsOptional()
 	@IsIn(availableOptions, { each: true })
@@ -133,7 +133,7 @@ export class PISearch {
 
 	@IsOptional()
 	@Field(() => SquaresRange, { nullable: true })
-	squaresRange?: SquaresRange;
+	sizeRange?: SquaresRange;
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })

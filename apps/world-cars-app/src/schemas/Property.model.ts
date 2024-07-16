@@ -36,17 +36,14 @@ const PropertySchema = new Schema(
 			required: true,
 		},
 
-		propertySquare: {
+		propertySize: {
 			type: Number,
 			required: true,
 		},
 
-		propertyBeds: {
-			type: Number,
-			required: true,
-		},
 
-		propertyRooms: {
+
+		propertySeat: {
 			type: Number,
 			required: true,
 		},

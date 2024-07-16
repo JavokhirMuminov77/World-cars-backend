@@ -28,13 +28,13 @@ export class Property {
 	propertyPrice: number;
 
 	@Field(() => Number)
-	propertySquare: number;
+	propertySize: number;
+
+	// @Field(() => Int)
+	// propertyBeds: number;
 
 	@Field(() => Int)
-	propertyBeds: number;
-
-	@Field(() => Int)
-	propertyRooms: number;
+	propertySeat: number;
 
 	@Field(() => Int)
 	propertyViews: number;
