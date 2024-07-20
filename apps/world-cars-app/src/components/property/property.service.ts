@@ -129,9 +129,8 @@ export class PropertyService {
 	private shapeMatchQuery(match: T, input: PropertiesInquiry): void {
 		const {
 			memberId,
-			locationList,
+			typesList,
 			seatList,
-			// bedsList,
 			typeList,
 			periodsRange,
 			pricesRange,
@@ -141,7 +140,7 @@ export class PropertyService {
 		} = input.search;
 
 		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
-		if (locationList && locationList.length) match.propertyLocation = { $in: locationList };
+		if (typesList && typesList.length) match.propertyTypes = { $in: typesList };
 		if (seatList && seatList.length) match.propertySeat = { $in: seatList };
 		// if (bedsList && bedsList.length) match.propertyBeds = { $in: bedsList };
 		if (typeList && typeList.length) match.propertyType = { $in: typeList };
@@ -220,12 +219,12 @@ export class PropertyService {
 	}
 
 	public async getAllPropertiesByAdmin(input: AllPropertiesInquiry): Promise<Properties> {
-		const { propertyStatus, propertyLocationList } = input.search;
+		const { propertyStatus, propertyTypesList } = input.search;
 		const match: T = {};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
 		if (propertyStatus) match.propertyStatus = propertyStatus;
-		if (propertyLocationList) match.propertyLocationList = { $in: propertyLocationList };
+		if (propertyTypesList) match.propertyTypesList = { $in: propertyTypesList };
 
 		const result = await this.propertyModel
 			.aggregate([

@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
-import { PropertyLocation, PropertyStatus, PropertyType } from '../../enums/property.enum';
+import { PropertyTypes, PropertyStatus, PropertyType } from '../../enums/property.enum';
 import { availableOptions, availablePropertySorts } from '../../config';
 import { Direction } from '../../enums/common.enum';
 import { ObjectId } from 'mongoose';
@@ -12,8 +12,8 @@ export class PropertyInput {
 	propertyType: PropertyType;
 
 	@IsNotEmpty()
-	@Field(() => PropertyLocation)
-	propertyLocation: PropertyLocation;
+	@Field(() => PropertyTypes)
+	propertyTypes: PropertyTypes;
 
 	@IsNotEmpty()
 	@Length(3, 100)
@@ -103,8 +103,8 @@ export class PISearch {
 	memberId?: ObjectId;
 
 	@IsOptional()
-	@Field(() => [PropertyLocation], { nullable: true })
-	locationList?: PropertyLocation[];
+	@Field(() => [PropertyTypes], { nullable: true })
+	typesList?: PropertyTypes[];
 
 	@IsOptional()
 	@Field(() => [PropertyType], { nullable: true })
@@ -206,8 +206,8 @@ export class ALPISearch {
 	propertyStatus?: PropertyStatus;
 
 	@IsOptional()
-	@Field(() => [PropertyLocation], { nullable: true })
-	propertyLocationList?: PropertyLocation[];
+	@Field(() => [PropertyTypes], { nullable: true })
+	propertyTypesList?: PropertyTypes[];
 }
 
 @InputType()
