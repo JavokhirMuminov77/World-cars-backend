@@ -27,8 +27,8 @@ import { LikeGroup } from '../../libs/enums/like.enum';
 export class PropertyService {
 	constructor(
 		@InjectModel('Property') private readonly propertyModel: Model<Property>,
-		private readonly memberService: MemberService,
-		private readonly viewService: ViewService,
+		private  memberService: MemberService,
+		private  viewService: ViewService,
 		private likeService: LikeService,
 	) {}
 
@@ -57,7 +57,7 @@ export class PropertyService {
 			const viewInput = { memberId: memberId, viewRefId: propertyId, viewGroup: ViewGroup.PROPERTY };
 			const newView = await this.viewService.recordView(viewInput);
 			if (newView) {
-				await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyviews', modifier: 1 });
+				await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyViews', modifier: 1 });
 				targetProperty.propertyViews++;
 			}
 
