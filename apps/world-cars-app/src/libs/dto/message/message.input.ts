@@ -1,47 +1,29 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { ObjectId } from 'mongoose';
-import { Member, TotalCounter } from '../member/member';
-import { MessageGroup, MessageStatus, MessageType } from '../../enums/message.enum';
-import { IsNotEmpty,  IsOptional } from 'class-validator';
-import { NotificationType } from '../../enums/notification.enum';
 
 @InputType()
-export class messageInput {
+export class MessageInput {
 	@IsNotEmpty()
-	@Field(() => MessageType)
-	messageType: NotificationType;
-
-	@IsNotEmpty()
-	@Field(() => MessageStatus, { defaultValue: MessageStatus.WAIT })
-	messageStatus: MessageStatus;
-
-	@IsNotEmpty()
-	@Field(() => MessageGroup)
-	messageGroup: MessageGroup;
+	@Field(() => String)
+	name: string;
 
 	@IsNotEmpty()
 	@Field(() => String)
-	messageTitle: string;
-
-	@IsOptional()
-	@Field(() => String)
-	messageDesc: string;
+	phone: string;
 
 	@IsNotEmpty()
 	@Field(() => String)
-	authorId: ObjectId;
+	email: string;
+
+	@IsNotEmpty()
+	@Length(1, 100)
+	@Field(() => String)
+	message: string;
 
 	@IsNotEmpty()
 	@Field(() => String)
-	receiverId: ObjectId;
+	messageRefId: ObjectId;
 
-	@IsNotEmpty()
-	@Field(() => String, { nullable: true })
-	propertyId?: ObjectId;
-
-	@IsNotEmpty()
-	@Field(() => String, { nullable: true })
-	articleId?: ObjectId;
-
-	/** from aggregation **/
+	memberId?: ObjectId;
 }

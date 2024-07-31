@@ -1,8 +1,8 @@
 import { ObjectId } from 'bson';
 
-export const availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
-export const availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
-export const availableOptions = ['propertyBarter', 'propertyRent'];
+export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
+export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
+export const availableOptions = ['propertyBook', 'propertyRent'];
 export const availablePropertySorts = [
 	'createdAt',
 	'updatedAt',
@@ -11,13 +11,11 @@ export const availablePropertySorts = [
 	'propertyRank',
 	'propertyPrice',
 ];
-
 export const availableBoardArticleSorts = ['createdAt', 'updatedAt', 'articleLikes', 'articleViews'];
-export const availableCommentSorts = ['createdAt', ];
+export const availableCommentSorts = ['createdAt', 'updatedAt'];
+export const availableNotificationSorts = ['createdAt', 'updatedAt'];
 
-export const availableMessageSorts = ['createdAt', 'updatedAt'];
-
-// IMAGE CONFIGURATION (config.js)
+/** IMAGE CONFIGURATION **/
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { T } from './types/common';
@@ -32,9 +30,6 @@ export const shapeIntoMongoObjectId = (target: any) => {
 	return typeof target === 'string' ? new ObjectId(target) : target;
 };
 
-
-
-
 export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id') => {
 	return {
 		$lookup: {
@@ -48,7 +43,7 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 				{
 					$match: {
 						$expr: {
-							$and: [{ $eq: ['$likeRefId', '$$localLikeRefId']}, { $eq: ['$memberId', '$$localMemberId']}],
+							$and: [{ $eq: ['$likeRefId', '$$localLikeRefId'] }, { $eq: ['$memberId', '$$localMemberId'] }],
 						},
 					},
 				},
@@ -58,8 +53,8 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 						memberId: 1,
 						likeRefId: 1,
 						myFavorite: '$$localMyFavorite',
-					}
-				}
+					},
+				},
 			],
 			as: 'meLiked',
 		},
@@ -72,7 +67,7 @@ interface LookupAuthMemberFollowed {
 }
 
 export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
-	const { followerId, followingId} = input;
+	const { followerId, followingId } = input;
 	return {
 		$lookup: {
 			from: 'follows',
@@ -85,7 +80,7 @@ export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
 				{
 					$match: {
 						$expr: {
-							$and: [{ $eq: ['$followerId', '$$localFollowerId']}, { $eq: ['$followingId', '$$localFollowingId']}],
+							$and: [{ $eq: ['$followerId', '$$localFollowerId'] }, { $eq: ['$followingId', '$$localFollowingId'] }],
 						},
 					},
 				},
@@ -94,20 +89,14 @@ export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
 						_id: 0,
 						followerId: 1,
 						followingId: 1,
-						myFavorite: '$$localMyFavorite',
-					}
-				}
+						myFollowing: '$$localMyFavorite',
+					},
+				},
 			],
 			as: 'meFollowed',
 		},
 	};
 };
-
-
-
-
-
-
 
 export const lookupMember = {
 	$lookup: {
@@ -126,7 +115,6 @@ export const lookupFollowingData = {
 		as: 'followingData',
 	},
 };
-
 
 export const lookupFollowerData = {
 	$lookup: {

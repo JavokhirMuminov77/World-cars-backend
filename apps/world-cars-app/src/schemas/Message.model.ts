@@ -1,58 +1,38 @@
 import { Schema } from 'mongoose';
-import { MessageGroup, MessageStatus, MessageType } from '../libs/enums/message.enum';
 
 const MessageSchema = new Schema(
 	{
-		messageType: {
-			type: String,
-			enum: MessageType,
-			required: true,
-		},
-
-		messageStatus: {
-			type: String,
-			enum: MessageStatus,
-			default: MessageStatus.WAIT,
-		},
-
-		messageGroup: {
-			type: String,
-			enum: MessageGroup,
-			required: true,
-		},
-
-		messageTitle: {
+		name: {
 			type: String,
 			required: true,
 		},
 
-		messageDesc: {
+		phone: {
 			type: String,
+			required: true,
 		},
 
-		authorId: {
+		email: {
+			type: String,
+			required: true,
+		},
+
+		message: {
+			type: String,
+			required: true,
+		},
+
+		messageRefId: {
 			type: Schema.Types.ObjectId,
 			required: true,
-			ref: 'Member',
 		},
 
-		receiverId: {
+		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,
-			ref: 'Member',
-		},
-
-		propertyId: {
-			type: Schema.Types.ObjectId,
-			ref: 'Property',
-		},
-
-		articleId: {
-			type: Schema.Types.ObjectId,
-			ref: 'BoardArticle',
 		},
 	},
-	{ timestamps: true, collection: 'message' },
+	{ timestamps: true, collection: 'messages' },
 );
 
 export default MessageSchema;
