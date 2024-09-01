@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LikeService } from './like.service';
-import LikeSchema from '../../schemas/Like.model';
+import LikeSchema from '../../schemas/like.model';
 import { MemberModule } from '../member/member.module';
 import { NotificationModule } from '../notification/notification.module';
 

@@ -27,7 +27,7 @@ export class PropertyUpdate {
 	propertyAddress?: string;
 
 	@IsOptional()
-	@Length(3, 100)
+	@Length(3, 12)
 	@Field(() => String, { nullable: true })
 	propertyTitle?: string;
 

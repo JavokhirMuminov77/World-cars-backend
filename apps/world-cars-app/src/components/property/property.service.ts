@@ -37,7 +37,7 @@ export class PropertyService {
 			const result = await this.propertyModel.create(input);
 
 			// increment memberProperties
-			await this.memberService.memberStatusEditor({ _id: result.memberId, targetKey: 'memberProperties', modifier: 1 });
+			await this.memberService.memberStatsEditor({ _id: result.memberId, targetKey: 'memberProperties', modifier: 1 });
 			return result;
 		} catch (err) {
 			console.log('Error Service.modul:', err.message);
@@ -87,7 +87,7 @@ export class PropertyService {
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 
 		if (soldAt || deletedAt) {
-			await this.memberService.memberStatusEditor({
+			await this.memberService.memberStatsEditor({
 				_id: memberId,
 				targetKey: 'memberProperties',
 				modifier: -1,
@@ -268,7 +268,7 @@ export class PropertyService {
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 
 		if (soldAt || deletedAt) {
-			await this.memberService.memberStatusEditor({
+			await this.memberService.memberStatsEditor({
 				_id: result.memberId,
 				targetKey: 'memberProperties',
 				modifier: -1,

@@ -9,11 +9,11 @@ import {
 	BoardArticleInput,
 	BoardArticlesInquiry,
 } from '../../libs/dto/board-article/board-article.input';
-import { BoardArticleUpdate } from '../../libs/dto/board-article/board-article.update';
-import { StatisticModifier, T } from '../../libs/types/common';
 import { Direction, Message } from '../../libs/enums/common.enum';
+import { StatisticModifier, T } from '../../libs/types/common';
 import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
+import { BoardArticleUpdate } from '../../libs/dto/board-article/board-article.update';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
@@ -25,18 +25,19 @@ export class BoardArticleService {
 		@InjectModel('BoardArticle') private readonly boardArticleModel: Model<BoardArticle>,
 		private readonly memberService: MemberService,
 		private readonly viewService: ViewService,
-		private readonly likeService: LikeService
+		private readonly likeService: LikeService,
 	) {}
 
 	public async createBoardArticle(memberId: ObjectId, input: BoardArticleInput): Promise<BoardArticle> {
 		input.memberId = memberId;
 		try {
 			const result = await this.boardArticleModel.create(input);
-			await this.memberService.memberStatusEditor({
+			await this.memberService.memberStatsEditor({
 				_id: memberId,
 				targetKey: 'memberArticles',
 				modifier: 1,
 			});
+
 			return result;
 		} catch (err) {
 			console.log('Error, Service.model:', err.message);
@@ -51,6 +52,8 @@ export class BoardArticleService {
 		};
 
 		const targetBoardArticle: BoardArticle = await this.boardArticleModel.findOne(search).lean().exec();
+		if (!targetBoardArticle) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
 		if (memberId) {
 			const viewInput = { memberId: memberId, viewRefId: articleId, viewGroup: ViewGroup.ARTICLE };
 			const newView = await this.viewService.recordView(viewInput);
@@ -59,11 +62,8 @@ export class BoardArticleService {
 				targetBoardArticle.articleViews++;
 			}
 
-			lookupAuthMemberLiked(memberId)
-
-			
-			const LikeInput = {memberId: memberId, likeRefId: memberId, likeGroup: LikeGroup.ARTICLE};
-			targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(LikeInput);
+			const likeInput = { memberId: memberId, likeRefId: articleId, likeGroup: LikeGroup.ARTICLE };
+			targetBoardArticle.meLiked = await this.likeService.checkLikeExistence(likeInput);
 		}
 
 		targetBoardArticle.memberData = await this.memberService.getMember(null, targetBoardArticle.memberId);
@@ -81,7 +81,7 @@ export class BoardArticleService {
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 
 		if (articleStatus === BoardArticleStatus.DELETE) {
-			await this.memberService.memberStatusEditor({
+			await this.memberService.memberStatsEditor({
 				_id: memberId,
 				targetKey: 'memberArticles',
 				modifier: -1,
@@ -101,7 +101,7 @@ export class BoardArticleService {
 		if (input.search?.memberId) {
 			match.memberId = shapeIntoMongoObjectId(input.search.memberId);
 		}
-		console.log('match:', match);
+		console.log('match', match);
 
 		const result = await this.boardArticleModel
 			.aggregate([
@@ -112,7 +112,7 @@ export class BoardArticleService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
-							// meLikedl
+							lookupAuthMemberLiked(memberId),
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],
@@ -122,43 +122,38 @@ export class BoardArticleService {
 			])
 			.exec();
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
 		return result[0];
 	}
 
-
-
-	//Like
 	public async likeTargetBoardArticle(memberId: ObjectId, likeRefId: ObjectId): Promise<BoardArticle> {
-		const target: BoardArticle= await this.boardArticleModel.findOne({_id: likeRefId, articleStatus: BoardArticleStatus.ACTIVE}).exec();
-		if(!target)  throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		const target: BoardArticle = await this.boardArticleModel
+			.findOne({ _id: likeRefId, articleStatus: BoardArticleStatus.ACTIVE })
+			.exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		const input: LikeInput = {
 			memberId: memberId,
 			likeRefId: likeRefId,
-			likeGroup: LikeGroup.MEMBER,
+			likeGroup: LikeGroup.ARTICLE,
 		};
 
-		//LIKE TOGGLR via Like modules
 		const modifier: number = await this.likeService.toggleLike(input);
-		const result = await this.boardArticleStatsEditor({_id: likeRefId, targetKey: 'articleLikes', modifier: modifier});
+		const result = await this.boardArticleStatsEditor({
+			_id: likeRefId,
+			targetKey: 'articleLikes',
+			modifier: modifier,
+		});
 
-		if(!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
 	}
-
-
-
-
-
-
-
-
 
 	public async getAllBoardArticlesByAdmin(input: AllBoardArticlesInquiry): Promise<BoardArticles> {
 		const { articleStatus, articleCategory } = input.search;
 		const match: T = {};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
-		console.log('match:', match);
+
 		if (articleStatus) match.articleStatus = articleStatus;
 		if (articleCategory) match.articleCategory = articleCategory;
 
@@ -171,6 +166,7 @@ export class BoardArticleService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
+							// meLiked
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],
@@ -181,6 +177,7 @@ export class BoardArticleService {
 			.exec();
 
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
 		return result[0];
 	}
 
@@ -192,11 +189,10 @@ export class BoardArticleService {
 				new: true,
 			})
 			.exec();
-
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 
 		if (articleStatus === BoardArticleStatus.DELETE) {
-			await this.memberService.memberStatusEditor({
+			await this.memberService.memberStatsEditor({
 				_id: result.memberId,
 				targetKey: 'memberArticles',
 				modifier: -1,
@@ -216,14 +212,6 @@ export class BoardArticleService {
 
 	public async boardArticleStatsEditor(input: StatisticModifier): Promise<BoardArticle> {
 		const { _id, targetKey, modifier } = input;
-		return await this.boardArticleModel
-			.findByIdAndUpdate(
-				_id,
-				{ $inc: { [targetKey]: modifier } },
-				{
-					new: true,
-				},
-			)
-			.exec();
+		return await this.boardArticleModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true });
 	}
 }
