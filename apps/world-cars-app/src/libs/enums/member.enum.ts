@@ -19,5 +19,4 @@ export enum MemberAuthType {
 	EMAIL = 'EMAIL',
 	TELEGRAM = 'TELEGRAM',
 }
-
 registerEnumType(MemberAuthType, { name: 'MemberAuthType' });

@@ -1,21 +1,20 @@
-import { Mutation, Resolver, Query, Args } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MemberService } from './member.service';
-import { InternalServerErrorException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AgentsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
 import { Member, Members } from '../../libs/dto/member/member';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decoratots/authMember.decorator';
-import { ObjectId } from 'mongoose';
 import { Roles } from '../auth/decoratots/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
+import { ObjectId } from 'mongoose';
 import { getSerialForImage, shapeIntoMongoObjectId, validMimeTypes } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
 import { Message } from '../../libs/enums/common.enum';
-import { Notification, Notifications } from '../../libs/dto/notification/notification';
 
 @Resolver()
 export class MemberResolver {
@@ -26,26 +25,29 @@ export class MemberResolver {
 		console.log('Mutation: signup');
 		return await this.memberService.signup(input);
 	}
+
 	@Mutation(() => Member)
 	public async login(@Args('input') input: LoginInput): Promise<Member> {
 		console.log('Mutation: login');
 		return await this.memberService.login(input);
 	}
+
 	@UseGuards(AuthGuard)
 	@Query(() => String)
-	public async checkAuth(@AuthMember('memberNick') memberNick: string): Promise<String> {
-		console.log('Mutation: checkAuth');
-		console.log('memberNick', memberNick);
-		return `hi ${memberNick}`;
+	public async checkAuth(@AuthMember('memberNick') memberNick: string): Promise<string> {
+		console.log('Query: checkAuth');
+		console.log('memberNick:', memberNick);
+		return `Hi, ${memberNick}`;
 	}
+
 	@Roles(MemberType.USER, MemberType.AGENT)
 	@UseGuards(RolesGuard)
 	@Query(() => String)
-	public async checkAuthRoles(@AuthMember('') AuthMember: Member): Promise<String> {
+	public async checkAuthRoles(@AuthMember() authMember: Member): Promise<string> {
 		console.log('Query: checkAuthRoles');
-		return `hi ${AuthMember.memberNick}, you are ${AuthMember.memberType} (member: ${AuthMember._id})`;
+		return `Hi, ${authMember.memberNick}, you are ${authMember.memberType} (memberId: ${authMember._id})`;
 	}
-	// Authenticated
+
 	@UseGuards(AuthGuard)
 	@Mutation(() => Member)
 	public async updateMember(
@@ -82,45 +84,32 @@ export class MemberResolver {
 		const likeRefId = shapeIntoMongoObjectId(input);
 		return await this.memberService.likeTargetMember(memberId, likeRefId);
 	}
-	// @UseGuards(AuthGuard)
-	// @Query(() => String)
-	// public async getLikeNotification(
-	// 	@Args('memberId') input: string,
-	// 	@AuthMember('_id') memberId: ObjectId,
-	// ): Promise<Notification> {
-	// 	console.log('Query:', 'getLikeNotification');
-	// 	return await this.memberService.getLikeNotification(memberId);
-	// }
 
-	/* ADMIN */
+	/** ADMIN **/
 
-	// Authorithation : ADMIN
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Query(() => Members)
 	public async getAllMembersByAdmin(@Args('input') input: MembersInquiry): Promise<Members> {
 		console.log('Query: getAllMembersByAdmin');
-
 		return await this.memberService.getAllMembersByAdmin(input);
 	}
 
-	// Authorithation : ADMIN
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Mutation(() => Member)
 	public async updateMemberByAdmin(@Args('input') input: MemberUpdate): Promise<Member> {
-		console.log('Mutation: updateMemberByAdmin ');
+		console.log('Mutation: updateMemberByAdmin');
 		return await this.memberService.updateMemberByAdmin(input);
 	}
 
-	// IMAGE UPLOADER (member.resolver.ts)
-
+	/** UPLOADER **/
 	@UseGuards(AuthGuard)
 	@Mutation((returns) => String)
 	public async imageUploader(
 		@Args({ name: 'file', type: () => GraphQLUpload })
 		{ createReadStream, filename, mimetype }: FileUpload,
-		@Args('target') target: String,
+		@Args('target') target: string,
 	): Promise<string> {
 		console.log('Mutation: imageUploader');
 
@@ -148,7 +137,7 @@ export class MemberResolver {
 	public async imagesUploader(
 		@Args('files', { type: () => [GraphQLUpload] })
 		files: Promise<FileUpload>[],
-		@Args('target') target: String,
+		@Args('target') target: string,
 	): Promise<string[]> {
 		console.log('Mutation: imagesUploader');
 
