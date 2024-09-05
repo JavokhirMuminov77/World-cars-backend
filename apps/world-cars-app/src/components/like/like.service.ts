@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
 import { Model, ObjectId } from 'mongoose';
@@ -10,22 +10,21 @@ import { Properties } from '../../libs/dto/property/property';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { lookupFavorite } from '../../libs/config';
 import { NotificationService } from '../notification/notification.service';
+import { MemberService } from '../member/member.service';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class LikeService {
 	constructor(
 		@InjectModel('Like') private readonly likeModel: Model<Like>,
-		private notificationService: NotificationService,
+		private readonly notificationService: NotificationService,
+		@Inject(forwardRef(() => MemberService)) private readonly memberService: MemberService,
 	) {}
 
 	public async toggleLike(input: LikeInput): Promise<number> {
-		const { likeGroup, likeRefId, memberId } = input;
-		const search: T = {
-				memberId: input.memberId,
-				likeRefId: input.likeRefId,
-			},
+    const { likeGroup, likeRefId, memberId } = input;
+		const search: T = { memberId: input.memberId, likeRefId: input.likeRefId },
 			exist = await this.likeModel.findOne(search).exec();
-
 		let modifier = 1;
 
 		if (exist) {
@@ -37,15 +36,16 @@ export class LikeService {
 				await this.likeModel.create(input);
 				await this.notificationService.createNotificationForLike(likeGroup, likeRefId, memberId);
 			} catch (err) {
-				console.log('Error, Service.model', err.message);
+				console.log('Error, Service.model:', err.message);
 				throw new BadRequestException(Message.CREATE_FAILED);
 			}
 		}
 
+		console.log(`-Like modifier ${modifier}`);
 		return modifier;
 	}
 
-	public async checkLikeExistence(input: LikeInput): Promise<MeLiked[]> {
+	public async checkLikeExistance(input: LikeInput): Promise<MeLiked[]> {
 		const { memberId, likeRefId } = input;
 		const result = await this.likeModel.findOne({ memberId: memberId, likeRefId: likeRefId }).exec();
 		return result ? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }] : [];
@@ -83,8 +83,8 @@ export class LikeService {
 			.exec();
 
 		const result: Properties = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map((ele) => ele.favoriteProperty);
 
+		result.list = data[0].list.map((ele) => ele.favoriteProperty);
 		console.log('result:', result);
 		return result;
 	}
