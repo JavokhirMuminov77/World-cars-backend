@@ -6,7 +6,7 @@
 	"private": true,
 	"license": "UNLICENSED",
 	"scripts": {
-		"build": "nest build dreamcar-api  && nest build dreamcar-batch",
+		"build": "nest build world-cars-api  && nest build world-cars-batch",
 		"format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
 		"start": "nest start",
 		"start:dev": "nest start --watch",
