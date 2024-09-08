@@ -5,14 +5,18 @@ import { Connection} from 'mongoose';
   imports: [
     MongooseModule.forRootAsync({
       useFactory: () => ({
+        
         uri:process.env.NODE_ENV === "production" ? process.env.MONGO_PROD : process.env.MONGO_DEV,
       }),
+      
     }),
   ],
   exports: [MongooseModule],
 })
+
 export class DatabaseModule {
   constructor(@InjectConnection() private readonly connection: Connection) {
+    console.log( process.env.MONGO_PROD, "sdjbsdjhbsdnbsjdn")
 
     if(connection.readyState === 1) {
       console.log(
