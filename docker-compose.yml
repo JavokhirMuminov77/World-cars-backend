@@ -1,14 +1,14 @@
 
 services:
-  dreamcar-api:
-    container_name: dreamcar-api
+  world-cars-app:
+    container_name: world-cars-app
     restart: always
     image: node:20.10.0
     ports:
       - 4001:3007
     volumes:
-      - ./:/usr/src/dreamcar
-    working_dir: /usr/src/dreamcar
+      - ./:/usr/src/world-cars
+    working_dir: /usr/src/world-cars
 
     networks:
       - monorepo-network
@@ -16,15 +16,15 @@ services:
     # for production
     command: bash -c "rm -rf dist && npm install && npm run build && npm run start:prod"
 
-  dreamcar-batch:
-    container_name: dreamcar-batch
+  world-cars-batch:
+    container_name: world-cars-batch
     restart: unless-stopped
     image: node:20.10.0
     ports:
       - 4002:3008
     volumes:
-      - ./:/usr/src/dreamcar
-    working_dir: /usr/src/dreamcar
+      - ./:/usr/src/world-cars
+    working_dir: /usr/src/world-cars
 
     networks:
       - monorepo-network

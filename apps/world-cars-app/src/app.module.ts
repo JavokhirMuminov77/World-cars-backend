@@ -7,9 +7,10 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { AppResolver } from './app.resolve';
 import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
+import { error } from 'console';
 import { T } from './libs/types/common';
+import { Message } from './libs/enums/common.enum';
 import { SocketModule } from './socket/socket.module';
-
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
@@ -19,14 +20,14 @@ import { SocketModule } from './socket/socket.module';
 			uploads: false,
 			autoSchemaFile: true,
 			formatError: (error: T) => {
-				const graphQLFormatedError = {
+				console.log('error:', error);
+				const graphqlFormattedError = {
 					code: error?.extensions.code,
-					message:
+					Message:
 						error?.extensions?.exception?.response?.message || error?.extensions?.response?.message || error?.message,
 				};
-				console.log('GRAPHQL GLOBAL ERR', graphQLFormatedError);
-
-				return graphQLFormatedError;
+				console.log('GRAPHQL GLOBAL ERR:', graphqlFormattedError);
+				return graphqlFormattedError;
 			},
 		}),
 		ComponentsModule,

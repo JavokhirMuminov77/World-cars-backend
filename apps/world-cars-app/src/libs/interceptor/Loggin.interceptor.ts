@@ -8,29 +8,31 @@ import { tap } from 'rxjs/operators';
 export class LoggingInterceptor implements NestInterceptor {
 	private readonly logger: Logger = new Logger();
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-		const recordTime = Date.now();
-		const requestType = context.getType<GqlContextType>();
+    const recordTime = Date.now();
+    const requestType = context.getType<GqlContextType>();
 
-		if (requestType === 'http') {
-			// Develop if needed!
-		} else if (requestType === 'graphql') {
-			// 1. Print Request
-			const gqlContext = GqlExecutionContext.create(context);
-			this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
+    if (requestType === 'graphql') {
+        const gqlContext = GqlExecutionContext.create(context);
+        const reqBody = gqlContext.getContext().req.body || {};
+        this.logger.log(`${this.stringify(reqBody)}`, 'REQUEST');
 
-			// 2. Errors handing via GraphQL
+        // Check the observable returned by next.handle()
+        const observable = next.handle();
+        if (observable === undefined) {
+            this.logger.error('The observable returned by next.handle() is undefined');
+        }
 
-			// 3. No Errors giving Response below
-			return next.handle().pipe(
-				tap((context) => {
-					const responseTime = Date.now() - recordTime;
-					this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, 'RESPONSE');
-				}),
-			);
-		}
-	}
-	private stringify(context: ExecutionContext): string {
-		console.log(typeof context);
-		return JSON.stringify(context).slice(0, 75);
-	}
+        return observable.pipe(
+            tap((context) => {
+                const responseTime = Date.now() - recordTime;
+                this.logger.log(`${this.stringify(context)} - ${responseTime}ms \n\n`, 'RESPONSE');
+            }),
+        );
+    } else {
+        return next.handle(); // For other request types
+    }
+}
+  stringify(reqBody: any) {
+    throw new Error('Method not implemented.');
+  }
 }
