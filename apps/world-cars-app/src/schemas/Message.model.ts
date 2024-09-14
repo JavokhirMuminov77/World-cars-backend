@@ -1,15 +1,17 @@
 import { Schema } from 'mongoose';
 
-const ContactSchema = new Schema(
+const MessageSchema = new Schema(
 	{
 		name: {
 			type: String,
 			required: true,
 		},
+
 		phone: {
 			type: String,
 			required: true,
 		},
+
 		email: {
 			type: String,
 			required: true,
@@ -20,7 +22,7 @@ const ContactSchema = new Schema(
 			required: true,
 		},
 
-		contactRefId: {
+		messageRefId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 		},
@@ -30,7 +32,7 @@ const ContactSchema = new Schema(
 			required: true,
 		},
 	},
-	{ timestamps: true, collection: 'contact' },
+	{ timestamps: true, collection: 'messages' },
 );
 
-export default ContactSchema;
+export default MessageSchema;

@@ -1,7 +1,7 @@
 import { ObjectId } from 'bson';
+export const availableAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
+export const availableMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 
-export const availbleAgentSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews', 'memberRank'];
-export const availbleMemberSorts = ['createdAt', 'updatedAt', 'memberLikes', 'memberViews'];
 export const availableOptions = ['propertyBarter', 'propertyRent'];
 export const availablePropertySorts = [
 	'createdAt',
@@ -15,10 +15,11 @@ export const availablePropertySorts = [
 export const availableBoardArticleSorts = ['createdAt', 'updatedAt', 'articleLikes', 'articleViews'];
 export const availableCommentSorts = ['createdAt', 'updatedAt'];
 
-// IMAGE CONFIGURATION (config.js)
+/* IMAGE CONFIGURATION (config.js) */
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { T } from './types/common';
+import { pipeline } from 'stream';
 
 export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 export const getSerialForImage = (filename: string) => {
@@ -29,9 +30,6 @@ export const getSerialForImage = (filename: string) => {
 export const shapeIntoMongoObjectId = (target: any) => {
 	return typeof target === 'string' ? new ObjectId(target) : target;
 };
-
-
-
 
 export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id') => {
 	return {
@@ -46,7 +44,7 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 				{
 					$match: {
 						$expr: {
-							$and: [{ $eq: ['$likeRefId', '$$localLikeRefId']}, { $eq: ['$memberId', '$$localMemberId']}],
+							$and: [{ $eq: ['$likeRefId', '$$localLikeRefId'] }, { $eq: ['$memberId', '$$localMemberId'] }],
 						},
 					},
 				},
@@ -56,21 +54,19 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 						memberId: 1,
 						likeRefId: 1,
 						myFavorite: '$$localMyFavorite',
-					}
-				}
+					},
+				},
 			],
 			as: 'meLiked',
 		},
 	};
 };
-
 interface LookupAuthMemberFollowed {
 	followerId: T;
 	followingId: string;
 }
-
 export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
-	const { followerId, followingId} = input;
+	const { followerId, followingId } = input;
 	return {
 		$lookup: {
 			from: 'follows',
@@ -83,7 +79,7 @@ export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
 				{
 					$match: {
 						$expr: {
-							$and: [{ $eq: ['$followerId', '$$localFollowerId']}, { $eq: ['$followingId', '$$localFollowingId']}],
+							$and: [{ $eq: ['$followerId', '$$localFollowerId'] }, { $eq: ['$followingId', '$$localFollowingId'] }],
 						},
 					},
 				},
@@ -92,26 +88,28 @@ export const lookupAuthMemberFollowed = (input: LookupAuthMemberFollowed) => {
 						_id: 0,
 						followerId: 1,
 						followingId: 1,
-						myFavorite: '$$localMyFavorite',
-					}
-				}
+						myFollowing: '$$localMyFavorite',
+					},
+				},
 			],
 			as: 'meFollowed',
 		},
 	};
 };
 
-
-
-
-
-
-
 export const lookupMember = {
 	$lookup: {
 		from: 'members',
 		localField: 'memberId',
 		foreignField: '_id',
+		as: 'memberData',
+	},
+};
+export const lookupMemberLike = {
+	$lookup: {
+		from: 'members',
+		localField: 'memberId',
+		foreignField: 'authorId',
 		as: 'memberData',
 	},
 };
@@ -124,7 +122,6 @@ export const lookupFollowingData = {
 		as: 'followingData',
 	},
 };
-
 
 export const lookupFollowerData = {
 	$lookup: {

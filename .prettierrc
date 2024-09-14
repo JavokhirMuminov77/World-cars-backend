@@ -1,11 +1,4 @@
-
 {
-  "extendes": "eslint:recommended",
-  "taWidth": 2,
-  "useTabs": true,
   "singleQuote": true,
-  "trailingComma": "all",
-  "semi": true,
-  "printWidth": 120,
-  "endOfLine": "auto"
+  "trailingComma": "all"
 }

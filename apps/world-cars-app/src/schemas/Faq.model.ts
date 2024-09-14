@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { FaqCategory, FaqStatus } from '../libs/enums/faq.enum';
 
 const faqSchema = new Schema(

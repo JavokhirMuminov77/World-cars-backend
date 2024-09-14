@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { NoticeCategory, NoticeStatus } from '../libs/enums/notice.enum';
 
 const NoticeSchema = new Schema(
@@ -22,6 +22,7 @@ const NoticeSchema = new Schema(
 
 		noticeContent: {
 			type: String,
+			// required: true,
 		},
 
 		// memberId: {
